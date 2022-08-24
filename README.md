@@ -12,4 +12,8 @@ licenses and hardware. For this project we must develop an IOS app, a web-app an
 needed to run the project, all of this keeping in mind the security and software engineering requirements
 that were raised in.
 
-## Project structure 
+## Project tools
+As this repo is just inteded to be for the web side of the project, here are not presented the tools
+used for the app development. Therefore, the tools used on this part are the following:
+- Flask
+- MongoDB
