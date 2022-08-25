@@ -16,4 +16,4 @@ that were raised in.
 As this repo is just inteded to be for the web side of the project, here are not presented the tools
 used for the app development. Therefore, the tools used on this part are the following:
 - Flask
-- MongoDB
+- Sqlite3
