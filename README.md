@@ -1,4 +1,4 @@
-# BookItWeb
+# BookMeWeb
 
 This is  a resporitory focused on the development of the web services of that are needed to run the
 BookIt project. 
