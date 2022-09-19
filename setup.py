@@ -2,10 +2,10 @@ import os
 # Requirement to install
 
 
-for i in range(2):
-    print("==========================")
 print("Installing requierements")
-for i in range(2):
-    print("==========================\n\n")
-
+print("==========================")
 os.system("pip3 install -r ./server/requirements.txt")
+
+print("Setting up database")
+print("==========================")
+os.system("python3 ./server/setupDB.py")
