@@ -2,6 +2,11 @@ import os
 # Requirement to install
 
 
+print("Generating requirements file")
+print("==========================")
+os.system("python3 -m pipreqs.pipreqs --force ./server")
+
+
 print("Installing requierements")
 print("==========================")
 os.system("pip3 install -r ./server/requirements.txt")
