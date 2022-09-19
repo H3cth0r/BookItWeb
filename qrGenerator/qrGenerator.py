@@ -1,0 +1,4 @@
+import qrcode
+
+class QRGenerator:
+

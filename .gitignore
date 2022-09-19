@@ -1,2 +1,5 @@
 # Nothing
 *.swp
+
+# Ignore sqlite3 binary file
+*.db

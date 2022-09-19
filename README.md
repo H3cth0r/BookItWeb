@@ -23,6 +23,6 @@ For setting up the project
 
 ## Run Server
 ```
-$ cd serverear
+$ cd server
 $ python3 -m flask --app server run
 ```
