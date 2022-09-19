@@ -4,7 +4,7 @@ This is  a resporitory focused on the development of the web services of that ar
 BookIt project. 
 
 
-## What is **BookIt**?
+## What is **BookMe**?
 Book it is a project of a security project, in which we are intended to create an app for the
 Tecnologico de Monterrey Hub of cyber-security located in campus Santa Fe, in which the app
 must let members of the institution and outsiders to reserve a physical space in the hub, software 
@@ -17,3 +17,6 @@ As this repo is just inteded to be for the web side of the project, here are not
 used for the app development. Therefore, the tools used on this part are the following:
 - Flask
 - Sqlite3
+
+## Setup the project
+For setting up the project
