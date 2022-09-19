@@ -20,3 +20,9 @@ used for the app development. Therefore, the tools used on this part are the fol
 
 ## Setup the project
 For setting up the project
+
+## Run Server
+'''
+$ cd serverear
+$ python3 -m flask --app server run
+'''
