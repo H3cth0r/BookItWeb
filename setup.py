@@ -1,11 +1,13 @@
 import os
 # Requirement to install
 
+print("Opening environment")
+print("==========================")
+os.system("python3 -m pipreqs.pipreqs --force ./server")
 
 print("Generating requirements file")
 print("==========================")
 os.system("python3 -m pipreqs.pipreqs --force ./server")
-
 
 print("Installing requierements")
 print("==========================")
