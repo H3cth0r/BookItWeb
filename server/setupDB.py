@@ -1,18 +1,9 @@
 import sqlite3
 from os.path import exists
 
-"""
-CREATE TABLE contacts (
-    contact_id INTEGER PRIMARY KEY,
-        first_name TEXT NOT NULL,
-            last_name TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                    phone TEXT NOT NULL UNIQUE
-                    );
-"""
-
 def main():
 
+    #no funciona?
     if exists("DB/BookMeDB.db") == False:
         print("databse already exists")
         return
