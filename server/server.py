@@ -35,8 +35,8 @@ def createJWT(jsnDict):
 
 # --- auth errors ---
 # 101 invalid user
-# 102 wrong pwd
-# 103 blocked
+# 102 blocked
+# 103 wrong pwd
 
 
 @app.route("/login", methods=['POST'])
@@ -44,15 +44,25 @@ def login(name=None):
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
-    user = cur.execute("SELECT Users.id, Users.firstName, Users.hashPassword FROM Users WHERE email = ?", (body['email'],)).fetchone()
+    user = cur.execute('''SELECT Users.id, 
+                                 Users.email,
+                                 Users.firstName,
+                                 Users.hashPassword,
+                                 Users.admin,
+                                 Users.blocked
+                                 FROM Users WHERE email = ?''', #es sensible que el usuario tenga acceso a su id?
+                       (body['email'],)).fetchone()
     if user is None:
         respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid user"
+    elif user["blocked"]:
+        respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"User is blocked"
     elif user["hashPassword"] == body["password"]:
         #respBody = {"authorized":True}
         respBody = render_template('main.html', name=name)
-        resp.set_cookie("JWT","asdfg")
+        user.pop("hashPassword")
+        resp.set_cookie("JWT",jwt.encode(user, jwtKey, algorithm="HS256"))
     else:
-        respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"Wrong pwd"
+        respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
 
     resp.set_data(respBody)
 
