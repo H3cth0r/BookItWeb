@@ -1,23 +1,21 @@
 <!DOCTYPE html>
+
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-        <script src="static/scripts/anime-master/lib/anime.min.js"></script>
-        <meta charset="utf-8"></meta>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/lux/bootstrap.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&display=swap" rel="stylesheet">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-        <link rel="stylesheet" href="static/styles/admin.css"></link>
+		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+		<script src="scripts/anime-master/lib/anime.min.js"></script>
 
-        <title>BookMe</title>
-    </head>
+		<meta charset="utf-8"></meta>
+		<link rel="stylesheet" href="styles/main_style.css"></link>
+		<title>BookMe</title>
+
+	</head>
  
     <body>
-        <main class="container p-3">
-            <h1 class="display-4 text-centerc title mt-4" >Agregando un objeto</h1>
+        <div>
+            <h3 >"register" : {</h3>
             <br>
 
 
@@ -37,7 +35,7 @@
                 </div>
                 <div class="form-group">
                     <label for="birth">"birth":{</label>
-                    <input type="text" class="form-control" id="birth" name="birth" placeholder="birth">
+                    <input type="date" class="form-control" id="birth" name="birth" placeholder="birth">
                 </div>
                 <div class="form-group">
                     <label for="organization">"Organization":{</label>
@@ -45,7 +43,7 @@
                 </div>
                 <div class="form-group">
                     <label for="email">"mail":{</label>
-                    <input type="text" class="form-control" id="email" name="email" placeholder="email">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="email">
                 </div>
                 <div class="form-group">
                     <label for="age">"age":{</label>
@@ -53,13 +51,16 @@
                 </div>
                 <div class="form-group">
                     <label for="password">"password":{</label>
-                    <input type="text" class="form-control" id="password" name="password" placeholder="password">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="password">
                 </div>
                 <div class="form-group">
                     <label for="password">"password":{</label>
-                    <input type="text" class="form-control" id="password" name="password" placeholder="password">
+                    <input type="password" class="form-control" id="password2" name="password" placeholder="password">
                 </div>
             </form>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </main>
+            <input type="submit" name="submit" id="submit" value="SEND">
+        </div>
+        <div> 
+            <a href="terminos">Terminos y Condiciones</a>
+        </div>
 </body>
