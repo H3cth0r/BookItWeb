@@ -44,7 +44,7 @@ def jwtValidated(token):
     except:
         return False
     else:
-        return True 
+        return True
 
 #api
 
@@ -150,6 +150,7 @@ def loginApp(name=None):
     user = cur.execute('''SELECT Users.id, 
                                  Users.email,
                                  Users.firstName,
+                                 Users.lastName,
                                  Users.hashPassword,
                                  Users.admin,
                                  Users.blocked
@@ -160,9 +161,9 @@ def loginApp(name=None):
     elif user["blocked"]:
         respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"User is blocked"
     elif user["hashPassword"] == body["password"]:
-        respBody = {"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")}
-        #respBody = render_template('main.html', name=name)
         user.pop("hashPassword")
+        user["exp"] = datetime.now(timezone.utc)
+        respBody = {"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")}
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
 
@@ -330,12 +331,48 @@ def getTicket():
         ticket = cur.execute(query, (body["ticketId"], )).fetchone()
         return ticket
 
-# Edit ticket
-# Select * From Tickets Where ticketId != ?
+# Create new ticket for user
+# Expecting request: {"jwt":jwt, "userId":userId, "objectId":objectId, "objectType":objectType, "objectName":objectName, "startDate":startDate,
+# "endDate":endDate, "description":ticketDescription}
+# Ej.:
+'''
+{
+  "jwt":0,
+  "userId":1,
+  "objectId":4,
+  "objectType":"HRDWR", 
+  "objectName":"DELL PC", 
+  "startDate":"2022-10-2 12:00:00.000",
+  "endDate":"2022-10-2 22:00:00.000",
+  "description":"Reserva Dell"
+}
+'''
+
+@app.route("/app/api/newTicket", methods=["POST"])
+def newTicket():
+    body = request.get_json()
+    if True:#logged(body["jwt"]):
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S.%f")
+        endDate = datetime.strptime(body["endDate"], "%Y-%m-%d %H:%M:%S.%f")
+        weight = (endDate - startDate).seconds / 3600
+        startDate = startDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        endDate = endDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        qr = "a1b2c34d5e6f7g8h"
+        cur = get_db().cursor()
+        cur.execute('''
+        INSERT INTO "main"."ReservationTicket" 
+        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userID", "description", "weight", "qrCode") VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''',
+        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, body["userId"], body["description"], weight, qr))
+        respBody = {"ticketSaved":True}
+        return json.dumps(respBody)
 
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
+        db.commit()
         db.close()
 
