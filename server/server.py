@@ -1,4 +1,5 @@
 from audioop import add
+from tkinter.tix import Tree
 from flask import Flask, request, g, make_response
 from flask import render_template
 from hashlib import sha256
@@ -13,7 +14,7 @@ print("Server started")
 app = Flask(__name__)
 
 DATABASE = 'DB\BookMeDB.db'
-jwtKey = 'BookMeIsCool'
+jwtKey = 'BooKMeIsCool'
 hashedAdminPwd = sha256(jwtKey.encode('utf-8'))
 #app.config['SECRET_KEY'] = 'super-secret'
 
@@ -107,35 +108,12 @@ def register():
                        (datetime.now(timezone(-timedelta(hours=5))).strftime("%Y-%m-%d %H:%M:%S"), body["firstName"], body["lastName"], body["username"],
                        body["birthDate"], body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
         respBody = json.dumps({"registered":True})
-    
 
-'''
-CREATE TABLE "AvailableObjects" (
-	"id"	INTEGER NOT NULL,
-	"hO"	INTEGER,
-	"sO"	INTEGER,
-	"rO"	INTEGER,
-	FOREIGN KEY("hO") REFERENCES "HardwareObjects"("objectId") ON DELETE CASCADE,
-	FOREIGN KEY("sO") REFERENCES "SoftwareObjects"("objectId") ON DELETE CASCADE,
-	FOREIGN KEY("rO") REFERENCES "Rooms"("id") ON DELETE CASCADE,
-	PRIMARY KEY("id" AUTOINCREMENT)
-)
-'''
-'''
-SELECT generalObjectID, identifier, description, operativeSystem, name, SUM(ResTicket.weight) as totalWeight FROM
-(SELECT DT.inTypeId, DT.identifier, DT.description, DT.operativeSystem, DT.name, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
-(SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.description, HardwareClass.operativeSystem, HardwareClass.name
-FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
-INNER JOIN AvailableObjects 
-ON (DT.inTypeId = AvailableObjects.hO)) DT2
-LEFT JOIN 
-(SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+1 days", "-0.001 seconds")) ResTicket
-ON (ResTicket.objectID = DT2.generalObjectID)
-GROUP BY DT2.generalObjectID
-'''
+'''------------------'''
+'''------APP API-----'''
+'''------------------'''
 
-# api app
+'''---USER MANAGEMENT---'''
 
 # --- auth errors ---
 # 101 invalid email
@@ -147,7 +125,7 @@ def loginApp(name=None):
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
-    user = cur.execute('''SELECT Users.id, 
+    user = cur.execute('''SELECT Users.userId, 
                                  Users.email,
                                  Users.firstName,
                                  Users.lastName,
@@ -192,6 +170,7 @@ def registerApp():
     return respBody
 
 
+'''---RESERVATION MANAGEMENT---'''
 # get object
 # route "/app/api/get<ObjectType>"
 
@@ -267,13 +246,14 @@ def getTimeRanges():
 
 
 # Get user's tickets by userId
-# Expecting request: {"jwt":jwt, "userId":userId}
+# Expecting request: {"jwt":jwt}
 # Optional request: {"ignoreTicket":ticketId}
 
 @app.route("/app/api/getTickets", methods=["POST"])
 def getTickets():
     body = request.get_json()
     if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
         if "ignoreTicket" in body:
             ignoreTicket = body["ignoreTicket"]
         else:
@@ -285,7 +265,7 @@ def getTickets():
                                  AND ReservationTicket.endDate > datetime('now', '-5 hours') 
                                  AND ticketId != ?
                                  ORDER BY startDate''', 
-        (body["userId"], ignoreTicket)).fetchall()
+        (userData["userId"], ignoreTicket)).fetchall()
         return tickets
 
 # Get user's ticket by ticketId
@@ -332,13 +312,12 @@ def getTicket():
         return ticket
 
 # Create new ticket for user
-# Expecting request: {"jwt":jwt, "userId":userId, "objectId":objectId, "objectType":objectType, "objectName":objectName, "startDate":startDate,
+# Expecting request: {"jwt":jwt, "objectId":objectId, "objectType":objectType, "objectName":objectName, "startDate":startDate,
 # "endDate":endDate, "description":ticketDescription}
 # Ej.:
 '''
 {
-  "jwt":0,
-  "userId":1,
+  "jwt":,
   "objectId":4,
   "objectType":"HRDWR", 
   "objectName":"DELL PC", 
@@ -352,6 +331,7 @@ def getTicket():
 def newTicket():
     body = request.get_json()
     if True:#logged(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
         dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S.%f")
         endDate = datetime.strptime(body["endDate"], "%Y-%m-%d %H:%M:%S.%f")
@@ -365,8 +345,35 @@ def newTicket():
         ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userID", "description", "weight", "qrCode") VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
-        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, body["userId"], body["description"], weight, qr))
+        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight, qr))
         respBody = {"ticketSaved":True}
+        return json.dumps(respBody)
+
+# Deleting ticket from user
+# Expecting request: {"jwt":jwt, "ticketId":ticketId}
+# Ej.:
+'''
+{
+  "jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+  eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJBMDE2NTk4OTFAdGVjLm14IiwiZmlyc3ROYW1lIjoiUGVwbyIsImxhc3ROYW1lIjoiUm9kcmlndWV6IiwiYWRtaW4iOjAsImJsb2NrZWQiOjB9.
+  KR8WPw1h18kOciOxs--VCRbvEohrcmO7asNkBX61N4o",
+  "ticketId":2
+}
+'''
+@app.route("/app/api/deleteTicket", methods=["POST"])
+def deleteTicket():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        cur = get_db().cursor()
+        cur.execute('''
+        DELETE FROM ReservationTicket WHERE ticketId = ? AND userId = ?;
+        ''',
+        (body["ticketId"], userData["userId"]))
+        respBody = {"ticketDeleted":True}
+        return json.dumps(respBody)
+    else:
+        respBody = {"ticketDeleted":False, "errorId": 100}
         return json.dumps(respBody)
 
 @app.teardown_appcontext
