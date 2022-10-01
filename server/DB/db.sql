@@ -283,16 +283,6 @@ CREATE TABLE IF NOT EXISTS "Users" (
 	FOREIGN KEY("countryId") REFERENCES "Countries"("id")
 );
 INSERT INTO Users VALUES(1,'2022-09-28 17:57:41','Pepo','Rodriguez','pepo117','2002-11-11 11:11:11.111','Tec','A01659891@tec.mx','Estudiante',12,'d50d3319bccca99d3093b689745b168cc79ecfd0e18e3e80be6d8c6ad1061407',0,0);
-CREATE TABLE IF NOT EXISTS "HardwareClass" (
-	"classId"	INTEGER NOT NULL,
-	"hardwareType"	TEXT NOT NULL,
-	"operativeSystem"	TEXT NOT NULL,
-	"description"	TEXT NOT NULL,
-	"prefix"	INTEGER NOT NULL UNIQUE,
-	PRIMARY KEY("classId" AUTOINCREMENT)
-);
-INSERT INTO HardwareClass VALUES(1,'Mac Book Air','macOS 12',replace(replace('{\r\n"cpu" : "M1",\r\n"ports" : {"usb4" : 2, "jack" : 1},\r\n"ram" : 8,\r\n"rom": {"ssd":256}\r\n}','\r',char(13)),'\n',char(10)),'MACAMTR');
-INSERT INTO HardwareClass VALUES(2,'DELL PC','Windows 10',replace(replace('{\r\n"cpu" : "i5",\r\n"ports" : {"usb3" : 3, "hdmi" :1, "jack" : 1},\r\n"ram" : 8,\r\n"rom": {"ssd":128, "hdd":1024}\r\n}','\r',char(13)),'\n',char(10)),'DLPCW10');
 CREATE TABLE IF NOT EXISTS "HardwareObjects" (
 	"inTypeId"	INTEGER NOT NULL,
 	"classId"	INTEGER NOT NULL,
@@ -342,25 +332,6 @@ INSERT INTO SoftwareObjects VALUES(13,4,3);
 INSERT INTO SoftwareObjects VALUES(14,4,4);
 INSERT INTO SoftwareObjects VALUES(15,4,5);
 INSERT INTO SoftwareObjects VALUES(16,4,6);
-CREATE TABLE IF NOT EXISTS "ReservationTicket" (
-	"ticketId"	INTEGER NOT NULL,
-	"dateRegistered"	TEXT NOT NULL,
-	"objectId"	INTEGER NOT NULL,
-	"objectType"	TEXT NOT NULL,
-	"startDate"	TEXT NOT NULL,
-	"endDate"	TEXT NOT NULL,
-	"userID"	INTEGER NOT NULL,
-	"description"	TEXT NOT NULL,
-	"weight"	REAL,
-	FOREIGN KEY("objectId") REFERENCES "AvailableObjects"("generalObjectID"),
-	PRIMARY KEY("ticketId" AUTOINCREMENT)
-);
-INSERT INTO ReservationTicket VALUES(1,'2022-09-28 15:00:00.000',1,'HRDWR','2022-09-28 17:00:00.000','2022-09-28 19:00:00.000',1,'Reserva 1',2.0);
-INSERT INTO ReservationTicket VALUES(2,'2022-09-28 15:00:00.000',1,'HRDWR','2022-09-29 7:00:00.000','2022-09-29 19:00:00.000',1,'Reserva 2',12.0);
-INSERT INTO ReservationTicket VALUES(3,'2022-09-28 15:00:00.000',3,'HRDWR','2022-09-30 16:00:00.000','2022-09-30 16:30:00.000',1,'Reserva Dell ',2.0);
-INSERT INTO ReservationTicket VALUES(4,'2022-09-28 15:00:00.000',16,'SFTWR','2022-09-30 16:00:00.000','2022-09-30 18:30:00.000',1,'Reserva Dell ',2.5);
-INSERT INTO ReservationTicket VALUES(5,'2022-09-28 17:00:00.000',16,'SFTWR','2022-09-28 20:00:00.000','2022-09-28 24:30:00.000',1,'DEscripción de reserva',4.0);
-INSERT INTO ReservationTicket VALUES(6,'2022-09-28 17:00:00.000',13,'SFTWR','2022-09-30 20:00:00.000','2022-10-01 20:00:00.000',1,'Descripción de reserva',24.0);
 CREATE TABLE IF NOT EXISTS "AvailableObjects" (
 	"generalObjectID"	INTEGER NOT NULL,
 	"hO"	INTEGER,
@@ -396,29 +367,65 @@ INSERT INTO AvailableObjects VALUES(23,NULL,NULL,1);
 INSERT INTO AvailableObjects VALUES(24,NULL,NULL,2);
 INSERT INTO AvailableObjects VALUES(25,NULL,NULL,3);
 INSERT INTO AvailableObjects VALUES(26,NULL,NULL,4);
-INSERT INTO AvailableObjects VALUES(27,NULL,NULL,7);
+INSERT INTO AvailableObjects VALUES(27,NULL,NULL,5);
+CREATE TABLE IF NOT EXISTS "HardwareClass" (
+	"classId"	INTEGER NOT NULL,
+	"name"	TEXT NOT NULL,
+	"operativeSystem"	TEXT NOT NULL,
+	"description"	TEXT NOT NULL,
+	"prefix"	INTEGER NOT NULL UNIQUE,
+	PRIMARY KEY("classId" AUTOINCREMENT)
+);
+INSERT INTO HardwareClass VALUES(1,'Mac Book Air','macOS 12',replace(replace('{\r\n"cpu" : "M1",\r\n"ports" : {"usb4" : 2, "jack" : 1},\r\n"ram" : 8,\r\n"rom": {"ssd":256}\r\n}','\r',char(13)),'\n',char(10)),'MACAMTR');
+INSERT INTO HardwareClass VALUES(2,'DELL PC','Windows 10',replace(replace('{\r\n"cpu" : "i5",\r\n"ports" : {"usb3" : 3, "hdmi" :1, "jack" : 1},\r\n"ram" : 8,\r\n"rom": {"ssd":128, "hdd":1024}\r\n}','\r',char(13)),'\n',char(10)),'DLPCW10');
 CREATE TABLE IF NOT EXISTS "Rooms" (
 	"roomId"	INTEGER NOT NULL,
-	"name"	TEXT NOT NULL,
+	"label"	TEXT NOT NULL,
+	"name"	TEXT,
 	"location"	TEXT NOT NULL,
 	"description"	TEXT NOT NULL,
 	"capacity"	INTEGER NOT NULL,
 	PRIMARY KEY("roomId" AUTOINCREMENT)
 );
-INSERT INTO Rooms VALUES(1,'SC01','Hub de Ciberseguridad, piso 3. ','Sala de conferencias, apta para presentaciones ejecutivas a un público grande.',50);
-INSERT INTO Rooms VALUES(2,'SC02','Hub de Ciberseguridad, piso 2. ','Sala de conferencias, apta para presentaciones ejecutivas a un público grande.',40);
-INSERT INTO Rooms VALUES(3,'LABFZ-01','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21);
-INSERT INTO Rooms VALUES(4,'LABFZ-02','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21);
-INSERT INTO Rooms VALUES(5,'LABFZ-03','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21);
+INSERT INTO Rooms VALUES(1,'SC01','Sala de Conferencias 01','Hub de Ciberseguridad, piso 3. ','Sala de conferencias, apta para presentaciones ejecutivas a un público grande.',50);
+INSERT INTO Rooms VALUES(2,'SC02','Sala de Conferencias 02','Hub de Ciberseguridad, piso 2. ','Sala de conferencias, apta para presentaciones ejecutivas a un público grande.',40);
+INSERT INTO Rooms VALUES(3,'LABFZ-01','Laboratorio de Finanzas 01','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21);
+INSERT INTO Rooms VALUES(4,'LABFZ-02','Laboratorio de Finanzas 02','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21);
+INSERT INTO Rooms VALUES(5,'LABFZ-03','Laboratorio de Finanzas 03','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21);
+CREATE TABLE IF NOT EXISTS "ReservationTicket" (
+	"ticketId"	INTEGER NOT NULL,
+	"dateRegistered"	TEXT NOT NULL,
+	"objectId"	INTEGER NOT NULL,
+	"objectType"	TEXT NOT NULL,
+	"objectName"	TEXT NOT NULL DEFAULT 'a',
+	"startDate"	TEXT NOT NULL,
+	"endDate"	TEXT NOT NULL,
+	"userID"	INTEGER NOT NULL,
+	"description"	TEXT NOT NULL,
+	"weight"	REAL NOT NULL,
+	"qrCode"	INTEGER,
+	FOREIGN KEY("objectId") REFERENCES "AvailableObjects"("generalObjectID"),
+	PRIMARY KEY("ticketId" AUTOINCREMENT)
+);
+INSERT INTO ReservationTicket VALUES(1,'2022-09-28 15:00:00.000',1,'HRDWR','Mac Book Air','2022-09-28 17:00:00.000','2022-09-28 19:00:00.000',1,'Reserva 1',2.0,NULL);
+INSERT INTO ReservationTicket VALUES(2,'2022-09-28 15:00:00.000',1,'HRDWR','Mac Book Air','2022-09-29 07:00:00.000','2022-09-29 19:00:00.000',1,'Reserva 2',12.0,NULL);
+INSERT INTO ReservationTicket VALUES(3,'2022-09-28 15:00:00.000',3,'HRDWR','Mac Book Air','2022-09-30 16:00:00.000','2022-09-30 16:30:00.000',1,'Reserva Dell ',2.0,NULL);
+INSERT INTO ReservationTicket VALUES(4,'2022-09-28 15:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-30 16:00:00.000','2022-09-30 18:30:00.000',1,'Reserva XD',2.5,NULL);
+INSERT INTO ReservationTicket VALUES(5,'2022-09-28 17:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-28 20:00:00.000','2022-09-28 24:30:00.000',1,'Descripción de reserva',4.0,NULL);
+INSERT INTO ReservationTicket VALUES(6,'2022-09-28 17:00:00.000',13,'SFTWR','Adobe XD','2022-09-30 20:00:00.000','2022-10-01 20:00:00.000',1,'Descripción de reserva',24.0,NULL);
+INSERT INTO ReservationTicket VALUES(7,'2022-09-29 9:00:00.000',27,'ROOM','Laboratorio de Finanzas 03','2022-09-30 12:00:00.000','2022-09-30 20:00:00.000',1,'Reservando sala de finanzas 3',8.0,NULL);
+INSERT INTO ReservationTicket VALUES(8,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 08:00:00.000','2022-09-30 12:00:00.000',1,'Reservando sala de finanzas 2',4.0,NULL);
+INSERT INTO ReservationTicket VALUES(9,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 12:30:00.000','2022-09-30 19:30:00.000',1,'Reservando sala de finanzas 2',7.5,NULL);
+INSERT INTO ReservationTicket VALUES(10,'2022-10-01 17:43:14.669',4,'HRDWR','DELL PC','2022-10-02 12:00:00.000','2022-10-02 22:00:00.000',1,'Reserva Dell',10.0,'a1b2c34d5e6f7g8h');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('RegisteredChanges',0);
 INSERT INTO sqlite_sequence VALUES('Countries',252);
 INSERT INTO sqlite_sequence VALUES('Users',1);
-INSERT INTO sqlite_sequence VALUES('HardwareClass',2);
 INSERT INTO sqlite_sequence VALUES('HardwareObjects',6);
 INSERT INTO sqlite_sequence VALUES('SoftwareClass',4);
 INSERT INTO sqlite_sequence VALUES('SoftwareObjects',16);
-INSERT INTO sqlite_sequence VALUES('ReservationTicket',6);
 INSERT INTO sqlite_sequence VALUES('AvailableObjects',27);
+INSERT INTO sqlite_sequence VALUES('HardwareClass',2);
 INSERT INTO sqlite_sequence VALUES('Rooms',5);
+INSERT INTO sqlite_sequence VALUES('ReservationTicket',10);
 COMMIT;
