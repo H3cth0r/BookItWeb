@@ -59,7 +59,7 @@ def login(name=None):
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
-    user = cur.execute('''SELECT Users.id, 
+    user = cur.execute('''SELECT Users.userId, 
                                  Users.email,
                                  Users.firstName,
                                  Users.lastName,
@@ -93,8 +93,8 @@ def login(name=None):
 def register():
     body = request.get_json()
     cur = get_db().cursor()
-    emailSearch = cur.execute("SELECT Users.id FROM Users WHERE email = ?", (body["email"],))
-    usernameSearch = cur.execute("SELECT Users.id FROM Users WHERE username = ?", (body["username"],))
+    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],))
+    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],))
     if emailSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":110})#, "desc":"Email is already registered"
     elif usernameSearch is not None:
@@ -157,10 +157,10 @@ def loginApp(name=None):
 def registerApp():
     body = request.get_json()
     cur = get_db().cursor()
-    emailSearch = cur.execute("SELECT Users.id FROM Users WHERE email = ?", (body["email"],))
+    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],))
     if emailSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":110})#, "desc":"Email is already registered"
-    usernameSearch = cur.execute("SELECT Users.id FROM Users WHERE username = ?", (body["username"],))
+    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],))
     if usernameSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":111})#, "desc":"Username is already registered"
     else:
@@ -169,15 +169,71 @@ def registerApp():
     
     return respBody
 
+# Check if new user data is valid.
+# Expecting request: {"jwt":jwt, "username":newUsername (or the same username as before), 
+# "email":newEmail (or the same username as before)}
+# Response: {"available":bool, "errorIds":int[] (empty if available is True)}
+@app.route("/app/api/verifyNewUserData", methods=["POST"])
+def verifyNewUserData():
+    body = request.get_json()
+    userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+    cur = get_db().cursor()
+    respBody = {"available":True, "errorIds":[]}
+    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ? AND userId != ?", (body["email"], userData["userId"])).fetchone()
+    if emailSearch is not None:
+        respBody["available"] = False
+        respBody["errorIds"].append(110) #, "desc":"Email is already registered"
+    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ? AND userId != ?", (body["username"], userData["userId"])).fetchone()
+    if usernameSearch is not None:
+        respBody["available"] = False
+        respBody["errorIds"].append(111) #, "desc":"Username is already registered"
+    
+    return json.dumps(respBody)
+
+# Change user data if old password is correct.
+# Expecting request: {"jwt":jwt, "oldHashPassword":hashPassword ,"firstName":newName, "lastName":newSurname, "username":newUsername, "birthDate":newBirth, 
+# "organization":newOrganization, "email":newEmail, "hashPassword":newHashPassword}
+# Response: {"saved":bool}
+
+@app.route("/app/api/changeUserData", methods=["POST"])
+def changeUserData():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        cur = get_db().cursor()
+        
+        passwordCheck = cur.execute("SELECT Users.hashPassword FROM Users WHERE userId = ?", (userData["userId"], )).fetchone()
+        if not compare_digest(passwordCheck["hashPassword"], body["oldHashPassword"]):
+            respBody = {"saved":False, "errorId":103}
+            return json.dumps(respBody)
+        
+        if body["hashPassword"] != "":
+            query = '''UPDATE Users 
+                   SET firstName = ?, lastName = ?, username = ?, birthDate = ?, organization = ?, email = ?, hashPassword = ?
+                   WHERE userId = ?'''
+            toInsert = (body["firstName"], body["lastName"], body["username"], body["birthDate"], body["organization"], body["email"],
+                        body["hashPassword"], userData["userId"])
+        else:
+            query = '''UPDATE Users 
+                   SET firstName = ?, lastName = ?, username = ?, birthDate = ?, organization = ?, email = ?
+                   WHERE userId = ?'''
+            toInsert = (body["firstName"], body["lastName"], body["username"], body["birthDate"], body["organization"], body["email"],
+                        userData["userId"])
+
+        cur.execute(query, toInsert)
+
+        respBody = {"saved":True}
+        return json.dumps(respBody)
 
 '''---RESERVATION MANAGEMENT---'''
-# get object
+# Get available objects
 # route "/app/api/get<ObjectType>"
+# Expecting request: {"jwt":jwt}
 
 @app.route("/app/api/getHardware", methods=["POST"])
 def getHardware():
     body = request.get_json()
-    if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+    if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         hardware = cur.execute('''
         SELECT generalObjectID, identifier, description, operativeSystem, name, SUM(ResTicket.weight) as totalWeight FROM
@@ -197,7 +253,7 @@ def getHardware():
 @app.route("/app/api/getSoftware", methods=["POST"])
 def getSoftware():
     body = request.get_json()
-    if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+    if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         software = cur.execute('''
         SELECT generalObjectID, identifier, name, brand, description, operativeSystem, SUM(ResTicket.weight) as totalWeight FROM
@@ -217,7 +273,7 @@ def getSoftware():
 @app.route("/app/api/getRooms", methods=["POST"])
 def getRooms():
     body = request.get_json()
-    if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+    if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         respBody = cur.execute('''
         SELECT generalObjectID, name, description, location, capacity, SUM(ResTicket.weight) as totalWeight FROM
@@ -235,7 +291,7 @@ def getRooms():
 @app.route("/app/api/getTimeRanges", methods=["POST"])
 def getTimeRanges():
     body = request.get_json()
-    if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+    if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         respBody = cur.execute('''
         SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
@@ -252,7 +308,7 @@ def getTimeRanges():
 @app.route("/app/api/getTickets", methods=["POST"])
 def getTickets():
     body = request.get_json()
-    if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+    if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
         if "ignoreTicket" in body:
             ignoreTicket = body["ignoreTicket"]
@@ -269,12 +325,12 @@ def getTickets():
         return tickets
 
 # Get user's ticket by ticketId
-# Expecting request: {"ticketId":ticketId, "objectType":objectType}
-# Ej.                {"ticketId":2,        "objectType":"HRDWR"}
+# Expecting request: {"jwt":jwt,     "ticketId":ticketId, "objectType":objectType}
+# Ej.                {"jwt":"asdfg", "ticketId":2,        "objectType":"HRDWR"}
 
 @app.route("/app/api/getTicket", methods=["POST"])
 def getTicket():
-    if True:#compare_digest(body["adminPwd"], hashedAdminPwd):
+    if jwtValidated(body["jwt"]):
         body = request.get_json()
         cur = get_db().cursor()
         
@@ -330,7 +386,7 @@ def getTicket():
 @app.route("/app/api/newTicket", methods=["POST"])
 def newTicket():
     body = request.get_json()
-    if True:#logged(body["jwt"]):
+    if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
         dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S.%f")
