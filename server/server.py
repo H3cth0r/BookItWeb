@@ -1,13 +1,13 @@
-from audioop import add
-from tkinter.tix import Tree
 from flask import Flask, request, g, make_response
 from flask import render_template
-from hashlib import sha256
+from hashlib import sha256, sha1
 from hmac import compare_digest
 import json
 import jwt
 import sqlite3
+import base64
 from datetime import datetime, timedelta, timezone
+from qrcode import QRCode, constants
 
 print("Server started")
 
@@ -46,6 +46,18 @@ def jwtValidated(token):
         return False
     else:
         return True
+
+def genQr(code):
+    qr = QRCode(version=1,
+                error_correction=constants.ERROR_CORRECT_L,
+                box_size=8,
+                border=1,
+    )
+    qr.add_data("http://localhost:5000/api/getTicket/" + code[:10]) #would idealy show ticket html
+    qr.make(fit=True)
+    img = qr.make_image(fill_color='black', black_color='white')
+    print(type(img))
+    img.save("static/resources/qrCodes/" + code + ".png")
 
 #api
 
@@ -330,8 +342,8 @@ def getTickets():
 
 @app.route("/app/api/getTicket", methods=["POST"])
 def getTicket():
+    body = request.get_json()
     if jwtValidated(body["jwt"]):
-        body = request.get_json()
         cur = get_db().cursor()
         
         if body["objectType"] == "HRDWR":
@@ -365,6 +377,62 @@ def getTicket():
                        INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)
                        '''
         ticket = cur.execute(query, (body["ticketId"], )).fetchone()
+        qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
+        with open(qrPath, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+        ticket["qrCode"] = encoded_string.decode('utf-8')
+        return ticket
+
+# Get user's ticket by ticketId
+# Expecting request: {"jwt":jwt}
+# Ej.                {"jwt":"asdfg"}
+
+@app.route("/api/getTicket/<qr>", methods=["POST"])
+def getTicketWithQr(qr):
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        '''
+        if userData["admin"] == 0:
+            return make_response("Only admins", 401)
+        '''
+        cur = get_db().cursor()
+        
+        if body["objectType"] == "HRDWR":
+            query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
+                                DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, HardwareClass.name, 
+                                HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
+                                (SELECT DT2.*, HardwareObjects.classId FROM 
+                                (SELECT DT.*, AvailableObjects.hO FROM 
+                                (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                                INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                                INNER JOIN HardwareObjects ON (DT2.hO = HardwareObjects.inTypeId)) DT3
+                                INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)'''
+        elif body["objectType"] == "SFTWR":
+            query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, SoftwareClass.name, 
+                       SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
+                       (SELECT DT2.*, SoftwareObjects.classId FROM 
+                       (SELECT DT.*, AvailableObjects.sO FROM 
+                       (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN SoftwareObjects ON (DT2.sO = SoftwareObjects.inTypeId)) DT3
+                       INNER JOIN SoftwareClass ON (DT3.classId = SoftwareClass.classId)
+                       '''
+        elif body["objectType"] == "ROOM":
+            query = '''SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
+                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, Rooms.name, 
+                       Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
+                       (SELECT DT.*, AvailableObjects.rO FROM 
+                       (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)
+                       '''
+        ticket = cur.execute(query, (qr, )).fetchone()
+        qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
+        with open(qrPath, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+        ticket["qrCode"] = encoded_string.decode('utf-8')
         return ticket
 
 # Create new ticket for user
@@ -394,14 +462,20 @@ def newTicket():
         weight = (endDate - startDate).seconds / 3600
         startDate = startDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         endDate = endDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-        qr = "a1b2c34d5e6f7g8h"
         cur = get_db().cursor()
         cur.execute('''
         INSERT INTO "main"."ReservationTicket" 
-        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userID", "description", "weight", "qrCode") VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userID", "description", "weight") VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
-        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight, qr))
+        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight))
+        # ticketId + userId + objectId
+        qr = str(cur.lastrowid) + str(userData["userId"]) + str(body["objectId"]) + dateRegistered
+        qr = qr.encode('utf-8')
+        qr = sha1(qr).hexdigest()[:10]
+        cur.execute('''UPDATE ReservationTicket SET qrCode = ? WHERE ticketId = ?''',
+                       (qr, cur.lastrowid))
+        genQr(qr)
         respBody = {"ticketSaved":True}
         return json.dumps(respBody)
 
