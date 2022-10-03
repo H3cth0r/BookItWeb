@@ -46,8 +46,8 @@
                 $("#usernameid").css("color", "red");
                 return false;
             } else if (birthdate == "dd/mm/aaaa") {
-                $("#birthdate").focus();
-                $("#birthdateid").css("color", "red");
+                $("#birth").focus();
+                $("#birthid").css("color", "red");
                 return false;
             } else if (organizacion == "") {
                 $("#organization").focus();
@@ -83,10 +83,11 @@
                 return false;
             } else if (contrasena2 == "") {
                 $("#password2").focus();
-                $("#password2id").css("color", "red");
+                $("#passwordid2").css("color", "red");
                 return false;
             } else if (contrasena != contrasena2) {
                 $("#password2").focus();
+                $("#passwordid2").css("color", "red");
                 return false;
             } else if (contrasena == contrasena2) {
                 hash256();
@@ -106,7 +107,7 @@ $(document).ready(function () {
         $("#emailid").css("color", "white");
         $("#ageid").css("color", "white");
         $("#passwordid").css("color", "white");
-        $("#password2id").css("color", "white");
+        $("#passwordid2").css("color", "white");
     });
 });
 
