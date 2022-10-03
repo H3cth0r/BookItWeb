@@ -71,17 +71,31 @@ def login(name=None):
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
-    user = cur.execute('''SELECT Users.userId, 
-                                 Users.email,
-                                 Users.firstName,
-                                 Users.lastName,
-                                 Users.hashPassword,
-                                 Users.admin,
-                                 Users.blocked
-                                 FROM Users WHERE email = ?''', #es sensible que el usuario tenga acceso a su id?
-                       (body['email'],)).fetchone()
+    if "email" in body:
+        user = cur.execute('''SELECT Users.userId, 
+                                     Users.email,
+                                     Users.firstName,
+                                     Users.lastName,
+                                     Users.hashPassword,
+                                     Users.admin,
+                                     Users.blocked
+                                     FROM Users WHERE email = ?''', #es sensible que el usuario tenga acceso a su id?
+                           (body['email'],)).fetchone()
+    elif "username" in body:
+        user = cur.execute('''SELECT Users.userId, 
+                                     Users.email,
+                                     Users.firstName,
+                                     Users.lastName,
+                                     Users.hashPassword,
+                                     Users.admin,
+                                     Users.blocked
+                                     FROM Users WHERE username = ?''', #es sensible que el usuario tenga acceso a su id?
+                           (body['username'],)).fetchone()
+    else:
+        user = None
+
     if user is None:
-        respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid email"
+        respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid username or email"
     elif user["blocked"]:
         respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"User is blocked"
     elif compare_digest(user["hashPassword"], body["password"]):
@@ -132,22 +146,40 @@ def register():
 # 102 blocked
 # 103 wrong pwd
 
+# Authenticate a user
+# Expecting request: {("username":newUsername || "email":newEmail), "hashPassword":hashPassword}
+# Response: {"available":bool}
+# Optional response: {"errorId":errorId}
 @app.route("/app/api/login", methods=['POST'])
 def loginApp(name=None):
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
-    user = cur.execute('''SELECT Users.userId, 
-                                 Users.email,
-                                 Users.firstName,
-                                 Users.lastName,
-                                 Users.hashPassword,
-                                 Users.admin,
-                                 Users.blocked
-                                 FROM Users WHERE email = ?''', #es sensible que el usuario tenga acceso a su id?
-                       (body['email'],)).fetchone()
+    if "username" in body:
+        user = cur.execute('''SELECT Users.userId, 
+                                     Users.email,
+                                     Users.firstName,
+                                     Users.lastName,
+                                     Users.hashPassword,
+                                     Users.admin,
+                                     Users.blocked
+                                     FROM Users WHERE email = ?''', #es sensible que el usuario tenga acceso a su id?
+                           (body['email'],)).fetchone()
+    elif "username" in body:
+        user = cur.execute('''SELECT Users.userId, 
+                                     Users.email,
+                                     Users.firstName,
+                                     Users.lastName,
+                                     Users.hashPassword,
+                                     Users.admin,
+                                     Users.blocked
+                                     FROM Users WHERE username = ?''', #es sensible que el usuario tenga acceso a su id?
+                           (body['username'],)).fetchone()
+    else:
+        user = None
+    
     if user is None:
-        respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid email"
+        respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid username or email"
     elif user["blocked"]:
         respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"User is blocked"
     elif user["hashPassword"] == body["password"]:
@@ -165,20 +197,29 @@ def loginApp(name=None):
 # 110 email already registered
 # 111 email already registered
 
+# Register a new user
+# Expecting request: {("username":newUsername || "email":newEmail), "hashPassword":hashPassword}
+# Response: {"readyToVerify":bool}
+# Optional response: {"errorId":errorId}
 @app.route("/app/api/register")
 def registerApp():
     body = request.get_json()
     cur = get_db().cursor()
     emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],))
     if emailSearch is not None:
-        respBody = json.dumps({"registered":False, "errorId":110})#, "desc":"Email is already registered"
+        respBody = json.dumps({"readyToVerify":False, "errorId":110})#, "desc":"Email is already registered"
     usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],))
     if usernameSearch is not None:
-        respBody = json.dumps({"registered":False, "errorId":111})#, "desc":"Username is already registered"
+        respBody = json.dumps({"readyToVerify":False, "errorId":111})#, "desc":"Username is already registered"
     else:
-        #Registrar usuario
-        respBody = json.dumps({"registered":True})
-    
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        cur.execute('''
+                    INSERT INTO Users (dateRegistered, firstName, lastName, username, birthDate, 
+                    organization, email, ocupation, countryId, hashPassword)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                    (dateRegistered, body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                    body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
+        respBody = json.dumps({"readyToVerify":True})
     return respBody
 
 # Check if new user data is valid.
@@ -383,7 +424,8 @@ def getTicket():
         ticket["qrCode"] = encoded_string.decode('utf-8')
         return ticket
 
-# Get user's ticket by ticketId
+# Get user's ticket by qrcode
+# This is expected to be a web path
 # Expecting request: {"jwt":jwt}
 # Ej.                {"jwt":"asdfg"}
 
