@@ -84,6 +84,16 @@ $("select").change(function(){
             <br>
             <br>
             <div id="contenedor">
+            <div>
+                <label for="marcaHardware">Sistema Operativo (opcional)</label>
+            </div>
+            <div>
+                <input type="text" id="os" name="os" placeholder="Windows">
+            </div>
+        </div>
+        <br>
+        <br>
+            <div id="contenedor">
                 <div>
                     <label for="maxDays">Maximo de dias a reservar</label>
                 </div>
@@ -184,21 +194,6 @@ $("select").change(function(){
 
 
 
-function new_div(obj){
-
-    for(let i = 0; i < 10; i++){
-            let the =`<div class="single_row_user" id="${username_list[i]}">
-            <p>${i+1}</p>
-            <p>${username_list[i]}</p>
-            
-            <div><button id="row_delete" onclick="delete_button('${objeto_list_id[i]}');">Delete</button></div>
-            <div><button id="row_save" onclick="save_button('${objeto_list_id[i]}');">Save</button></div>
-        </div>
-        <br>`;
-        $('.div_list_users').append(the);
-        console.log("lol");
-    }
-}
 
 window.onload = add_div();
 
