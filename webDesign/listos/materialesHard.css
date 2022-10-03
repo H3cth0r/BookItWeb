@@ -184,10 +184,21 @@ p{
 }
 
 #tipo {
-    width: 12vw;
+    width: 8vw;
     border: transparent;
     color: black;
     background-color: white;
     text-align: center;
     height: 2vh;
+}
+
+#prefijo {
+    width: 8vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin : 3px;
+
 }
