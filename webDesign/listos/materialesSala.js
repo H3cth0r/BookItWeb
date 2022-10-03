@@ -1,18 +1,16 @@
 function add_div(){
-    var item_list = ["imac 24", "imac 27", "imac 32", "imac 36", "imac 40", "imac 44", "imac 48", "imac 52", "imac 56", "imac 60"];
-    var descripcion_list = ["Computadora iMac de 24 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 27 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 32 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 36 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 40 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 44 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 48 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 52 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 56 con procesador M1 y sistema operativo MacOs Monterey", "Computadora iMac de 60 con procesador M1 y sistema operativo MacOs Monterey"];
-
+    var item_list = ["sala1", "sala2", "sala3", "sala4", "sala5", "sala6", "sala7", "sala8", "sala9", "sala10"];
+    var descripcion_list = ["esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica" , "esta es una descripcion generica"];
+    var etiqueta_list = ["CDT", "CDT", "CDT", "CDT", "CDT", "CDT", "CDT", "CDT", "CDT", "CDT" ];
+    var localizacion_list = ["esta es una localizacion generica", "esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica","esta es una localizacion generica"];
     for(let i = 0; i < 10; i++){
-            let the = `<div class="single_row_user" id="${item_list[i]}">
-
+            let the = `<div class="single_row_user" id="${item_list[i]}">  
+                        <p id="prefijo">${etiqueta_list[i]}</p>
                         <p id="nombreObjeto">${item_list[i]}</p>
+
                         <p id="descripcionObjeto">${descripcion_list[i]}</p>
                         <input type="number" name="cantidad" id="cantidad" class="numero">
-                        <select name="tipo" id="tipo">
-                            <option value="1">Hardware</option>
-                            <option value="2">Software</option>
-                            <option value="3">Espacio</option>
-                        </select>
+                        <p id="tipo"> ${localizacion_list[i]} </p>
                         <div class="checkbox">
                                     <input type="checkbox" name="disponible" id="disponible" class="checkbox">
                         </div>
