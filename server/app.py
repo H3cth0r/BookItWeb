@@ -155,7 +155,7 @@ def loginApp(name=None):
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
-    if "username" in body:
+    if "email" in body:
         user = cur.execute('''SELECT Users.userId, 
                                      Users.email,
                                      Users.firstName,
