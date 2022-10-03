@@ -1,13 +1,5 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS "RegisteredChanges" (
-	"id"	INTEGER NOT NULL,
-	"userId"	INTEGER NOT NULL,
-	"date"	TEXT NOT NULL,
-	"type"	TEXT NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("userId") REFERENCES "Users"("id")
-);
 CREATE TABLE IF NOT EXISTS "Countries" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"name"	TEXT NOT NULL UNIQUE,
@@ -265,24 +257,6 @@ INSERT INTO Countries VALUES(249,'Western Sahara');
 INSERT INTO Countries VALUES(250,'Yemen');
 INSERT INTO Countries VALUES(251,'Zambia');
 INSERT INTO Countries VALUES(252,'Zimbabwe');
-CREATE TABLE IF NOT EXISTS "Users" (
-	"id"	INTEGER NOT NULL,
-	"dateRegistered"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	"firstName"	TEXT NOT NULL,
-	"lastName"	TEXT NOT NULL,
-	"username"	TEXT NOT NULL UNIQUE,
-	"birthDate"	TEXT NOT NULL,
-	"organization"	TEXT NOT NULL,
-	"email"	TEXT NOT NULL UNIQUE,
-	"ocupation"	TEXT NOT NULL,
-	"countryId"	INTEGER NOT NULL,
-	"hashPassword"	TEXT NOT NULL,
-	"admin"	INTEGER NOT NULL DEFAULT 0,
-	"blocked"	INTEGER NOT NULL DEFAULT 0,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("countryId") REFERENCES "Countries"("id")
-);
-INSERT INTO Users VALUES(1,'2022-09-28 17:57:41','Pepo','Rodriguez','pepo117','2002-11-11 11:11:11.111','Tec','A01659891@tec.mx','Estudiante',12,'d50d3319bccca99d3093b689745b168cc79ecfd0e18e3e80be6d8c6ad1061407',0,0);
 CREATE TABLE IF NOT EXISTS "HardwareObjects" (
 	"inTypeId"	INTEGER NOT NULL,
 	"classId"	INTEGER NOT NULL,
@@ -407,8 +381,6 @@ CREATE TABLE IF NOT EXISTS "ReservationTicket" (
 	FOREIGN KEY("objectId") REFERENCES "AvailableObjects"("generalObjectID"),
 	PRIMARY KEY("ticketId" AUTOINCREMENT)
 );
-INSERT INTO ReservationTicket VALUES(1,'2022-09-28 15:00:00.000',1,'HRDWR','Mac Book Air','2022-09-28 17:00:00.000','2022-09-28 19:00:00.000',1,'Reserva 1',2.0,NULL);
-INSERT INTO ReservationTicket VALUES(2,'2022-09-28 15:00:00.000',1,'HRDWR','Mac Book Air','2022-09-29 07:00:00.000','2022-09-29 19:00:00.000',1,'Reserva 2',12.0,NULL);
 INSERT INTO ReservationTicket VALUES(3,'2022-09-28 15:00:00.000',3,'HRDWR','Mac Book Air','2022-09-30 16:00:00.000','2022-09-30 16:30:00.000',1,'Reserva Dell ',2.0,NULL);
 INSERT INTO ReservationTicket VALUES(4,'2022-09-28 15:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-30 16:00:00.000','2022-09-30 18:30:00.000',1,'Reserva XD',2.5,NULL);
 INSERT INTO ReservationTicket VALUES(5,'2022-09-28 17:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-28 20:00:00.000','2022-09-28 24:30:00.000',1,'Descripción de reserva',4.0,NULL);
@@ -416,16 +388,42 @@ INSERT INTO ReservationTicket VALUES(6,'2022-09-28 17:00:00.000',13,'SFTWR','Ado
 INSERT INTO ReservationTicket VALUES(7,'2022-09-29 9:00:00.000',27,'ROOM','Laboratorio de Finanzas 03','2022-09-30 12:00:00.000','2022-09-30 20:00:00.000',1,'Reservando sala de finanzas 3',8.0,NULL);
 INSERT INTO ReservationTicket VALUES(8,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 08:00:00.000','2022-09-30 12:00:00.000',1,'Reservando sala de finanzas 2',4.0,NULL);
 INSERT INTO ReservationTicket VALUES(9,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 12:30:00.000','2022-09-30 19:30:00.000',1,'Reservando sala de finanzas 2',7.5,NULL);
-INSERT INTO ReservationTicket VALUES(10,'2022-10-01 17:43:14.669',4,'HRDWR','DELL PC','2022-10-02 12:00:00.000','2022-10-02 22:00:00.000',1,'Reserva Dell',10.0,'a1b2c34d5e6f7g8h');
+INSERT INTO ReservationTicket VALUES(21,'2022-10-02 14:29:41.042',4,'HRDWR','DELL PC','2022-10-02 12:00:00.000','2022-10-02 22:00:00.000',1,'Reserva Dell',10.0,'hFsh9f/QWX');
+INSERT INTO ReservationTicket VALUES(22,'2022-10-02 14:32:41.845',4,'HRDWR','DELL PC','2022-10-02 12:00:00.000','2022-10-02 22:00:00.000',1,'Reserva Dell',10.0,'b26c3c7350');
+CREATE TABLE IF NOT EXISTS "RegisteredChanges" (
+	"id"	INTEGER NOT NULL,
+	"userId"	INTEGER NOT NULL,
+	"date"	TEXT NOT NULL,
+	"type"	TEXT NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE IF NOT EXISTS "Users" (
+	"userId"	INTEGER NOT NULL,
+	"dateRegistered"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	"firstName"	TEXT NOT NULL,
+	"lastName"	TEXT NOT NULL,
+	"username"	TEXT NOT NULL UNIQUE,
+	"birthDate"	TEXT NOT NULL,
+	"organization"	TEXT NOT NULL,
+	"email"	TEXT NOT NULL UNIQUE,
+	"ocupation"	TEXT NOT NULL,
+	"countryId"	INTEGER NOT NULL,
+	"hashPassword"	TEXT NOT NULL,
+	"admin"	INTEGER NOT NULL DEFAULT 0,
+	"blocked"	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY("userId" AUTOINCREMENT),
+	FOREIGN KEY("countryId") REFERENCES "Countries"("id")
+);
+INSERT INTO Users VALUES(1,'2022-09-28 17:57:41','Pepo','Lopez','pepo117','2002-11-11 11:11:11.111','Tec','A01659891@tec.mx','Estudiante',12,'d50d3319bccca99d3093b689745b168cc79ecfd0e18e3e80be6d8c6ad1061407',0,0);
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('RegisteredChanges',0);
 INSERT INTO sqlite_sequence VALUES('Countries',252);
-INSERT INTO sqlite_sequence VALUES('Users',1);
 INSERT INTO sqlite_sequence VALUES('HardwareObjects',6);
 INSERT INTO sqlite_sequence VALUES('SoftwareClass',4);
 INSERT INTO sqlite_sequence VALUES('SoftwareObjects',16);
 INSERT INTO sqlite_sequence VALUES('AvailableObjects',27);
 INSERT INTO sqlite_sequence VALUES('HardwareClass',2);
 INSERT INTO sqlite_sequence VALUES('Rooms',5);
-INSERT INTO sqlite_sequence VALUES('ReservationTicket',10);
+INSERT INTO sqlite_sequence VALUES('ReservationTicket',22);
+INSERT INTO sqlite_sequence VALUES('RegisteredChanges',0);
+INSERT INTO sqlite_sequence VALUES('Users',1);
 COMMIT;

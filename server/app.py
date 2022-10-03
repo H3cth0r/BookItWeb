@@ -185,7 +185,7 @@ def loginApp(name=None):
     elif user["hashPassword"] == body["password"]:
         user.pop("hashPassword")
         user["exp"] = datetime.now(timezone.utc)
-        respBody = {"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")}
+        respBody = json.dumps({"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")})
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
 
