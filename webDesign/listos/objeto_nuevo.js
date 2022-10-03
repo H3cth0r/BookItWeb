@@ -18,6 +18,16 @@ $("select").change(function(){
                 <br>
                 <div id="contenedor">
                     <div>
+                        <label for="location">Localización</label>
+                    </div>
+                    <div>
+                        <input type="text" id="locationId" name="location" placeholder="Localizacion">
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div id="contenedor">
+                    <div>
                         <label for="capacidad">Capacidad maxima</label>
                     </div>
                     <div>
@@ -37,9 +47,15 @@ $("select").change(function(){
             </div>
             
             <div id="Descripcion">
-                <label for="descripcion">Descripcion</label>
-                <textarea rows="4" cols="50" id="descripcion" name="descripcion" placeholder="Descripcion"></textarea>
+            <div>
+                <label for="Label">Etiqueta</label>
             </div>
+            <div>
+                <input type="text" id="prefijo" name="prefijo">
+            </div>
+            <label for="descripcion">Descripcion</label>
+            <textarea rows="4" cols="50" id="descripcion" name="descripcion" placeholder="Descripcion"></textarea>
+        </div>
             
               
         </div>`;
@@ -194,8 +210,6 @@ $("select").change(function(){
 
 
 
-
-window.onload = add_div();
 
 function move_rows(id_val){
     $(`#${id_val}`).remove();

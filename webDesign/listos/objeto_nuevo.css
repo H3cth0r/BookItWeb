@@ -98,6 +98,7 @@ p{
     flex-wrap: wrap;
     flex-direction: row;
     align-items: flex-end;
+    padding-left: 5vw;
 }
 
 
@@ -196,7 +197,7 @@ p{
     border: transparent;
     width: 15vw;
     margin: 0;
-    padding-left: 60%;
+    padding-left: 50%;
 }
 #descripcion  {
     
@@ -327,4 +328,15 @@ label {
     width: 30vw;
     border-radius: 30px;
     float: left;
+}
+#locationId {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
 }

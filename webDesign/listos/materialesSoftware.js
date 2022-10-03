@@ -32,16 +32,20 @@ function new_div(obj){
     for(let i = 0; i < 10; i++){
             let the =`<div class="single_row_user" id="${item_list[i]}">
 
-        
-            
+            <p id ="prefijo"> ${prefijo_list[i]} </p>
+            <p id="nombreObjeto">${item_list[i]}</p>
+            <p id="descripcionObjeto">${descripcion_list[i]}</p>
+            <input type="number" name="cantidad" id="cantidad" class="numero">
+            <p id="tipo"> Software </p>
+            <p id="sistema">${sistema_list[i]}</p>
             <div class="checkbox">
                         <input type="checkbox" name="disponible" id="disponible" class="checkbox">
             </div>
             
-            <div><button id="row_block" onclick="block_button('${item_list[i]}');">Block</button></div>
             <div><button id="row_delete" onclick="delete_button('${item_list[i]}');">Delete</button></div>
             <div><button id="row_save" onclick="save_button('${item_list[i]}');">Save</button></div>
-        </div>`;
+        </div>
+        <br>`;
         $('.div_list_users').append(the);
         console.log("lol");
     }
