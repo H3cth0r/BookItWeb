@@ -1,3 +1,4 @@
+from asyncio.base_subprocess import ReadSubprocessPipeProto
 from flask import Flask, request, g, make_response
 from flask import render_template
 from hashlib import new, sha256, sha1
@@ -136,6 +137,19 @@ def logout(name=None):
 # 110 email already registered
 # 111 email already registered
 
+# Expecting request:
+{
+  "username":"nonwiz",
+  "firstName":"Victor",
+  "lastName":"Portilla",
+  "birthDate":"2002-11-01 00:00:00.000",
+  "organization":"Tec",
+  "email":"a01659198@tec.mx",
+  "ocupation":"Estudihambre",
+  "countryId":107,
+  "hashPassword":"5f77c2500f56fe1a4abe06bf961012a3ea513ce8fbbbf4fec4d58339f95630d9"
+}
+
 @app.route("/api/register", methods=["POST"])
 def register():
     body = request.get_json()
@@ -143,6 +157,7 @@ def register():
     emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],)).fetchone()
     usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],)).fetchone()
     if emailSearch is not None:
+        print(emailSearch)
         respBody = json.dumps({"registered":False, "errorId":110})#, "desc":"Email is already registered"
     elif usernameSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":111})#, "desc":"Username is already registered"
@@ -151,10 +166,11 @@ def register():
         cur.execute('''INSERT INTO "main"."Users"
                        ("dateRegistered", "firstName", "lastName", "username", "birthDate", "organization", 
                        "email", "ocupation", "countryId", "hashPassword")
-                       VALUES ('?', '?', '?', '?', '?', '?', '?', '?', ?, '?');''',
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                        (datetime.now(timezone(-timedelta(hours=5))).strftime("%Y-%m-%d %H:%M:%S"), body["firstName"], body["lastName"], body["username"],
                        body["birthDate"], body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
         respBody = json.dumps({"registered":True})
+    return respBody
 
 '''
 {
@@ -854,8 +870,45 @@ def deleteTicket():
         respBody = {"ticketDeleted":False, "errorId": 100}
         return json.dumps(respBody)
 
+
+'''--- OTHER ---'''
+
+# Expecting request: {"jwt":jwt}
+# Response:
+'''
+{
+    "totalReservations": 10,
+    "totalHoursReserved": 82,
+    "daysSinceRegister": 5,
+    "favObjectType": "HRDWR",
+    "favObjectTypeReservations": 4
+}
+'''
+@app.route("/app/api/stats", methods=["POST"])
+def statsApp():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        cur = get_db().cursor()
+        respBody = {}
+        respBody["totalReservations"] = cur.execute('''SELECT count(ticketId) as totalReservations FROM ReservationTicket 
+                                                       WHERE userId = ?;''', (userData["userId"],)).fetchone()["totalReservations"]
+        respBody["totalHoursReserved"] = cur.execute('''SELECT sum(weight) as totalHours FROM ReservationTicket WHERE userId = ?;''', 
+                                                        (userData["userId"],)).fetchone()["totalHours"]
+        dateRegistered = cur.execute("SELECT dateRegistered FROM Users WHERE userId = ?;", (userData["userId"],)).fetchone()["dateRegistered"]
+        print(dateRegistered)
+        respBody["daysSinceRegister"] = (datetime.now(timezone(-timedelta(hours=5))).replace(tzinfo=None) - datetime.strptime(dateRegistered, "%Y-%m-%d %H:%M:%S.%f")).days
+        print(respBody["daysSinceRegister"])
+        favObjTypeQuery = cur.execute('''SELECT objectType, count(objectType) as ammount FROM ReservationTicket 
+                                         WHERE userId = ? GROUP BY objectType ORDER BY ammount DESC LIMIT 1''',
+                                         (userData["userId"],)).fetchone()
+        respBody["favObjectType"] = favObjTypeQuery["objectType"]
+        respBody["favObjectTypeReservations"] = favObjTypeQuery["ammount"]
+        return json.dumps(respBody) 
+
+
 @app.teardown_appcontext
-def close_connection(exception):
+def close_connection(exception):    
     db = getattr(g, '_database', None)
     if db is not None:
         db.commit()
