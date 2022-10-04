@@ -29,5 +29,7 @@ htmlcov/
 
 # Ignore sqlite3 binary file
 *.db
+*.db-journal
+*.sqbpro
 
 .DS_Store

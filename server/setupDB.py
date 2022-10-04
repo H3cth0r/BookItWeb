@@ -17,6 +17,7 @@ def create_db():
 
 def main():
 
+    #no funciona?
     if exists("DB/BookMeDB.db") == False:
         print("databse already exists")
         return
