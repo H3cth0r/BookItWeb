@@ -601,7 +601,7 @@ def getHardware():
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+8 days", "-0.001 seconds")) ResTicket
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
         ON (ResTicket.objectID = DT2.generalObjectID)
         GROUP BY DT2.generalObjectID
         ''').fetchall()
@@ -621,7 +621,7 @@ def getSoftware():
         ON (DT.inTypeId = AvailableObjects.sO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+8 days", "-0.001 seconds")) ResTicket
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
         ON (ResTicket.objectID = DT2.generalObjectID)
         GROUP BY DT2.generalObjectID
         ''').fetchall()
@@ -639,7 +639,7 @@ def getRoomsApp():
         ON (Rooms.roomId = AvailableObjects.rO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+8 days", "-0.001 seconds")) ResTicket
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
         ON (ResTicket.objectID = DT2.generalObjectID)
         GROUP BY DT2.generalObjectID
         ''').fetchall()
