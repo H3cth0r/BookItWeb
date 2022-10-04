@@ -1,6 +1,6 @@
 from flask import Flask, request, g, make_response
 from flask import render_template
-from hashlib import sha256, sha1
+from hashlib import new, sha256, sha1
 from hmac import compare_digest
 import json
 import jwt
@@ -30,8 +30,9 @@ def get_db():
     return db
 
 @app.route("/")
-def hello_world(name=None):
-    return render_template('main.html', name=name)
+def hello_world(name=None): 
+    a = {"a":1, "b":2}
+    return render_template('main.html', test=a)
 
 def createJWT(jsnDict):
     return jwt.encode(jsnDict, jwtKey, algorithm="HS256")
@@ -42,7 +43,8 @@ def jwtValidated(token):
     except jwt.InvalidSignatureError:
         print("There was an attempt to use an invalid JWT Signature")
         return False
-    except:
+    except Exception as e:
+        print(e)
         return False
     else:
         return True
@@ -65,7 +67,10 @@ def genQr(code):
 # 101 invalid email
 # 102 blocked
 # 103 wrong pwd
-
+# Authenticate a user
+# Expecting request: {("username":newUsername || "email":newEmail), "hashPassword":hashPassword}
+# Response: {"available":bool}
+# Optional response: {"errorId":errorId}
 @app.route("/api/login", methods=['POST'])
 def login(name=None):
     body = request.get_json()
@@ -74,6 +79,7 @@ def login(name=None):
     if "email" in body:
         user = cur.execute('''SELECT Users.userId, 
                                      Users.email,
+                                     Users.username,
                                      Users.firstName,
                                      Users.lastName,
                                      Users.hashPassword,
@@ -84,6 +90,7 @@ def login(name=None):
     elif "username" in body:
         user = cur.execute('''SELECT Users.userId, 
                                      Users.email,
+                                     Users.username,
                                      Users.firstName,
                                      Users.lastName,
                                      Users.hashPassword,
@@ -93,24 +100,30 @@ def login(name=None):
                            (body['username'],)).fetchone()
     else:
         user = None
-
+    
     if user is None:
         respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid username or email"
     elif user["blocked"]:
         respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"User is blocked"
-    elif compare_digest(user["hashPassword"], body["password"]):
-        respBody = {"authorized":True}
-
-        #respBody = render_template('main.html', name=name)
+    elif user["hashPassword"] == body["password"]:
         user.pop("hashPassword")
-        resp.set_cookie("JWT",jwt.encode(user, jwtKey, algorithm="HS256"))
+        user["exp"] = datetime.now(timezone.utc) + timedelta(days=7)
+        respBody = json.dumps({"authorized":True})
+        resp.set_cookie("jwt", jwt.encode(user, jwtKey, algorithm="HS256"))
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
 
     resp.set_data(respBody)
-
     return resp
 
+
+@app.route("/api/logout", methods=['POST'])
+def logout(name=None):
+    resp = make_response('main.html')
+    resp.set_cookie("JWT", expires=0)
+    resp.set_cookie("testCookie", expires=0)
+    resp.set_cookie("jwt", expires=0)
+    return resp
 # --- register errors ---
 # 110 email already registered
 # 111 email already registered
@@ -134,6 +147,149 @@ def register():
                        (datetime.now(timezone(-timedelta(hours=5))).strftime("%Y-%m-%d %H:%M:%S"), body["firstName"], body["lastName"], body["username"],
                        body["birthDate"], body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
         respBody = json.dumps({"registered":True})
+
+# Authenticate a user
+# Expecting request: {}
+# Ej.:
+'''
+{
+  "classId":1,
+  "quantity":6,
+  "name":"Mac Book Air",
+  "operativeSystem":"macOS 12",
+  "description":"CPU = M1\nRAM = 8GB\nSSD = 256GB",
+  "prefix":"MACAMTR",
+  "availability":true,
+  "maxDays":"15"
+}
+'''
+# Response: {"saved":bool}
+
+@app.route("/api/editHardware", methods=["POST"])
+def editHardware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        oldHardware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
+                                     (SELECT * FROM HardwareClass WHERE classId = ?) DT
+                                     LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
+                                     GROUP BY DT.classId''', (body["classId"],)).fetchone()
+        oldQuantity = oldHardware["quantity"]
+        newQuantity = body["quantity"]
+        dObjects = newQuantity - oldQuantity
+        if dObjects > 0:
+            for i in range(oldQuantity+1, newQuantity+1):
+                cur.execute('''INSERT INTO HardwareObjects (classId, inClassId) VALUES (?, ?)''', (body["classId"], i))
+                cur.execute('''INSERT INTO AvailableObjects (hO) VALUES (?)''', (cur.lastrowid, ))
+        elif dObjects < 0:
+            for i in range(oldQuantity, newQuantity, -1):
+                inTypeId = cur.execute('''SELECT HardwareObjects.inTypeId FROM HardwareObjects WHERE classId = ? AND inClassId = ?''',
+                                       (body["classId"], i)).fetchone()["inTypeId"]
+                print(inTypeId)
+                cur.execute('''DELETE FROM HardwareObjects WHERE inTypeId = ?''', (inTypeId, ))
+        
+        cur.execute('''
+                    UPDATE HardwareClass SET name = ?, operativeSystem = ?, description = ?, prefix = ?, 
+                    availability = ?, maxDays = ? WHERE classId = ?''',
+                    (body["name"], body["operativeSystem"], body["description"], body["prefix"], 
+                     int(body["availability"]), body["maxDays"], body["classId"]))
+
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+
+@app.route("/api/editSoftware", methods=["POST"])
+def editSoftware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        oldSoftware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
+                                     (SELECT * FROM SoftwareClass WHERE classId = ?) DT
+                                     LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
+                                     GROUP BY DT.classId''', (body["classId"],)).fetchone()
+        oldQuantity = oldSoftware["quantity"]
+        newQuantity = body["quantity"]
+        dObjects = newQuantity - oldQuantity
+        if dObjects > 0:
+            for i in range(oldQuantity+1, newQuantity+1):
+                cur.execute('''INSERT INTO SoftwareObjects (classId, inClassId) VALUES (?, ?)''', (body["classId"], i))
+                cur.execute('''INSERT INTO AvailableObjects (sO) VALUES (?)''', (cur.lastrowid, ))
+        elif dObjects < 0:
+            for i in range(oldQuantity, newQuantity, -1):
+                cur.execute("PRAGMA foreign_keys = ON")
+                inTypeId = cur.execute('''SELECT SoftwareObjects.inTypeId FROM SoftwareObjects WHERE classId = ? AND inClassId = ?''',
+                                       (body["classId"], i)).fetchone()["inTypeId"]
+                print(inTypeId)
+                cur.execute('''DELETE FROM SoftwareObjects WHERE inTypeId = ?''', (inTypeId, ))
+                
+        cur.execute("PRAGMA foreign_keys = OFF")
+        cur.execute('''
+                    UPDATE SoftwareClass SET name = ?, operativeSystem = ?, description = ?, prefix = ?, 
+                    brand = ?, availability = ?, maxDays = ? WHERE classId = ?''',
+                    (body["name"], body["operativeSystem"], body["description"], body["prefix"],
+                     body["brand"], int(body["availability"]), body["maxDays"], body["classId"]))
+
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+@app.route("/api/editRooms", methods=["POST"])
+def editRooms():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''
+                    UPDATE Rooms SET name = ?, label = ?, description = ?, location = ?, 
+                    availability = ?, maxDays = ? WHERE roomId = ?''',
+                    (body["name"], body["label"], body["description"], body["location"],
+                     int(body["availability"]), body["maxDays"], body["roomId"]))
+
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+@app.route("/api/getHardwareClasses", methods=["POST"])
+def getHardwareClasses():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        cur = get_db().cursor()
+        hardware = cur.execute('''
+        SELECT DT.*, COUNT(inClassId) as quantity FROM
+        (SELECT * FROM HardwareClass) DT
+        LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
+        GROUP BY DT.classId
+        ''').fetchall()
+        return json.dumps(hardware)
+
+@app.route("/api/getSoftwareClasses", methods=["POST"])
+def getSoftwareClasses():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        cur = get_db().cursor()
+        software = cur.execute('''
+        SELECT DT.*, COUNT(inClassId) as quantity FROM
+        (SELECT * FROM SoftwareClass) DT
+        LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
+        GROUP BY DT.classId
+        ''').fetchall()
+        return json.dumps(software)
+
+@app.route("/api/getRooms", methods=["POST"])
+def getRooms():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        cur = get_db().cursor()
+        software = cur.execute('''
+        SELECT * FROM Rooms
+        ''').fetchall()
+        return json.dumps(software)
 
 '''------------------'''
 '''------APP API-----'''
@@ -184,7 +340,7 @@ def loginApp(name=None):
         respBody = json.dumps({"authorized":False, "errorId":102}) #, "desc":"User is blocked"
     elif user["hashPassword"] == body["password"]:
         user.pop("hashPassword")
-        user["exp"] = datetime.now(timezone.utc)
+        user["exp"] = datetime.now(timezone.utc) + timedelta(days=7)
         respBody = json.dumps({"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")})
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
@@ -324,7 +480,7 @@ def getSoftware():
         return json.dumps(software)
 
 @app.route("/app/api/getRooms", methods=["POST"])
-def getRooms():
+def getRoomsApp():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
@@ -428,7 +584,24 @@ def getTicket():
 # This is expected to be a web path
 # Expecting request: {"jwt":jwt}
 # Ej.                {"jwt":"asdfg"}
-
+# REsponse 
+'''
+{
+    "dateRegistered": "2022-10-02 14:32:41.845",
+    "endDate": "2022-10-02 22:00:00.000",
+    "name": "DELL PC",
+    "objectDescription": "{\r\n\"cpu\" : \"i5\",\r\n\"ports\" : {\"usb3\" : 3, \"hdmi\" :1, \"jack\" : 1},\r\n\"ram\" : 8,\r\n\"rom\": {\"ssd\":128, \"hdd\":1024}\r\n}",
+    "objectId": 4,
+    "objectName": "DELL PC",
+    "objectType": "HRDWR",
+    "operativeSystem": "Windows 10",
+    "qrCode": "iVBORw0KGgoAAAANSUhEUgAAAPgAAAD4AQAAAADpqhamAAABg0lEQVR4nOWYwZLDMAhDnzr5/1/WHhBOZg+9xewm6TR14RA5yCCQ+Xp9vrv/vZ/ev521Xd+yTuO7239k10JGlrNo6zS+DfH3ujcDLtZpfBvin8vKL7rkhGl8+/yyQSCMBp4/4z9YKVC2igViWafx7cv/vz6xTuO723+eddHhv0qCaXw74u9V8yMAOvvjN8RfRjhrLCiDjB6//4Nk/JQ/YyQshPA4vh36J+wP7Uv8Rg49Pv4qvlP3FH8vSjx+/+UXBgmwcF6J5efz/0Orvtp386GMb+h/jF0p4Cz8/ff557/6H1nXFKBTFk3j2xH/M/m764HB9gv63w8yCKUBbPFDjPP47vabkrxA5cD0wPUS5vHd6z9y1KN6sVVJAFmex7ez/yvtL7DclXAa34b418I4k58agZQAGse3of6F/x3yUICaCU/j29P/dfsL1BwsE7Dn67/Tr7yH1f7pDf3vZf7d/F+zD17C/+K9ovovw9935L8e9jvTMFEFQP4D+PbV/5nnT/t/AFuu3pX9L0YAAAAAAElFTkSuQmCC",
+    "startDate": "2022-10-02 12:00:00.000",
+    "ticketDescription": "Reserva Dell",
+    "ticketId": 22,
+    "userID": 1
+}
+'''
 @app.route("/api/getTicket/<qr>", methods=["POST"])
 def getTicketWithQr(qr):
     body = request.get_json()
@@ -475,6 +648,7 @@ def getTicketWithQr(qr):
         with open(qrPath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
         ticket["qrCode"] = encoded_string.decode('utf-8')
+        #return render_template('ticketWithQr.html', ticket=ticket)
         return ticket
 
 # Create new ticket for user
