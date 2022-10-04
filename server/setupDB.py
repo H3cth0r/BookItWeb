@@ -10,6 +10,10 @@ CREATE TABLE contacts (
                     phone TEXT NOT NULL UNIQUE
                     );
 """
+def create_db():
+    conn = sqlite3.connect('BookMeDB.db')
+    conn.commit()
+    conn.close()
 
 def main():
 
@@ -76,7 +80,7 @@ def main():
                             hO      INTEGER,
                             sO      INTEGER,
                             rO      INTEGER,
-                            FOREIGN KEY(hO) REFERENCES SardwareObjects(id) ON DELETE CASCADE,
+                            FOREIGN KEY(hO) REFERENCES HardwareObjects(id) ON DELETE CASCADE,
                             FOREIGN KEY(sO) REFERENCES SoftwareObjects(id) ON DELETE CASCADE,
                             FOREIGN KEY(rO) REFERENCES Rooms(id)           ON DELETE CASCADE 
                        );
