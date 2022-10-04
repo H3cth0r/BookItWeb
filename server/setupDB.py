@@ -1,6 +1,20 @@
 import sqlite3
 from os.path import exists
 
+"""
+CREATE TABLE contacts (
+    contact_id INTEGER PRIMARY KEY,
+        first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                    phone TEXT NOT NULL UNIQUE
+                    );
+"""
+def create_db():
+    conn = sqlite3.connect('BookMeDB.db')
+    conn.commit()
+    conn.close()
+
 def main():
 
     #no funciona?
@@ -67,7 +81,7 @@ def main():
                             hO      INTEGER,
                             sO      INTEGER,
                             rO      INTEGER,
-                            FOREIGN KEY(hO) REFERENCES SardwareObjects(id) ON DELETE CASCADE,
+                            FOREIGN KEY(hO) REFERENCES HardwareObjects(id) ON DELETE CASCADE,
                             FOREIGN KEY(sO) REFERENCES SoftwareObjects(id) ON DELETE CASCADE,
                             FOREIGN KEY(rO) REFERENCES Rooms(id)           ON DELETE CASCADE 
                        );

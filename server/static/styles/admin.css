@@ -1,0 +1,9 @@
+.title{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family: 'Chivo-bold' !important;
+}
+body{
+    font-family: 'Chivo' !important;
+}
