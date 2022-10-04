@@ -128,7 +128,7 @@ def logout(name=None):
 # 110 email already registered
 # 111 email already registered
 
-@app.route("/api/register")
+@app.route("/api/register", methods=["POST"])
 def register():
     body = request.get_json()
     cur = get_db().cursor()
@@ -148,13 +148,107 @@ def register():
                        body["birthDate"], body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
         respBody = json.dumps({"registered":True})
 
-# Authenticate a user
-# Expecting request: {}
-# Ej.:
 '''
 {
+  "quantity":3,
+  "name":"iPhone 11",
+  "operativeSystem":"iOS 12",
+  "description":"Núcleos = 4\nRAM = 6GB\nSSD = 64GB",
+  "prefix":"IPHONE11",
+  "maxDays":"15"
+}
+'''
+@app.route("/api/newHardware", methods=["POST"])
+def newHardware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+
+        cur.execute('''INSERT INTO "main"."HardwareClass" ("name", "operativeSystem", "description", "prefix","maxDays")
+                            VALUES (?, ?, ?, ?, ?);''',
+                            (body["name"], body["operativeSystem"], body["description"], body["prefix"], 
+                            body["maxDays"]))
+
+        classId = cur.lastrowid
+        for i in range(1, body["quantity"]+1):
+            cur.execute('''INSERT INTO HardwareObjects (classId, inClassId) VALUES (?, ?)''', (classId, i))
+            cur.execute('''INSERT INTO AvailableObjects (hO) VALUES (?)''', (cur.lastrowid, ))        
+        return json.dumps({"saved":True})
+
+    return json.dumps({"saved":False})
+
+'''
+{
+  "quantity":5,
+  "name":"Adobe Photoshop",
+  "brand":"Adobe",
+  "operativeSystem":"Windows 10+",
+  "description":"Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.",
+  "prefix":"ADBXDW10",
+  "maxDays":"12"
+}
+'''
+@app.route("/api/newSoftware", methods=["POST"])
+def newSoftware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+
+        cur.execute('''INSERT INTO "main"."SoftwareClass" ("brand", "name", "description", "operativeSystem", "prefix", "maxDays")
+                       VALUES (?, ?, ?, ?, ?, ?);''',
+                            (body["brand"], body["name"], body["description"], body["operativeSystem"], body["prefix"], 
+                             body["maxDays"]))
+
+        classId = cur.lastrowid
+        for i in range(1, body["quantity"]+1):
+                cur.execute('''INSERT INTO SoftwareObjects (classId, inClassId) VALUES (?, ?)''', (classId, i))
+                cur.execute('''INSERT INTO AvailableObjects (sO) VALUES (?)''', (cur.lastrowid, )) 
+        return json.dumps({"saved":True})
+        
+    return json.dumps({"saved":False})
+
+'''
+{
+  "name":"Sala de Conferencias 04",
+  "location":"Hub de Ciberseguridad, piso 3.",
+  "label":"SC04",
+  "description":"Sala de conferencias, apta para presentaciones ejecutivas a un público grande.",
+  "capacity":35,
+  "maxDays":"12"
+}
+'''
+@app.route("/api/newRoom", methods=["POST"])
+def newRoom():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+
+        cur.execute('''INSERT INTO "main"."Rooms" ("label", "name", "location", "description", "capacity", "maxDays")
+                       VALUES (?, ?, ?, ?, ?, ?);''',
+                            (body["label"], body["name"], body["location"], body["description"], body["capacity"], 
+                             body["maxDays"]))
+        
+        cur.execute('''INSERT INTO AvailableObjects (rO) VALUES (?)''', (cur.lastrowid, ))
+        return json.dumps({"saved":True})
+        
+    return json.dumps({"saved":False})
+
+# Edit hardware
+# Expecting request: 
+'''
+{
+  "jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiQTAxNjU5ODkxQHRlYy5teCIsImZpcnN0TmFtZSI6IlBlcG8iLCJsYXN0TmFtZSI6IkxvcGV6IiwiYWRtaW4iOjAsImJsb2NrZWQiOjAsImV4cCI6MTY2NDgzMzc3N30.nCyDkEwjnaqLmFXbt61lsuOKjhlNd0cBBrkyahc1Ldg",
   "classId":1,
-  "quantity":6,
+  "quantity":7,
   "name":"Mac Book Air",
   "operativeSystem":"macOS 12",
   "description":"CPU = M1\nRAM = 8GB\nSSD = 256GB",
@@ -200,7 +294,21 @@ def editHardware():
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
 
-
+# Edit software
+# Expecting request: 
+'''
+{
+  "classId":1,
+  "quantity":12,
+  "name":"Adobe XD",
+  "brand":"Adobe",
+  "operativeSystem":"Windows 10+",
+  "description":"Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.",
+  "prefix":"ADBXDW10",
+  "availability":true,
+  "maxDays":"12"
+}
+'''
 @app.route("/api/editSoftware", methods=["POST"])
 def editSoftware():
     if jwtValidated(request.cookies.get('jwt')):
@@ -238,6 +346,20 @@ def editSoftware():
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
 
+# Edit rooms
+# Expecting request: 
+'''
+{
+  "roomId":1,
+  "name":"Sala de Conferencias 01",
+  "location":"Hub de Ciberseguridad, piso 3.",
+  "label":"SC01",
+  "description":"Sala de conferencias, apta para presentaciones ejecutivas a un público grande.",
+  "capacity":40,
+  "availability":true,
+  "maxDays":"12"
+}
+'''
 @app.route("/api/editRooms", methods=["POST"])
 def editRooms():
     if jwtValidated(request.cookies.get('jwt')):
@@ -314,6 +436,7 @@ def loginApp(name=None):
     if "email" in body:
         user = cur.execute('''SELECT Users.userId, 
                                      Users.email,
+                                     Users.username,
                                      Users.firstName,
                                      Users.lastName,
                                      Users.hashPassword,
@@ -324,6 +447,7 @@ def loginApp(name=None):
     elif "username" in body:
         user = cur.execute('''SELECT Users.userId, 
                                      Users.email,
+                                     Users.username,
                                      Users.firstName,
                                      Users.lastName,
                                      Users.hashPassword,
@@ -357,7 +481,7 @@ def loginApp(name=None):
 # Expecting request: {("username":newUsername || "email":newEmail), "hashPassword":hashPassword}
 # Response: {"readyToVerify":bool}
 # Optional response: {"errorId":errorId}
-@app.route("/app/api/register")
+@app.route("/app/api/register", methods=["POST"])
 def registerApp():
     body = request.get_json()
     cur = get_db().cursor()
