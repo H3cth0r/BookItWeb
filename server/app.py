@@ -61,7 +61,15 @@ def genQr(code):
     print(type(img))
     img.save("static/resources/qrCodes/" + code + ".png")
 
-#api
+'''-----------------------'''
+'''----FRONTEND ROUTES----'''
+'''-----------------------'''
+
+'''-------------------'''
+'''--------API--------'''
+'''-------------------'''
+
+'''---USER MANAGEMENT---'''
 
 # --- auth errors ---
 # 101 invalid email
@@ -132,8 +140,8 @@ def logout(name=None):
 def register():
     body = request.get_json()
     cur = get_db().cursor()
-    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],))
-    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],))
+    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],)).fetchone()
+    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],)).fetchone()
     if emailSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":110})#, "desc":"Email is already registered"
     elif usernameSearch is not None:
@@ -485,10 +493,10 @@ def loginApp(name=None):
 def registerApp():
     body = request.get_json()
     cur = get_db().cursor()
-    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],))
+    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],)).fetchone()
     if emailSearch is not None:
         respBody = json.dumps({"readyToVerify":False, "errorId":110})#, "desc":"Email is already registered"
-    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],))
+    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],)).fetchone()
     if usernameSearch is not None:
         respBody = json.dumps({"readyToVerify":False, "errorId":111})#, "desc":"Username is already registered"
     else:
