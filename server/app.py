@@ -1,4 +1,3 @@
-from asyncio.base_subprocess import ReadSubprocessPipeProto
 from flask import Flask, request, g, make_response
 from flask import render_template
 from hashlib import new, sha256, sha1
@@ -17,6 +16,7 @@ app = Flask(__name__)
 DATABASE = 'DB\BookMeDB.db'
 jwtKey = 'BooKMeIsCool'
 hashedAdminPwd = sha256(jwtKey.encode('utf-8'))
+baseUrl = "http://4.228.81.149:5000"
 #app.config['SECRET_KEY'] = 'super-secret'
 
 def make_dicts(cursor, row):
@@ -56,7 +56,7 @@ def genQr(code):
                 box_size=8,
                 border=1,
     )
-    qr.add_data("http://localhost:5000/api/getTicket/" + code[:10]) #would idealy show ticket html
+    qr.add_data(baseUrl + "/api/getTicket/" + code[:10]) #would idealy show ticket html
     qr.make(fit=True)
     img = qr.make_image(fill_color='black', black_color='white')
     print(type(img))
@@ -65,6 +65,36 @@ def genQr(code):
 '''-----------------------'''
 '''----FRONTEND ROUTES----'''
 '''-----------------------'''
+
+'''---VIEWS---'''
+
+@app.route("/register", methods=["GET"])
+def registerView():
+    if True:#jwtValidated(request.cookies.get('jwt')):
+        return render_template('reg.html', hardW=[])
+
+# Show materials
+@app.route("/admin/materialesHardware", methods=["GET"])
+def getHardwareView():
+    if True:#jwtValidated(request.cookies.get('jwt')):
+        # if user is admin
+        cur = get_db().cursor()
+        hardware = cur.execute('''
+        SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.*
+        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
+        INNER JOIN AvailableObjects 
+        ON (DT.inTypeId = AvailableObjects.hO)) DT2
+        LEFT JOIN 
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
+        GROUP BY DT2.generalObjectID
+        ''').fetchall()
+
+        return render_template('materialesHard.html', hardW=hardware)
+
 
 '''-------------------'''
 '''--------API--------'''
@@ -593,16 +623,16 @@ def getHardware():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         hardware = cur.execute('''
-        SELECT generalObjectID, identifier, description, operativeSystem, name, SUM(ResTicket.weight) as totalWeight FROM
-        (SELECT DT.inTypeId, DT.identifier, DT.description, DT.operativeSystem, DT.name, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
-        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.description, HardwareClass.operativeSystem, HardwareClass.name
+        SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inClassId) as identifier, inTypeId, HardwareClass.*
         FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID)
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(hardware)
@@ -613,16 +643,16 @@ def getSoftware():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         software = cur.execute('''
-        SELECT generalObjectID, identifier, name, brand, description, operativeSystem, SUM(ResTicket.weight) as totalWeight FROM
-        (SELECT DT.inTypeId, DT.identifier, DT.description, DT.operativeSystem, DT.name, DT.brand, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
-        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inTypeId) as identifier, inTypeId, SoftwareClass.name, SoftwareClass.brand, SoftwareClass.description, SoftwareClass.operativeSystem
+        SELECT generalObjectID, identifier, name, brand, description, operativeSystem, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
+        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inClassId) as identifier, inTypeId, SoftwareClass.*
         FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId)) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.sO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID)
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(software)
@@ -633,18 +663,26 @@ def getRoomsApp():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         respBody = cur.execute('''
-        SELECT generalObjectID, name, description, location, capacity, SUM(ResTicket.weight) as totalWeight FROM
+        SELECT generalObjectID, name, description, location, capacity, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT Rooms.*, AvailableObjects.generalObjectID, AvailableObjects.rO FROM 
         Rooms INNER JOIN AvailableObjects 
         ON (Rooms.roomId = AvailableObjects.rO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID)
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(respBody)
 
+# Expecting request:
+'''
+{
+	"jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJBMDE2NTk4OTFAdGVjLm14IiwiZmlyc3ROYW1lIjoiUGVwbyIsImxhc3ROYW1lIjoiUm9kcmlndWV6IiwiYWRtaW4iOjAsImJsb2NrZWQiOjB9.KR8WPw1h18kOciOxs--VCRbvEohrcmO7asNkBX61N4o",
+    "date":"2022-09-30",
+    "objectId":"26"
+}
+'''
 @app.route("/app/api/getTimeRanges", methods=["POST"])
 def getTimeRanges():
     body = request.get_json()
@@ -657,6 +695,18 @@ def getTimeRanges():
         ''', (body["date"], body["objectId"])).fetchall()
         return json.dumps(respBody)
 
+@app.route("/app/api/getTimeRangesForDays", methods=["POST"])
+def getTimeRangesForDays():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        cur = get_db().cursor()
+        respBody = cur.execute('''
+        SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
+        strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
+        FROM ReservationTicket WHERE ((startDay BETWEEN date(?) AND date(?))
+		OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ?
+        ''', (body["startDate"], body["endDate"], body["startDate"], body["endDate"], body["objectId"])).fetchall()
+        return json.dumps(respBody)
 
 # Get user's tickets by userId
 # Expecting request: {"jwt":jwt}
@@ -725,20 +775,20 @@ def getTicket():
         qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
         with open(qrPath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
-        ticket["qrCode"] = encoded_string.decode('utf-8')
+        ticket["qrCode64"] = encoded_string.decode('utf-8')
         return ticket
 
 # Get user's ticket by qrcode
 # This is expected to be a web path
 # Expecting request: {"jwt":jwt}
 # Ej.                {"jwt":"asdfg"}
-# REsponse 
+# Response 
 '''
 {
     "dateRegistered": "2022-10-02 14:32:41.845",
     "endDate": "2022-10-02 22:00:00.000",
     "name": "DELL PC",
-    "objectDescription": "{\r\n\"cpu\" : \"i5\",\r\n\"ports\" : {\"usb3\" : 3, \"hdmi\" :1, \"jack\" : 1},\r\n\"ram\" : 8,\r\n\"rom\": {\"ssd\":128, \"hdd\":1024}\r\n}",
+    "objectDescription": "CPU = i5\nRAM = 8 GB\nROM = 1TB\nIdeal para trabajos de oficina.",
     "objectId": 4,
     "objectName": "DELL PC",
     "objectType": "HRDWR",
@@ -747,57 +797,73 @@ def getTicket():
     "startDate": "2022-10-02 12:00:00.000",
     "ticketDescription": "Reserva Dell",
     "ticketId": 22,
-    "userID": 1
+    "userId": 1
 }
 '''
-@app.route("/api/getTicket/<qr>", methods=["POST"])
+@app.route("/api/getTicket/<qr>", methods=["GET"])
 def getTicketWithQr(qr):
-    body = request.get_json()
-    if jwtValidated(body["jwt"]):
-        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
-        '''
-        if userData["admin"] == 0:
-            return make_response("Only admins", 401)
-        '''
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+
         cur = get_db().cursor()
-        
-        if body["objectType"] == "HRDWR":
+        ticketInfo = cur.execute('''SELECT ticketId, objectType, userId FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
+
+        if userData["admin"] == 0 and userData["id"] != ticketInfo["userId"]:
+            return make_response("Only admins", 401)
+
+        if ticketInfo["objectType"] == "HRDWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
                                 DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, HardwareClass.name, 
                                 HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
                                 (SELECT DT2.*, HardwareObjects.classId FROM 
                                 (SELECT DT.*, AvailableObjects.hO FROM 
-                                (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                                (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
                                 INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
                                 INNER JOIN HardwareObjects ON (DT2.hO = HardwareObjects.inTypeId)) DT3
                                 INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)'''
-        elif body["objectType"] == "SFTWR":
+        elif ticketInfo["objectType"] == "SFTWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
                        DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, SoftwareClass.name, 
                        SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
                        (SELECT DT2.*, SoftwareObjects.classId FROM 
                        (SELECT DT.*, AvailableObjects.sO FROM 
-                       (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
                        INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
                        INNER JOIN SoftwareObjects ON (DT2.sO = SoftwareObjects.inTypeId)) DT3
                        INNER JOIN SoftwareClass ON (DT3.classId = SoftwareClass.classId)
                        '''
-        elif body["objectType"] == "ROOM":
+        elif ticketInfo["objectType"] == "ROOM":
             query = '''SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
                        DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, Rooms.name, 
                        Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
                        (SELECT DT.*, AvailableObjects.rO FROM 
-                       (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
                        INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
                        INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)
                        '''
-        ticket = cur.execute(query, (qr, )).fetchone()
+        ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
         qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
         with open(qrPath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
         ticket["qrCode"] = encoded_string.decode('utf-8')
         #return render_template('ticketWithQr.html', ticket=ticket)
         return ticket
+
+@app.route("/api/updateQrCodes", methods=["GET"])
+def updateQrCodes():
+    if jwtValidated(request.cookies.get('jwt')):
+        cur = get_db().cursor()
+        tickets = cur.execute('''SELECT ticketId, userId, objectId, dateRegistered FROM ReservationTicket''').fetchall()
+        print(tickets)
+        for ticket in tickets:
+            qr = str(ticket["ticketId"]) + str(ticket["userId"]) + str(ticket["objectId"]) + ticket["dateRegistered"]
+            qr = qr.encode('utf-8')
+            qr = sha1(qr).hexdigest()[:10]
+            cur.execute('''UPDATE ReservationTicket SET qrCode = ? WHERE ticketId = ?''',
+                        (qr, ticket["ticketId"]))
+            genQr(qr)
+        return "FIN"
+        
 
 # Create new ticket for user
 # Expecting request: {"jwt":jwt, "objectId":objectId, "objectType":objectType, "objectName":objectName, "startDate":startDate,
@@ -829,7 +895,7 @@ def newTicket():
         cur = get_db().cursor()
         cur.execute('''
         INSERT INTO "main"."ReservationTicket" 
-        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userID", "description", "weight") VALUES
+        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userId", "description", "weight") VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
         (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight))
