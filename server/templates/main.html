@@ -6,19 +6,18 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-		<script src="static/scripts/anime-master/lib/anime.min.js"></script>
+		<script src="scripts/anime-master/lib/anime.min.js"></script>
 
-		<!--<meta charset="utf-8"> </meta>
-		<link rel="stylesheet" href="static/styles/main_style.css"></link>-->
-
+		<meta charset="utf-8"></meta>
+		<link rel="stylesheet" href="styles/main_style.css"></link>
 		<title>BookMe</title>
 
 	</head>
-	<body>
+	<bod>
 		<!-- importing three.js -->
-		<script src="static/scripts/three.js"></script>
+		<script src="scripts/three.js"></script>
 		<!-- importing three js application -->
-		<script src="static/scripts/math_graph.js"></script>
+		<script src="scripts/math_graph.js"></script>
 
 
 		
@@ -33,6 +32,15 @@
 					<p id="myname-name">Book &ensp;</p>
 					<p id="myname-lastname">|&ensp;Me</p>
 				</div>
+				<nav>
+					<ul>
+						<li><a href="main.html">Welcome</a></li>
+						<li><a href="#">Who are we?</a></li>
+						<li><a href="#">The app</a></li>
+                        <li><a href="LogandReg.html">Login or Register</a></li>
+                        <li><a href="#">Download App</a></li>
+					</ul>
+				</nav>
 
 
 
@@ -42,41 +50,53 @@
 			<div id="texturecanvas"></div>
 			<canvas id="maincanvas"></canvas>
 		</div>
+        <div>
+			<h1><b>HUB</b> de Ciberseguridad</h1>
+            <img src="hub-ciberseguridad.jpg" alt="Logo">
+            <p>El Tec de Monterrey busca crear conciencia entre la sociedad sobre la ciberseguridad. 
 
-		<!-- navbar that follows the user -->
-		<div class="navbar" id="navbar">
-			<!-- navbar items -->
-			<div class="navbar-item" id="navbar-item-1">
-				<p class="navbar-item-text">Home</p>
-			</div>
-			<div class="navbar-item" id="navbar-item-2">
-				<p class="navbar-item-text">About</p>
-			</div>
-			<div class="navbar-item" id="navbar-item-3">
-				<p class="navbar-item-text">Contact</p>
-			</div>
+                Con una muy prominente presencia tanto en
+                 México como en Latinoamérica con el Hub de
+                Ciberseguridad, nos hemos presentado como una plataforma de trabajo abierta interactiva
+                colaborativa multi organizacional.</p>
+            
+            <h3>
+                ¿Cual es su proposito?
+            </h3>
+            <p>El objetivo es brindar soporte para individuos y organizaciones
+                que demandan salvaguarda en sus redes de
+                información estratégica.
+                
+                Es por ello que en el Tec hemos apostado en
+                desarrollar recursos y capital humano en esta
+                disciplina qué tanta demanda tiene la actualidad
+                y que estamos seguros se va expandir hacia el
+                futuro.
+                
+                Esto a través de programas de innovación tecnológica de
+                consultoría de capacitación, eventos de difusión y concientización sobre la necesidad permanente
+                de contar con las herramientas con el personal
+                capacitado y los servicios alrededor del tema de
+                ciberseguridad, al igual que proporcionar dichas herramientas.</p>
+
+            <img src="telefono main.png" alt="app">
+            <h3>Proporcionando las herramientas necesarias</h3>
+            <p>Si eres alguien interesado en esto, podrás hacerlo desde esta misma aplicación: Simplemente seleccona el tipo de recurso que quieres (espacio físico, software o hardware), elige el recurso específico y la fecha inicial y final. 
+
+                Puedes ver tu próxima reserva en forma de ticket, además del resto de reservas.
+                
+                Además, podrás ver tus propias estadísticas, como la cantidad de reservas totales que has hecho.
+            </p>
+
+            <a href="LogandReg.html">Da click aqui para empezar a reservar recursos</a>
+
 
 		</div>
 
-		<div id="bannerId p">
-
-			<p>Under Construction</p>
-		</div>
-
-		<!-- navbar that follows the user -->
-		<div >
-
-			<p>El Tec de Monterrey busca crear conciencia entre la sociedad sobre la ciberseguridad. 
-
-				Con una muy prominente presencia tanto en
-				 México como en Latinoamérica con el Hub de
-				Ciberseguridad, nos hemos presentado como una plataforma de trabajo abierta interactiva
-				colaborativa multi organizacional.</p>
-		</div>
 
 
+		<script src="scripts/animate_navbar.js"></script>
 
-		<script src="static/scripts/animate_navbar.js"></script>
 	</body>
 </html>
 

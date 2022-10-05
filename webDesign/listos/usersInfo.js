@@ -1,21 +1,19 @@
-<!DOCTYPE html>
+var info = [{
+"username": "pedro",
+"firstName": "pedro",
+"lastName": "apellido",
+"birthDate": "birthdate",
+"organization": "organizacion",
+"email": "correo",
+"ocupation": "age",
+"countryId": "countryId",
+"hashPassword": "contrasena"
+}]
 
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  
 
-		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-		<!--<script src="scripts/anime-master/lib/anime.min.js"></script>   -->
-        <script src="{{ url_for('static',filename='scripts/reg.js') }}" ></script>
 
-		<meta charset="utf-8"></meta>
-		<link rel="stylesheet" href="{{ url_for('static',filename='styles/reg.css') }}" ></link>
-		<title>BookMe</title>
-        
-    <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
-	</head>
-    <body>
-    <div class="todocompleto">
+/*<div class="todocompleto">
       <div class="v142_103">
 
         
@@ -43,8 +41,8 @@
                   <input type="text" class="form-control" id="username" name="username" placeholder="username">
               </div>
               <div class="form-group">
-                  <label for="birthdate" id="birthid">"birth":{</label>
-                  <input type="date" class="form-control" id="birthdate" name="birth" placeholder="birth" value="1995-01-01">
+                  <label for="birth" id="birthid">"birth":{</label>
+                  <input type="date" class="form-control" id="birth" name="birth" placeholder="birth" value="1995-01-01">
               </div>
               <div class="form-group" >
                   <label for="organization" id="organizationid">"Organization":{</label>
@@ -52,7 +50,7 @@
               </div>
                 <div class="form-group">
                     <label for="contry" id="country">"country":{</label>
-                    <select name="country" id="countryId">
+                    <select name="" id="">
                         <option value="1">Mexico </option>
                         <option value="2">USA</option>
                         <option value="3">Canada</option>
@@ -125,9 +123,4 @@
         <div class="contenedor_boton">
         <button type="submit" class="btn btn-primary" id="botonenvio">SEND</button>
        
-    </div>
-    <div  class="contenedor_terminos">
-        <a href="terminos.html'">Terminos y condiciones</a>
-    </div>   
-    </div>
-</body></html> <br/><br/> 
+    </div>*/

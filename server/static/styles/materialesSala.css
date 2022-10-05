@@ -1,0 +1,212 @@
+                        /* Importing font stylesheet*/
+
+                        *{
+                            font-family: "Chivo", sans-serif !important;
+                            font-size: medium;
+                            padding: 0%;
+                            margin: 0%;
+                            box-sizing: border-box;
+                        }
+                        /* Snap Scroll config */
+                        html{
+                            scroll-snap-type: y mandatory;
+                        }
+                        
+                        .general_site_div{
+                            scroll-snap-align: start;
+                            opacity: 0;
+                        }
+                        
+                        /* Scrollbar start */
+                        /* width */
+                        ::-webkit-scrollbar {
+                          width: 0.2vw;
+                          height: 0.1vh;
+                        }
+                        
+                        
+                         
+                        /* Handle */
+                        ::-webkit-scrollbar-thumb {
+                          background: rgb(0, 0, 0); 
+                        }
+                        
+                        
+                        ::-moz-selection { /* Code for Firefox */
+                          color: white;
+                          background: #444444;
+                        }
+                        
+                        ::selection {
+                          color: white;
+                          background: #444444;
+                        }
+                        
+                        
+                        
+                        @media screen and (max-width: 1212px){}
+                        
+                        p{
+                            color: #444444;
+                        }
+                        
+                        
+                        /* NavBar */
+                        .navbar{
+                            display: flex;
+                            overflow: hidden;
+                            position: fixed;
+                            top: 0%;
+                            width: 100vw;
+                            height: 9vh;
+                            align-items: center;
+                            justify-content: space-between;
+                            background-color: transparent;
+                        }
+                        .navbar p{
+                            background: transparent;
+                            font-weight: 500;
+                            margin: 1.5rem;
+                        }
+                        .navbar a{
+                            width: 3rem;
+                            height: auto;
+                            margin: 1rem;
+                            background-color: transparent;
+                        }
+                        .navbar a img{
+                            width: 1.5rem;
+                            height: auto;
+                            background-color: transparent;
+                        }
+                        
+                        #navbar_id{
+                            background-color: transparent;
+                        }
+                        
+                        .header {
+                            background-color: black ;
+                            height: 9vh;
+                        }
+                        
+                        
+                        /* Main div */
+                        .main_div{
+                            width: 100vw;
+                            height: 100vh;
+                            display: flex;
+                            flex-wrap: wrap;
+                            flex-direction: row;
+                            align-items: flex-end;
+                            justify-content: center;
+                        }
+                        
+                        
+                        /* div list users */
+                        .div_list_users{
+                            height: 90vh;
+                            width: 90vw;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: flex-start;
+                        }
+                        .div_list_users div{
+                            margin-top: 0.5rem;
+                        }
+                        .div_list_users div div{
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: center;
+                            width: 8vw;
+                        }
+                        .div_list_users div div input{
+                            width: 6vw;
+                        }
+                        .div_list_users div div select{
+                            width: 8vw;
+                        }
+                        /* single row label */
+                        .single_row_label{
+                            width: 90vw;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-around;
+                            font-weight: bold;
+                            background-color: white;
+                        }
+                        
+                        
+                        /* single row user */
+                        .single_row_user{
+                            width: 90vw;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-around;
+                            
+                        }
+                        
+                        #row_save{
+                            width: 6vw;
+                            border: 2px solid black;
+                            color: black;
+                            background-color: white;
+                        }
+                        #row_delete{
+                            width: 6vw;
+                            border: 2px solid black;
+                            color: black;
+                            background-color: white;
+                        }
+                        #row_block{
+                            width: 6vw;
+                            border: 2px solid black;
+                            color: black;
+                            background-color: white;
+                        }
+                        
+                        #descripcionObjeto{
+                            width: 8vw;
+                            border: transparent;
+                            color: black;
+                            background-color: white;
+                            text-align: center;
+                            height: 5vh;
+                        }
+                        
+                        .numero{
+                            width: 5vw;
+                            border: transparent;
+                            color: black;
+                            background-color: rgb(200, 200, 200);
+                            text-align: center;
+                            height: 2vh;
+                        }
+                        
+                        #tipo {
+                            width: 8vw;
+                            border: transparent;
+                            color: black;
+                            background-color: white;
+                            text-align: center;
+                            height: 2vh;
+                        }
+                        #prefijo {
+                            width: 8vw;
+                            border: transparent;
+                            color: black;
+                            background-color: white;
+                            text-align: center;
+                            height: 2vh;
+                            margin : 3px;
+                        
+                        }
+                        
+                        #nombreObjeto {
+                            width: 7vw;
+                            border: transparent;
+                            color: black;
+                            background-color: white;
+                            text-align: center;
+                            height: 2vh;
+                        }

@@ -1,0 +1,37 @@
+*{
+    font-family: 'Chivo', sans-serif;
+    text-align: center;
+}
+
+#log {
+    width: 25%;
+    height: 25%;
+    background-color: #f2f2f2;
+    position: absolute;
+    top: 35%;
+    left: 17%;
+    z-index: 1;
+    
+}
+
+#reg {
+    width: 25%;
+    height: 25%;
+    background-color: #f2f2f2;
+    position: absolute;
+    top: 35%;
+    right: 17%;
+    z-index: 0;
+    
+}
+
+#ortext {
+    width: 10%;
+    height: 10%;
+    position: absolute;
+    top: 35%;
+    left: 45%;
+    z-index: 1;
+    font-size: 80px;
+    text-align: center;
+}

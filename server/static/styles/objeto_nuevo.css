@@ -1,0 +1,342 @@
+                        /* Importing font stylesheet*/
+
+*{
+    font-family: "Chivo", sans-serif !important;
+    font-size: medium;
+    padding: 0%;
+    margin: 0%;
+    box-sizing: border-box;
+}
+/* Snap Scroll config */
+html{
+    scroll-snap-type: y mandatory;
+}
+
+.general_site_div{
+    scroll-snap-align: start;
+    opacity: 0;
+}
+
+/* Scrollbar start */
+/* width */
+::-webkit-scrollbar {
+  width: 0.2vw;
+  height: 0.1vh;
+}
+
+
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 0, 0); 
+}
+
+
+::-moz-selection { /* Code for Firefox */
+  color: white;
+  background: #444444;
+}
+
+::selection {
+  color: white;
+  background: #444444;
+}
+
+
+
+@media screen and (max-width: 1212px){}
+
+p{
+    color: #444444;
+}
+
+
+/* NavBar */
+.navbar{
+    display: flex;
+    overflow: hidden;
+    position: fixed;
+    top: 0%;
+    width: 100vw;
+    height: 9vh;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+}
+.navbar p{
+    background: transparent;
+    font-weight: 500;
+    margin: 1.5rem;
+}
+.navbar a{
+    width: 3rem;
+    height: auto;
+    margin: 1rem;
+    background-color: transparent;
+}
+.navbar a img{
+    width: 1.5rem;
+    height: auto;
+    background-color: transparent;
+}
+
+#navbar_id{
+    background-color: transparent;
+}
+
+.header {
+    background-color: black ;
+    height: 9vh;
+}
+
+
+/* Main div */
+.main_div{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: flex-end;
+    padding-left: 5vw;
+}
+
+
+/* div list users */
+.div_list_users{
+    height: 90vh;
+    width: 90vw;
+    
+}
+
+.titulo{
+    font-size: 4rem;
+    font-weight: bold;
+    color: black;
+    margin: 1rem;
+    justify-content: left;
+}
+.titulo2{
+    font-size: 3rem;
+    font-weight: bold;
+    color: black;
+    margin: 1rem;
+    justify-content: left;
+}
+
+#tipo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+
+#nombreSala {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+#maxDays {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+
+#capacidad {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+
+#contenedor{
+    flex-direction: row;
+    align-items: center;
+    width: 50vw;
+    height: 5vh;
+    margin: 1rem;
+}
+
+#textoSala {
+    font-size: 10px;
+    font-weight: bold;
+    justify-content: left;
+    border: transparent;
+    width: 30vw;
+    border-radius: 30px;
+    float: left;
+}
+
+#Descripcion {
+    font-size: 2rem;
+    font-weight: bold;
+    justify-content: right;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 15vw;
+    margin: 0;
+    padding-left: 50%;
+}
+#descripcion  {
+    
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin-right: 0px;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 40vw;
+    height: 30vh;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+}
+
+label {
+    font-size: 2rem;
+    
+}
+
+#contendortodo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+#os {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+
+#Hardware {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+#nombreHardware {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+
+#prefijo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+#textoHardware {
+    font-size: 10px;
+    font-weight: bold;
+    justify-content: left;
+    border: transparent;
+    width: 30vw;
+    border-radius: 30px;
+    float: left;
+}
+
+
+#Software {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+#nombreSoftware {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+
+#prefijo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
+#textoSoftware {
+    font-size: 10px;
+    font-weight: bold;
+    justify-content: left;
+    border: transparent;
+    width: 30vw;
+    border-radius: 30px;
+    float: left;
+}
+#locationId {
+    font-size: 2rem;
+    font-weight: bold;
+    color: grey;
+    margin: 1rem;
+    justify-content: left;
+    background-color: lightgray;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+}
