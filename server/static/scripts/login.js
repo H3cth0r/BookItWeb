@@ -86,8 +86,8 @@ def login(name=None):
 
     $(document).ready(function () {
         $("#botonenvio").click(function () {
-            var email = $("#email").val();
-            if (email.test(email) == true) {
+            var correo = $("#email").val();
+            if (email.test(correo) == true) {
                 $.ajax({
                     url: "http://localhost:5000/api/login",
                     type: "POST",

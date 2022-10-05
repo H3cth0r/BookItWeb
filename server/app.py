@@ -30,11 +30,6 @@ def get_db():
         db.row_factory = make_dicts
     return db
 
-@app.route("/")
-def hello_world(name=None): 
-    a = {"a":1, "b":2}
-    return render_template('main.html', test=a)
-
 def createJWT(jsnDict):
     return jwt.encode(jsnDict, jwtKey, algorithm="HS256")
     
@@ -68,10 +63,24 @@ def genQr(code):
 
 '''---VIEWS---'''
 
+@app.route("/")
+def mainView(): 
+    return render_template('main.html')
+
+@app.route("/login", methods=["GET"])
+def loginView():
+    if True:
+        return render_template('log.html')
+
 @app.route("/register", methods=["GET"])
 def registerView():
-    if True:#jwtValidated(request.cookies.get('jwt')):
-        return render_template('reg.html', hardW=[])
+    if True:
+        return render_template('reg.html')
+
+@app.route("/admin/nuevoObjeto", methods=["GET"])
+def newObjectView():
+    if True:
+        return render_template('objeto_nuevo.html')
 
 # Show materials
 @app.route("/admin/materialesHardware", methods=["GET"])
@@ -80,20 +89,26 @@ def getHardwareView():
         # if user is admin
         cur = get_db().cursor()
         hardware = cur.execute('''
-        SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
-        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
-        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.*
-        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
-        INNER JOIN AvailableObjects 
-        ON (DT.inTypeId = AvailableObjects.hO)) DT2
-        LEFT JOIN 
-        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
-        GROUP BY DT2.generalObjectID
+        SELECT DT.*, COUNT(inClassId) as quantity FROM
+        (SELECT * FROM HardwareClass) DT
+        LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
+        GROUP BY DT.classId
         ''').fetchall()
 
         return render_template('materialesHard.html', hardW=hardware)
+
+# Show materials
+@app.route("/admin/materialesSoftware", methods=["GET"])
+def getSoftwareView():
+    if True:
+        cur = get_db().cursor()
+        software = cur.execute('''
+        SELECT DT.*, COUNT(inClassId) as quantity FROM
+        (SELECT * FROM SoftwareClass) DT
+        LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
+        GROUP BY DT.classId
+        ''').fetchall()
+        return render_template('materialesSoftware.html', softW=software)
 
 
 '''-------------------'''
@@ -220,7 +235,7 @@ def newHardware():
             return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
-
+    
         cur.execute('''INSERT INTO "main"."HardwareClass" ("name", "operativeSystem", "description", "prefix","maxDays")
                             VALUES (?, ?, ?, ?, ?);''',
                             (body["name"], body["operativeSystem"], body["description"], body["prefix"], 
