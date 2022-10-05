@@ -71,3 +71,7 @@ function save_button(id_val){
     });
 }
 
+//ajax para guardar en la base de datos
+function save_all(){
+    alert("saved all")
+}

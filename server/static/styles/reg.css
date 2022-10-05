@@ -185,7 +185,7 @@ body {
     text-decoration: none;
   }
   
-  #birth {
+  #birthdate {
     filter: invert(100%);
     color : black;
   }
