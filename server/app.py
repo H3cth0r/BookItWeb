@@ -1,5 +1,3 @@
-from asyncio.base_subprocess import ReadSubprocessPipeProto
-from crypt import methods
 from flask import Flask, request, g, make_response
 from flask import render_template
 from hashlib import new, sha256, sha1
@@ -70,7 +68,6 @@ def genQr(code):
 '''---VIEWS---'''
 @app.route("/admin/materialesHardware", methods=["GET"])
 def getHardwareView():
-    body = request.get_json()
     if True:#jwtValidated(request.cookies.get('jwt')):
         # if user is admin
         cur = get_db().cursor()
@@ -88,7 +85,7 @@ def getHardwareView():
         GROUP BY DT2.generalObjectID
         ''').fetchall()
 
-        return render_template('materialesHard.html', hardw=hardware)
+        return render_template('materialesHard.html', hardW=hardware)
 
 
 '''-------------------'''
