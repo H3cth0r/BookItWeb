@@ -725,7 +725,7 @@ def getTicket():
         qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
         with open(qrPath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
-        ticket["qrCode"] = encoded_string.decode('utf-8')
+        ticket["qrCode64"] = encoded_string.decode('utf-8')
         return ticket
 
 # Get user's ticket by qrcode
@@ -750,48 +750,48 @@ def getTicket():
     "userID": 1
 }
 '''
-@app.route("/api/getTicket/<qr>", methods=["POST"])
+@app.route("/api/getTicket/<qr>", methods=["GET"])
 def getTicketWithQr(qr):
-    body = request.get_json()
-    if jwtValidated(body["jwt"]):
-        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
         '''
         if userData["admin"] == 0:
             return make_response("Only admins", 401)
         '''
         cur = get_db().cursor()
-        
-        if body["objectType"] == "HRDWR":
+        ticketInfo = cur.execute('''SELECT ticketId, objectType FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
+
+        if ticketInfo["objectType"] == "HRDWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
                                 DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, HardwareClass.name, 
                                 HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
                                 (SELECT DT2.*, HardwareObjects.classId FROM 
                                 (SELECT DT.*, AvailableObjects.hO FROM 
-                                (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                                (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
                                 INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
                                 INNER JOIN HardwareObjects ON (DT2.hO = HardwareObjects.inTypeId)) DT3
                                 INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)'''
-        elif body["objectType"] == "SFTWR":
+        elif ticketInfo["objectType"] == "SFTWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
                        DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, SoftwareClass.name, 
                        SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
                        (SELECT DT2.*, SoftwareObjects.classId FROM 
                        (SELECT DT.*, AvailableObjects.sO FROM 
-                       (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
                        INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
                        INNER JOIN SoftwareObjects ON (DT2.sO = SoftwareObjects.inTypeId)) DT3
                        INNER JOIN SoftwareClass ON (DT3.classId = SoftwareClass.classId)
                        '''
-        elif body["objectType"] == "ROOM":
+        elif ticketInfo["objectType"] == "ROOM":
             query = '''SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
                        DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, Rooms.name, 
                        Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
                        (SELECT DT.*, AvailableObjects.rO FROM 
-                       (SELECT * FROM ReservationTicket WHERE qrCode = ?) DT
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
                        INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
                        INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)
                        '''
-        ticket = cur.execute(query, (qr, )).fetchone()
+        ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
         qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
         with open(qrPath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
