@@ -1,16 +1,16 @@
-var info = [{}]
-"username": usuario,
-"firstName": nombre,
-"lastName": apellido,
-"birthDate": birthdate,
-"organization": organizacion,
-"email": correo,
-"ocupation": age,
-"countryId": countryId,
-"hashPassword": contrasena
+var info = [{
+"username": "pedro",
+"firstName": "pedro",
+"lastName": "apellido",
+"birthDate": "birthdate",
+"organization": "organizacion",
+"email": "correo",
+"ocupation": "age",
+"countryId": "countryId",
+"hashPassword": "contrasena"
+}]
 
-
-
+  
 
 
 /*<div class="todocompleto">

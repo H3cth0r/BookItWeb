@@ -1,20 +1,3 @@
-var softW = [{ /* poner el json y despues poner las variables bien*/
-    "quantity":5,
-    "name":"Adobe Photoshop",
-    "brand":"Adobe",
-    "operativeSystem":"Windows 10+",
-    "description":"Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.",
-    "prefix":"ADBXDW10",
-    "maxDays":"12"
-  },{
-    "quantity":5,
-    "name":"Adobe Photoshop",
-    "brand":"Adobe",
-    "operativeSystem":"Windows 10+",
-    "description":"Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.",
-    "prefix":"ADBXDW10",
-    "maxDays":"12"
-  }];
 
 for (var i = 0; i < softW.length; i++) {
     var software = softW[i];
