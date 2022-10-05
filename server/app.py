@@ -1,4 +1,5 @@
 from asyncio.base_subprocess import ReadSubprocessPipeProto
+from crypt import methods
 from flask import Flask, request, g, make_response
 from flask import render_template
 from hashlib import new, sha256, sha1
@@ -65,6 +66,30 @@ def genQr(code):
 '''-----------------------'''
 '''----FRONTEND ROUTES----'''
 '''-----------------------'''
+
+'''---VIEWS---'''
+@app.route("/admin/materialesHardware", methods=["GET"])
+def getHardwareView():
+    body = request.get_json()
+    if True:#jwtValidated(request.cookies.get('jwt')):
+        # if user is admin
+        cur = get_db().cursor()
+        hardware = cur.execute('''
+        SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.*
+        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
+        INNER JOIN AvailableObjects 
+        ON (DT.inTypeId = AvailableObjects.hO)) DT2
+        LEFT JOIN 
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
+        GROUP BY DT2.generalObjectID
+        ''').fetchall()
+
+        return render_template('materialesHard.html', hardw=hardware)
+
 
 '''-------------------'''
 '''--------API--------'''
