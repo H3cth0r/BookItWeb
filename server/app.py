@@ -645,6 +645,14 @@ def getRoomsApp():
         ''').fetchall()
         return json.dumps(respBody)
 
+# Expecting request:
+'''
+{
+	"jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJBMDE2NTk4OTFAdGVjLm14IiwiZmlyc3ROYW1lIjoiUGVwbyIsImxhc3ROYW1lIjoiUm9kcmlndWV6IiwiYWRtaW4iOjAsImJsb2NrZWQiOjB9.KR8WPw1h18kOciOxs--VCRbvEohrcmO7asNkBX61N4o",
+    "date":"2022-09-30",
+    "objectId":"26"
+}
+'''
 @app.route("/app/api/getTimeRanges", methods=["POST"])
 def getTimeRanges():
     body = request.get_json()
@@ -657,6 +665,18 @@ def getTimeRanges():
         ''', (body["date"], body["objectId"])).fetchall()
         return json.dumps(respBody)
 
+@app.route("/app/api/getTimeRangesForDays", methods=["POST"])
+def getTimeRangesForDays():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        cur = get_db().cursor()
+        respBody = cur.execute('''
+        SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
+        strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
+        FROM ReservationTicket WHERE ((startDay BETWEEN date(?) AND date(?))
+		OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ?
+        ''', (body["startDate"], body["endDate"], body["startDate"], body["endDate"], body["objectId"])).fetchall()
+        return json.dumps(respBody)
 
 # Get user's tickets by userId
 # Expecting request: {"jwt":jwt}
@@ -732,13 +752,13 @@ def getTicket():
 # This is expected to be a web path
 # Expecting request: {"jwt":jwt}
 # Ej.                {"jwt":"asdfg"}
-# REsponse 
+# Response 
 '''
 {
     "dateRegistered": "2022-10-02 14:32:41.845",
     "endDate": "2022-10-02 22:00:00.000",
     "name": "DELL PC",
-    "objectDescription": "{\r\n\"cpu\" : \"i5\",\r\n\"ports\" : {\"usb3\" : 3, \"hdmi\" :1, \"jack\" : 1},\r\n\"ram\" : 8,\r\n\"rom\": {\"ssd\":128, \"hdd\":1024}\r\n}",
+    "objectDescription": "CPU = i5\nRAM = 8 GB\nROM = 1TB\nIdeal para trabajos de oficina.",
     "objectId": 4,
     "objectName": "DELL PC",
     "objectType": "HRDWR",
