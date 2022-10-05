@@ -16,6 +16,7 @@ app = Flask(__name__)
 DATABASE = 'DB\BookMeDB.db'
 jwtKey = 'BooKMeIsCool'
 hashedAdminPwd = sha256(jwtKey.encode('utf-8'))
+baseUrl = "http://4.228.81.149:5000"
 #app.config['SECRET_KEY'] = 'super-secret'
 
 def make_dicts(cursor, row):
@@ -55,7 +56,7 @@ def genQr(code):
                 box_size=8,
                 border=1,
     )
-    qr.add_data("http://localhost:5000/api/getTicket/" + code[:10]) #would idealy show ticket html
+    qr.add_data(baseUrl + "/api/getTicket/" + code[:10]) #would idealy show ticket html
     qr.make(fit=True)
     img = qr.make_image(fill_color='black', black_color='white')
     print(type(img))
@@ -624,7 +625,7 @@ def getHardware():
         hardware = cur.execute('''
         SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
-        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.*
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inClassId) as identifier, inTypeId, HardwareClass.*
         FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
@@ -644,7 +645,7 @@ def getSoftware():
         software = cur.execute('''
         SELECT generalObjectID, identifier, name, brand, description, operativeSystem, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
-        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inTypeId) as identifier, inTypeId, SoftwareClass.*
+        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inClassId) as identifier, inTypeId, SoftwareClass.*
         FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId)) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.sO)) DT2
@@ -796,7 +797,7 @@ def getTicket():
     "startDate": "2022-10-02 12:00:00.000",
     "ticketDescription": "Reserva Dell",
     "ticketId": 22,
-    "userID": 1
+    "userId": 1
 }
 '''
 @app.route("/api/getTicket/<qr>", methods=["GET"])
@@ -848,6 +849,22 @@ def getTicketWithQr(qr):
         #return render_template('ticketWithQr.html', ticket=ticket)
         return ticket
 
+@app.route("/api/updateQrCodes", methods=["GET"])
+def updateQrCodes():
+    if jwtValidated(request.cookies.get('jwt')):
+        cur = get_db().cursor()
+        tickets = cur.execute('''SELECT ticketId, userId, objectId, dateRegistered FROM ReservationTicket''').fetchall()
+        print(tickets)
+        for ticket in tickets:
+            qr = str(ticket["ticketId"]) + str(ticket["userId"]) + str(ticket["objectId"]) + ticket["dateRegistered"]
+            qr = qr.encode('utf-8')
+            qr = sha1(qr).hexdigest()[:10]
+            cur.execute('''UPDATE ReservationTicket SET qrCode = ? WHERE ticketId = ?''',
+                        (qr, ticket["ticketId"]))
+            genQr(qr)
+        return "FIN"
+        
+
 # Create new ticket for user
 # Expecting request: {"jwt":jwt, "objectId":objectId, "objectType":objectType, "objectName":objectName, "startDate":startDate,
 # "endDate":endDate, "description":ticketDescription}
@@ -878,7 +895,7 @@ def newTicket():
         cur = get_db().cursor()
         cur.execute('''
         INSERT INTO "main"."ReservationTicket" 
-        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userID", "description", "weight") VALUES
+        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userId", "description", "weight") VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
         (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight))

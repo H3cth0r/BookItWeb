@@ -309,34 +309,6 @@ INSERT INTO SoftwareObjects VALUES(36,5,2);
 INSERT INTO SoftwareObjects VALUES(37,5,3);
 INSERT INTO SoftwareObjects VALUES(38,5,4);
 INSERT INTO SoftwareObjects VALUES(39,5,5);
-CREATE TABLE IF NOT EXISTS "ReservationTicket" (
-	"ticketId"	INTEGER NOT NULL,
-	"dateRegistered"	TEXT NOT NULL,
-	"objectId"	INTEGER NOT NULL,
-	"objectType"	TEXT NOT NULL,
-	"objectName"	TEXT NOT NULL DEFAULT 'a',
-	"startDate"	TEXT NOT NULL,
-	"endDate"	TEXT NOT NULL,
-	"userID"	INTEGER NOT NULL,
-	"description"	TEXT NOT NULL,
-	"weight"	REAL NOT NULL,
-	"qrCode"	INTEGER,
-	FOREIGN KEY("objectId") REFERENCES "AvailableObjects"("generalObjectID"),
-	PRIMARY KEY("ticketId" AUTOINCREMENT)
-);
-INSERT INTO ReservationTicket VALUES(3,'2022-09-28 15:00:00.000',3,'HRDWR','Mac Book Air','2022-09-30 16:00:00.000','2022-09-30 16:30:00.000',1,'Reserva Dell ',2.0,NULL);
-INSERT INTO ReservationTicket VALUES(4,'2022-09-28 15:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-30 16:00:00.000','2022-09-30 18:30:00.000',1,'Reserva XD',2.5,NULL);
-INSERT INTO ReservationTicket VALUES(5,'2022-09-28 17:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-28 20:00:00.000','2022-09-28 24:30:00.000',1,'Descripción de reserva',4.0,NULL);
-INSERT INTO ReservationTicket VALUES(6,'2022-09-28 17:00:00.000',13,'SFTWR','Adobe XD','2022-09-30 20:00:00.000','2022-10-01 20:00:00.000',1,'Descripción de reserva',24.0,NULL);
-INSERT INTO ReservationTicket VALUES(7,'2022-09-29 9:00:00.000',27,'ROOM','Laboratorio de Finanzas 03','2022-09-30 12:00:00.000','2022-09-30 20:00:00.000',1,'Reservando sala de finanzas 3',8.0,NULL);
-INSERT INTO ReservationTicket VALUES(8,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 08:00:00.000','2022-09-30 12:00:00.000',1,'Reservando sala de finanzas 2',4.0,NULL);
-INSERT INTO ReservationTicket VALUES(9,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 12:30:00.000','2022-09-30 19:30:00.000',1,'Reservando sala de finanzas 2',7.5,NULL);
-INSERT INTO ReservationTicket VALUES(21,'2022-10-02 14:29:41.042',4,'HRDWR','DELL PC','2022-10-18 12:00:00.000','2022-10-19 12:00:00.000',1,'Reserva Dell',24.0,'hFsh9f/QWX');
-INSERT INTO ReservationTicket VALUES(22,'2022-10-02 14:32:41.845',4,'HRDWR','DELL PC','2022-10-19 12:00:00.000','2022-10-20 08:00:00.000',1,'Reserva Dell',20.0,'b26c3c7350');
-INSERT INTO ReservationTicket VALUES(23,'2022-10-04 16:41:25.596',4,'HRDWR','DELL PC','2022-10-20 12:00:00.000','2022-10-20 20:00:00.000',3,'Reserva Dell',8.0,'bfb869ad5d');
-INSERT INTO ReservationTicket VALUES(24,'2022-10-04 16:41:38.448',4,'HRDWR','DELL PC','2022-10-20 22:00:00.000','2022-10-21 12:00:00.000',3,'Reserva Dell',13.999999999999999999,'a8db3050f1');
-INSERT INTO ReservationTicket VALUES(25,'2022-10-04 17:33:53.547',4,'HRDWR','DELL PC','2022-10-22 12:00:00.000','2022-10-23 12:00:00.000',3,'Reserva Dell',24.0,'e3552bb97a');
-INSERT INTO ReservationTicket VALUES(26,'2022-10-04 17:36:07.656',4,'HRDWR','DELL PC','2022-10-24 12:00:00.000','2022-10-24 22:00:00.000',1,'Reserva Dell',10.0,'b7d97a737e');
 CREATE TABLE IF NOT EXISTS "RegisteredChanges" (
 	"id"	INTEGER NOT NULL,
 	"userId"	INTEGER NOT NULL,
@@ -446,7 +418,7 @@ CREATE TABLE IF NOT EXISTS "SoftwareClass" (
 );
 INSERT INTO SoftwareClass VALUES(1,'Adobe','Adobe XD','Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.','Windows 10+','ADBXDW10',1,12);
 INSERT INTO SoftwareClass VALUES(2,'Adobe','Adobe XD','Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.​','macOS 12 (Monterey)+','ADBXDMC12',1,10);
-INSERT INTO SoftwareClass VALUES(3,'Autodesk','Autodesk Maya','Autodesk Maya es un programa informático dedicado al desarrollo de gráficos 3D por ordenador, efectos especiales, animación y de dibujo.','Windows 8+','ADMYW8',1,10);
+INSERT INTO SoftwareClass VALUES(3,'Autodesk','Autodesk Maya','Autodesk Maya es un programa informático dedicado al desarrollo de gráficos 3D por ordenador, efectos especiales, animación y de dibujo.','Windows 8+','ADMYW8',1,1);
 INSERT INTO SoftwareClass VALUES(4,'Minitab Inc.','Minitab','Minitab es un programa de computadora diseñado para ejecutar funciones estadísticas básicas y avanzadas.','Windows 7+','MNTB',1,10);
 INSERT INTO SoftwareClass VALUES(5,'Adobe','Adobe Photoshop','Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.','Windows 10+','ADBXDW10',1,12);
 CREATE TABLE IF NOT EXISTS "Rooms" (
@@ -467,15 +439,43 @@ INSERT INTO Rooms VALUES(4,'LABFZ-02','Laboratorio de Finanzas 02','Hub de Ciber
 INSERT INTO Rooms VALUES(5,'LABFZ-03','Laboratorio de Finanzas 03','Hub de Ciberseguridad, piso 1. ','Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',21,1,10);
 INSERT INTO Rooms VALUES(7,'SC03','Sala de Conferencias 03','Hub de Ciberseguridad, piso 3.','Sala de conferencias, apta para presentaciones ejecutivas a un público grande.',35,1,12);
 INSERT INTO Rooms VALUES(8,'SC04','Sala de Conferencias 04','Hub de Ciberseguridad, piso 3.','Sala de conferencias, apta para presentaciones ejecutivas a un público grande.',35,1,12);
+CREATE TABLE IF NOT EXISTS "ReservationTicket" (
+	"ticketId"	INTEGER NOT NULL,
+	"dateRegistered"	TEXT NOT NULL,
+	"objectId"	INTEGER NOT NULL,
+	"objectType"	TEXT NOT NULL,
+	"objectName"	TEXT NOT NULL DEFAULT 'a',
+	"startDate"	TEXT NOT NULL,
+	"endDate"	TEXT NOT NULL,
+	"userId"	INTEGER NOT NULL,
+	"description"	TEXT NOT NULL,
+	"weight"	REAL NOT NULL,
+	"qrCode"	INTEGER,
+	FOREIGN KEY("objectId") REFERENCES "AvailableObjects"("generalObjectID"),
+	PRIMARY KEY("ticketId" AUTOINCREMENT)
+);
+INSERT INTO ReservationTicket VALUES(3,'2022-09-28 15:00:00.000',3,'HRDWR','Mac Book Air','2022-09-30 16:00:00.000','2022-09-30 16:30:00.000',1,'Reserva Dell ',2.0,'7fdad1c625');
+INSERT INTO ReservationTicket VALUES(4,'2022-09-28 15:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-30 16:00:00.000','2022-09-30 18:30:00.000',1,'Reserva XD',2.5,'9908994ce3');
+INSERT INTO ReservationTicket VALUES(5,'2022-09-28 17:00:00.000',16,'SFTWR','Autodesk Maya','2022-09-28 20:00:00.000','2022-09-28 24:30:00.000',1,'Descripción de reserva',4.0,'a0559fb5aa');
+INSERT INTO ReservationTicket VALUES(6,'2022-09-28 17:00:00.000',13,'SFTWR','Adobe XD','2022-09-30 20:00:00.000','2022-10-01 20:00:00.000',1,'Descripción de reserva',24.0,'40123c506a');
+INSERT INTO ReservationTicket VALUES(7,'2022-09-29 9:00:00.000',27,'ROOM','Laboratorio de Finanzas 03','2022-09-30 12:00:00.000','2022-09-30 20:00:00.000',1,'Reservando sala de finanzas 3',8.0,'97c1fa58b7');
+INSERT INTO ReservationTicket VALUES(8,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 08:00:00.000','2022-09-30 12:00:00.000',1,'Reservando sala de finanzas 2',4.0,'c8202c0acc');
+INSERT INTO ReservationTicket VALUES(9,'2022-09-29 9:00:00.000',26,'ROOM','Laboratorio de Finanzas 02','2022-09-30 12:30:00.000','2022-09-30 19:30:00.000',1,'Reservando sala de finanzas 2',7.5,'1df7eac27c');
+INSERT INTO ReservationTicket VALUES(21,'2022-10-02 14:29:41.042',4,'HRDWR','DELL PC','2022-10-18 12:00:00.000','2022-10-19 12:00:00.000',1,'Reserva Dell',24.0,'845b21f5ff');
+INSERT INTO ReservationTicket VALUES(22,'2022-10-02 14:32:41.845',4,'HRDWR','DELL PC','2022-10-19 12:00:00.000','2022-10-20 08:00:00.000',1,'Reserva Dell',20.0,'b26c3c7350');
+INSERT INTO ReservationTicket VALUES(23,'2022-10-04 16:41:25.596',4,'HRDWR','DELL PC','2022-10-20 12:00:00.000','2022-10-20 20:00:00.000',3,'Reserva Dell',8.0,'bfb869ad5d');
+INSERT INTO ReservationTicket VALUES(24,'2022-10-04 16:41:38.448',4,'HRDWR','DELL PC','2022-10-20 22:00:00.000','2022-10-21 12:00:00.000',3,'Reserva Dell',13.999999999999999999,'a8db3050f1');
+INSERT INTO ReservationTicket VALUES(25,'2022-10-04 17:33:53.547',4,'HRDWR','DELL PC','2022-10-22 12:00:00.000','2022-10-23 12:00:00.000',3,'Reserva Dell',24.0,'e3552bb97a');
+INSERT INTO ReservationTicket VALUES(26,'2022-10-04 17:36:07.656',4,'HRDWR','DELL PC','2022-10-24 12:00:00.000','2022-10-24 22:00:00.000',1,'Reserva Dell',10.0,'b7d97a737e');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('Countries',252);
 INSERT INTO sqlite_sequence VALUES('HardwareObjects',22);
 INSERT INTO sqlite_sequence VALUES('SoftwareObjects',39);
-INSERT INTO sqlite_sequence VALUES('ReservationTicket',26);
 INSERT INTO sqlite_sequence VALUES('RegisteredChanges',0);
 INSERT INTO sqlite_sequence VALUES('Users',5);
 INSERT INTO sqlite_sequence VALUES('AvailableObjects',64);
 INSERT INTO sqlite_sequence VALUES('HardwareClass',3);
 INSERT INTO sqlite_sequence VALUES('SoftwareClass',5);
 INSERT INTO sqlite_sequence VALUES('Rooms',8);
+INSERT INTO sqlite_sequence VALUES('ReservationTicket',26);
 COMMIT;
