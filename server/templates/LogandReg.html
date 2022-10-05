@@ -9,20 +9,19 @@
 
         <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
 		<meta charset="utf-8"></meta>
-		<link rel="stylesheet" href="logAndReg.css"></link>
+		<link rel="stylesheet" href="{{ url_for('static',filename='styles/logAndReg.css') }}"></link>
 		<title>BookMe</title>
 
 	</head>
 <body>
     <div>
-        
         <div id="myname-title">
             <h1 id="myname-name">BooKME &ensp;</h2>
         </div>
     </div>
     <div>
-        <a href="log.html"><img src="log.png" alt="log" id="log"></a>
+        <a href="{{ url_for('static',filename='log.html') }}"><img src="{{ url_for('static',filename='resources/log.png') }}" alt="log" id="log"></a>
         <p id = "ortext">or</p>
-        <a href="reg.html"><img src="reg.png" alt="reg" id="reg"></a>
+        <a href="{{ url_for('static',filename='reg.html') }}"><img src="{{ url_for('static',filename='resources/reg.png') }}" alt="reg" id="reg"></a>
     </div>
 </body>
