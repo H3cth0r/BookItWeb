@@ -66,6 +66,13 @@ def genQr(code):
 '''-----------------------'''
 
 '''---VIEWS---'''
+
+@app.route("/register", methods=["GET"])
+def registerView():
+    if True:#jwtValidated(request.cookies.get('jwt')):
+        return render_template('reg.html', hardW=[])
+
+# Show materials
 @app.route("/admin/materialesHardware", methods=["GET"])
 def getHardwareView():
     if True:#jwtValidated(request.cookies.get('jwt')):

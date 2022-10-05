@@ -1,0 +1,195 @@
+*{ 
+font-family: 'Chivo', sans-serif;
+}
+
+body {
+    font-size: 14px;
+    background-color: black;
+}
+
+  .v142_103 {
+    width: 100%;
+    height: 982px;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .v142_104 {
+    width: 100%;
+    height: 91px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .v142_118 {
+    width: 139px;
+    color: rgba(255,255,255,1);
+    position: absolute;
+    top: 167px;
+    left: 686px;
+    font-family: Chivo;
+    font-weight: Regular;
+    font-size: 35px;
+    opacity: 1;
+    text-align: left;
+  }
+  .v142_119 {
+    width: 364px;
+    color: url("../images/v142_119.png");
+    position: absolute;
+    top: 254px;
+    left: 252px;
+    font-size: 16px;
+    opacity: 1;
+    text-align: left;
+  }
+  .v182_13 {
+    width: 143px;
+    height: 49px;
+    background: url("../images/v182_13.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    opacity: 1;
+    position: absolute;
+    top: 845px;
+    left: 825px;
+    overflow: hidden;
+  }
+  .v37_205 {
+    width: 143px;
+    height: 49px;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 2px solid rgba(255,255,255,1);
+    overflow: hidden;
+  }
+  .v37_206 {
+    width: 65px;
+    color: rgba(255,255,255,1);
+    position: absolute;
+    top: 10px;
+    left: 72px;
+    font-family: Chivo;
+    font-weight: Regular;
+    font-size: 25px;
+    opacity: 1;
+    text-align: left;
+  }
+  .v163_93 {
+    width: 143px;
+    height: 49px;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 2px solid rgba(255,255,255,1);
+    overflow: hidden;
+  }
+  .v163_94 {
+    width: 65px;
+    color: rgba(255,255,255,1);
+    position: absolute;
+    top: 10px;
+    left: 72px;
+    font-family: Chivo;
+    font-weight: Regular;
+    font-size: 25px;
+    opacity: 1;
+    text-align: left;
+  }
+
+
+  .error {
+    color: #ff0000;
+  }
+  .is-valid {
+    color: #00ff00;
+  }
+  h3 {
+    color: #fff;
+  }
+  label {
+    color: #fff;
+  }
+  input {
+    color: #fff;
+    background-color: transparent;
+    margin:  0 0 10px 0;
+    border: 0;
+  }
+  .reg{
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .forms {
+    width: 100%;
+    height: 100%;
+    padding-left: 30%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  button {
+    width: 30%;
+    height: 30%;
+    background: rgba(0,0,0,1);
+    color : #fff;
+    border: 2px solid #fff;
+  }
+
+  .contenedor_boton {
+    width: 30%;
+    height: 20%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 80%;
+    left: 60%;
+    overflow: hidden;
+  }
+
+  .contenedor_terminos {
+    width: 20%;
+    height: 20%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 60%;
+    left: 20%;
+    overflow: hidden;
+    color: white;
+  }
+
+  .contenedor_boton a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  #birthdate {
+    filter: invert(100%);
+    color : black;
+  }
+
+  .todocompleto {
+    background-color: black;
+  }
