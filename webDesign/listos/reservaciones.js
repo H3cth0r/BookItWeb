@@ -21,25 +21,6 @@ function add_div(){
 }
 
 
-function new_div(obj){
-
-    for(let i = 0; i < 10; i++){
-            let the =`<div class="single_row_user" id="${username_list[i]}">
-            &nbsp <p>${i+1}</p>&nbsp
-                        <p>${username_list[i]}</p>
-                        <p>${objeto_list_id[i]}</p>
-                        <p>${fecha_inicio_list[i]}</p>
-                        <p>${fecha_fin_list[i]}</p>
-                        <div><button id="row_delete" onclick="delete_button('${objeto_list_id[i]}');">Delete</button></div>
-                        <div><button id="row_save" onclick="save_button('${objeto_list_id[i]}');">Save</button></div>
-                    </div>
-                    <br>`;
-        $('.div_list_users').append(the);
-        console.log("lol");
-    }
-}
-
-window.onload = add_div();
 
 function move_rows(id_val){
     $(`#${id_val}`).remove();

@@ -1,6 +1,6 @@
 *{
     font-family: Chivo, sans-serif;
-    box-sizing: content-box;
+    box-sizing: flex-box;
 }
 
 /*.iframes{
@@ -14,9 +14,12 @@
 }*/
 
 .iframes{
+    
     top : 40%;
-    align-items: center;
-
+    align-items: space-around;
+    display: flex;
+    flex-direction: row;
+    
 }
 h1 {
     text-align: center;
@@ -71,22 +74,23 @@ iframe {
     border: none;
     background-color: transparent;
     top : 50%;
+    left : 50%;
     
   }
 
-  .contenedores{
+  .contenedorMain{
     display: flex;
     flex-direction: column;
-    
-    margin-top: 20px;
+    align-items: center;
+    margin-top: 40px;
     margin-bottom: 20px;
+    padding-left: 10px;
+    width: 100%;
   }
 
   #selector {
-    width:  30%;
-    height: 25%;
+    
     border: none;
-    padding-left: 15%;
     
   }
 
@@ -94,4 +98,10 @@ iframe {
     padding-left: 50%;
     width: 40%;
     height: 40%;
+  }
+
+  .contenedores {
+    
+    justify-content: space-between;
+    width: 400%;
   }
