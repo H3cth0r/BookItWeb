@@ -1,0 +1,129 @@
+* {
+    box-sizing: border-box;
+  }
+  body {
+    font-size: 14px;
+  }
+  .v142_120 {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .v142_121 {
+    width: 100%;
+    height: 91px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .v142_123 {
+    width: 139px;
+    color: rgba(255,255,255,1);
+    position: absolute;
+    top: 167px;
+    left: 686px;
+    font-family: Chivo;
+    font-weight: Regular;
+    font-size: 55px;
+    opacity: 1;
+    text-align: left;
+  }
+  .v142_127 {
+    width: 346px;
+    color: yellow;
+    font-family: Chivo;
+    position: absolute;
+    top: 408px;
+    left: 583px;
+    opacity: 1;
+    text-align: center;
+  }
+  .v142_128 {
+        width: 346px;
+        color: yellow;
+        font-family: Chivo;
+        position: absolute;
+        top: 430px;
+        left: 583px;
+        opacity: 1;
+        text-align: center;
+      }
+  .v142_129 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 625px;
+    left: 694px;
+    overflow: hidden;
+  }
+  .v142_130 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 649px;
+    left: 673px;
+    overflow: hidden;
+  }
+  .v142_131 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 697px;
+    left: 766px;
+    overflow: hidden;
+  }
+  .v142_132 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 721px;
+    left: 790px;
+    overflow: hidden;
+  }
+  .v142_133 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 745px;
+    left: 766px;
+    overflow: hidden;
+  }
+  .v142_134 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 769px;
+    left: 742px;
+    overflow: hidden;
+  }
+  .v142_135 {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,1);
+    opacity: 1;
+    position: absolute;
+    top: 793px;
+    left: 718px;
+    overflow: hidden;
+  }
+  

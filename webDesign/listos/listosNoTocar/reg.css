@@ -4,13 +4,8 @@ font-family: 'Chivo', sans-serif;
 
 body {
     font-size: 14px;
-    width: 100%;
-    height: 100%;
+    background-color: black;
 }
-
-
-
-  
 
   .v142_103 {
     width: 100%;
@@ -188,4 +183,13 @@ body {
   .contenedor_boton a {
     color: #fff;
     text-decoration: none;
+  }
+  
+  #birth {
+    filter: invert(100%);
+    color : black;
+  }
+
+  .todocompleto {
+    background-color: black;
   }

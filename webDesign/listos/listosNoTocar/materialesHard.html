@@ -3,14 +3,14 @@
     <head>
         
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
         <!-- Jquery -->
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
          crud style -->
-        <link rel="stylesheet" href="objeto_nuevo.css">
+        <link rel="stylesheet" href="materialesHard.css">
         <!-- import crud functionality -->
-        <title>CRUD</title>
+        <title>BookMe</title>
     
     </head>
     <body>
@@ -35,7 +35,6 @@
 
         <!-- Main div -->
         <div class="main_div" id="main_div_id">
-            <h1 class="titulo"> Agregando nuevo objeto</h1>
 
             
 
@@ -44,25 +43,26 @@
             <!-- username, mail, name, country, birth, gender, creation(not_edit) -->
             <!-- name, lastname, gender, brith -->
             <div class="div_list_users" id="div_list_users_id">
-                <h2 class="titulo2"> Tipo</h2>
-                <select class="tipo" name="tipo" id="tipo">
-                    
-                    <option value="1">Elige un tipo de objeto</option>
-                    
-                    <option value="2">Hardware</option>
-                   
-                    <option value="3"> Software</option>
 
-                    <option value="4"> Sala</option>
-                </select>
                 <!-- Label -->
-                <br>
-                <br>
-                <div id="contenedortodo">
+                <div class="single_row_label" id="single_row_label_id">
                     
+                    <div><p>Prefijo</p></div>
+                    <div><p>Nombre Objeto</p></div>
+                    <div><p>Descripcion</p></div>
+                    <div><p>Cantidad</p></div>
+                    <div><p>Tipo</p></div>
+                    <div><p>Sistema Operativo</p></div>
+                    <div><p>Disponible</p></div>
+                    <div><p>Borrar</p></div>
+                    <div><p>Guardar</p></div>
                 </div>
+                
+                
 
-        <script src="objeto_nuevo.js"></script>
+            </div>
+
+        <script src="materialesHard.js"></script>
         </div>
     </body>
 </html>

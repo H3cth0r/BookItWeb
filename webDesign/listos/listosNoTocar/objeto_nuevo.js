@@ -56,10 +56,11 @@ $("select").change(function(){
             <label for="descripcion">Descripcion</label>
             <textarea rows="4" cols="50" id="descripcion" name="descripcion" placeholder="Descripcion"></textarea>
         </div>
-            
+            <button id="aceptarSala">Aceptar</button>
               
         </div>`;
             $('#contenedortodo').append(the);
+            add_Sala();
 
         }
         if($(this).val()=="3"){
@@ -129,10 +130,11 @@ $("select").change(function(){
             <label for="descripcion">Descripcion</label>
             <textarea rows="4" cols="50" id="descripcion" name="descripcion" placeholder="Descripcion"></textarea>
         </div>
-        
+        <button id="aceptarSoftware">Aceptar</button>
         </div>  
     </div>`;
             $('#contenedortodo').append(the);
+            add_Soft();
         }
         if($(this).val()=="2"){
             let the =   `<div id="textoHardware">
@@ -198,10 +200,11 @@ $("select").change(function(){
             <label for="descripcion">Descripcion</label>
             <textarea rows="4" cols="50" id="descripcion" name="descripcion" placeholder="Descripcion"></textarea>
         </div>
-        
+        <button id="aceptarHardware">Aceptar</button>
         </div>  
     </div>`;
             $('#contenedortodo').append(the);
+            
         }
     });
     
@@ -227,3 +230,85 @@ function delete_button(id_val){
 }
 
 
+function add_Hard(){
+    $('#aceptarHard').click(function(){
+        var nombreHardware = $('#nombreHardware').val();
+        var tipoHardware = $('#Hardware').val();
+        var os = $('#os').val();
+        var maxDays = $('#maxDays').val();
+        var prefijo = $('#prefijo').val();
+        var descripcion = $('#descripcion').val();
+
+        if(nombreHardware == "" || tipoHardware == "" || maxDays == "" || prefijo == "" || descripcion == ""){
+            alert("No se puede dejar campos vacios");
+        }
+        else{
+            $.ajax({
+                url: 'localhost:3000/addHardware', //cambiar esto por la ruta del servidor y añadir bien el json
+                type: 'POST',
+                data: {nombreHardware: nombreHardware, tipoHardware: tipoHardware, os: os, maxDays: maxDays, prefijo: prefijo, descripcion: descripcion},
+                success: function(data){
+                    alert(data);
+                }
+            });
+        }
+    });
+}
+
+function add_Soft(){
+    /*{
+  "quantity":5,
+  "name":"Adobe Photoshop",
+  "brand":"Adobe",
+  "operativeSystem":"Windows 10+",
+  "description":"Adobe XD apoya al diseño vectorial y a los sitios web wireframe, creando prototipos simples e interactivos con un solo clic.",
+  "prefix":"ADBXDW10",
+  "maxDays":"12"
+}*/
+    $('#aceptarSoft').click(function(){
+        var nombreSoftware = $('#nombreSoftware').val();
+        var tipoSoftware = $('#Software').val();
+        var os = $('#os').val();
+        var maxDays = $('#maxDays').val();
+        var prefijo = $('#prefijo').val();
+        var descripcion = $('#descripcion').val();
+
+        if(nombreSoftware == "" || tipoSoftware == "" || maxDays == "" || prefijo == "" || descripcion == ""){
+            alert("No se puede dejar campos vacios");
+        }
+        else{
+            $.ajax({
+                url: 'localhost:3000/addSoftware', //cambiar esto por la ruta del servidor y añadir bien el json
+                type: 'POST',
+                data: {quantity: 5, name: nombreSoftware, brand: tipoSoftware, operativeSystem: os, description: descripcion, prefix: prefijo, maxDays: maxDays},
+                success: function(data){
+                    alert(data);
+                }
+            });
+        }
+    });
+}
+
+function add_Sala(){
+    $('#aceptarSala').click(function(){
+        var nombreSala = $('#nombreSala').val();
+        var capacidad = $('#capacidad').val();
+        var maxDays = $('#maxDays').val();
+        var prefijo = $('#prefijo').val();
+        var descripcion = $('#descripcion').val();
+
+        if(nombreSala == "" || capacidad == "" || maxDays == "" || prefijo == "" || descripcion == ""){
+            alert("No se puede dejar campos vacios");
+        }
+        else{
+            $.ajax({
+                url: 'localhost:3000/addSala', //cambiar esto por la ruta del servidor y añadir bien el json
+                type: 'POST',
+                data: {nombreSala: nombreSala, capacidad: capacidad, maxDays: maxDays, prefijo: prefijo, descripcion: descripcion},
+                success: function(data){
+                    alert(data);
+                }
+            });
+        }
+    });
+}
