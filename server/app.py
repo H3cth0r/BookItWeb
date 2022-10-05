@@ -593,16 +593,16 @@ def getHardware():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         hardware = cur.execute('''
-        SELECT generalObjectID, identifier, description, operativeSystem, name, SUM(ResTicket.weight) as totalWeight FROM
-        (SELECT DT.inTypeId, DT.identifier, DT.description, DT.operativeSystem, DT.name, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
-        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.description, HardwareClass.operativeSystem, HardwareClass.name
+        SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.*
         FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID)
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(hardware)
@@ -613,16 +613,16 @@ def getSoftware():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         software = cur.execute('''
-        SELECT generalObjectID, identifier, name, brand, description, operativeSystem, SUM(ResTicket.weight) as totalWeight FROM
-        (SELECT DT.inTypeId, DT.identifier, DT.description, DT.operativeSystem, DT.name, DT.brand, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
-        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inTypeId) as identifier, inTypeId, SoftwareClass.name, SoftwareClass.brand, SoftwareClass.description, SoftwareClass.operativeSystem
+        SELECT generalObjectID, identifier, name, brand, description, operativeSystem, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
+        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inTypeId) as identifier, inTypeId, SoftwareClass.*
         FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId)) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.sO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID)
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(software)
@@ -633,14 +633,14 @@ def getRoomsApp():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         respBody = cur.execute('''
-        SELECT generalObjectID, name, description, location, capacity, SUM(ResTicket.weight) as totalWeight FROM
+        SELECT generalObjectID, name, description, location, capacity, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT Rooms.*, AvailableObjects.generalObjectID, AvailableObjects.rO FROM 
         Rooms INNER JOIN AvailableObjects 
         ON (Rooms.roomId = AvailableObjects.rO)) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID)
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(respBody)
@@ -754,12 +754,12 @@ def getTicket():
 def getTicketWithQr(qr):
     if jwtValidated(request.cookies.get('jwt')):
         userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
-        '''
-        if userData["admin"] == 0:
-            return make_response("Only admins", 401)
-        '''
+
         cur = get_db().cursor()
-        ticketInfo = cur.execute('''SELECT ticketId, objectType FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
+        ticketInfo = cur.execute('''SELECT ticketId, objectType, userId FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
+
+        if userData["admin"] == 0 and userData["id"] != ticketInfo["userId"]:
+            return make_response("Only admins", 401)
 
         if ticketInfo["objectType"] == "HRDWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
