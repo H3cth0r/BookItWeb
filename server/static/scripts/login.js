@@ -99,7 +99,8 @@ def login(name=None):
                     dataType: "json",
                     success: function (data) {
                         if (data.authorized) {
-                            window.location.replace("http://localhost:5000/main");
+                            //window.location.replace("http://localhost:5000/main");
+                            console.log("AAAAAGH")
                         } else {
                             $("#error").html("Usuario o contraseña incorrectos");
                         }
@@ -122,7 +123,8 @@ def login(name=None):
                     dataType: "json",
                     success: function (data) {
                         if (data.authorized) {
-                            window.location.replace("http://localhost:5000/main");
+                            console.log("SSSSSSSSSSSSSSSSSSSSIU")
+                            //window.location.replace("http://localhost:5000/main");
                         } else {
                             $("#error").html("Usuario o contraseña incorrectos");
                         }

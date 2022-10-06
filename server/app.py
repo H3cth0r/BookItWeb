@@ -82,7 +82,7 @@ def newObjectView():
     if True:
         return render_template('objeto_nuevo.html')
 
-# Show materials
+# Show hardware view
 @app.route("/admin/materialesHardware", methods=["GET"])
 def getHardwareView():
     if True:#jwtValidated(request.cookies.get('jwt')):
@@ -90,21 +90,21 @@ def getHardwareView():
         cur = get_db().cursor()
         hardware = cur.execute('''
         SELECT DT.*, COUNT(inClassId) as quantity FROM
-        (SELECT * FROM HardwareClass) DT
+        (SELECT * FROM HardwareClass WHERE deleted = 0) DT
         LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
 
         return render_template('materialesHard.html', hardW=hardware)
 
-# Show materials
+# Show software view
 @app.route("/admin/materialesSoftware", methods=["GET"])
 def getSoftwareView():
     if True:
         cur = get_db().cursor()
         software = cur.execute('''
         SELECT DT.*, COUNT(inClassId) as quantity FROM
-        (SELECT * FROM SoftwareClass) DT
+        (SELECT * FROM SoftwareClass WHERE deleted = 0) DT
         LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
@@ -171,7 +171,7 @@ def login(name=None):
     return resp
 
 
-@app.route("/api/logout", methods=['POST'])
+@app.route("/api/logout", methods=['GET'])
 def logout(name=None):
     resp = make_response('main.html')
     resp.set_cookie("JWT", expires=0)
@@ -337,7 +337,7 @@ def editHardware():
         body = request.get_json()
         cur = get_db().cursor()
         oldHardware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
-                                     (SELECT * FROM HardwareClass WHERE classId = ?) DT
+                                     (SELECT * FROM HardwareClass WHERE classId = ? AND deleted = 0) DT
                                      LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
                                      GROUP BY DT.classId''', (body["classId"],)).fetchone()
         oldQuantity = oldHardware["quantity"]
@@ -348,12 +348,13 @@ def editHardware():
                 cur.execute('''INSERT INTO HardwareObjects (classId, inClassId) VALUES (?, ?)''', (body["classId"], i))
                 cur.execute('''INSERT INTO AvailableObjects (hO) VALUES (?)''', (cur.lastrowid, ))
         elif dObjects < 0:
+            cur.execute("PRAGMA foreign_keys = ON")
             for i in range(oldQuantity, newQuantity, -1):
                 inTypeId = cur.execute('''SELECT HardwareObjects.inTypeId FROM HardwareObjects WHERE classId = ? AND inClassId = ?''',
                                        (body["classId"], i)).fetchone()["inTypeId"]
                 print(inTypeId)
                 cur.execute('''DELETE FROM HardwareObjects WHERE inTypeId = ?''', (inTypeId, ))
-        
+        cur.execute("PRAGMA foreign_keys = OFF")
         cur.execute('''
                     UPDATE HardwareClass SET name = ?, operativeSystem = ?, description = ?, prefix = ?, 
                     availability = ?, maxDays = ? WHERE classId = ?''',
@@ -387,7 +388,7 @@ def editSoftware():
         body = request.get_json()
         cur = get_db().cursor()
         oldSoftware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
-                                     (SELECT * FROM SoftwareClass WHERE classId = ?) DT
+                                     (SELECT * FROM SoftwareClass WHERE classId = ? AND deleted = 0) DT
                                      LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
                                      GROUP BY DT.classId''', (body["classId"],)).fetchone()
         oldQuantity = oldSoftware["quantity"]
@@ -398,8 +399,8 @@ def editSoftware():
                 cur.execute('''INSERT INTO SoftwareObjects (classId, inClassId) VALUES (?, ?)''', (body["classId"], i))
                 cur.execute('''INSERT INTO AvailableObjects (sO) VALUES (?)''', (cur.lastrowid, ))
         elif dObjects < 0:
-            for i in range(oldQuantity, newQuantity, -1):
-                cur.execute("PRAGMA foreign_keys = ON")
+            cur.execute("PRAGMA foreign_keys = ON")
+            for i in range(oldQuantity, newQuantity, -1):    
                 inTypeId = cur.execute('''SELECT SoftwareObjects.inTypeId FROM SoftwareObjects WHERE classId = ? AND inClassId = ?''',
                                        (body["classId"], i)).fetchone()["inTypeId"]
                 print(inTypeId)
@@ -446,6 +447,57 @@ def editRooms():
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
 
+
+# Expecting request: {"classId":classId}
+@app.route("/api/deleteHardwareClass", methods=["POST"])
+def deleteHardware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE HardwareClass SET deleted = 1 WHERE classId = ?''', (body["classId"],))
+        cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
+                (SELECT AvailableObjects.generalObjectID FROM 
+                (SELECT HardwareObjects.inTypeId FROM HardwareObjects WHERE classId = ?) DT
+                LEFT JOIN AvailableObjects ON (DT.inTypeId = AvailableObjects.hO))''', (body["classId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+# Expecting request: {"classId":classId}
+@app.route("/api/deleteSoftwareClass", methods=["POST"])
+def deleteSoftware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE SoftwareClass SET deleted = 1 WHERE classId = ?''', (body["classId"],))
+        cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
+                       (SELECT AvailableObjects.generalObjectID FROM 
+                       (SELECT SoftwareObjects.inTypeId FROM SoftwareObjects WHERE classId = ?) DT
+                       LEFT JOIN AvailableObjects ON (DT.inTypeId = AvailableObjects.sO))''', (body["classId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+# Expecting request: {"roomId":roomId}
+@app.route("/api/deleteRooms", methods=["POST"])
+def deleteHardware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE Rooms SET deleted = 1 WHERE roomId = ?''',(body["roomId"]))
+        cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
+                       (SELECT AvailableObjects.generalObjectID FROM Rooms
+                       LEFT JOIN AvailableObjects ON (Rooms.roomId = AvailableObjects.rO))''', (body["roomId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
 @app.route("/api/getHardwareClasses", methods=["POST"])
 def getHardwareClasses():
     body = request.get_json()
@@ -453,7 +505,7 @@ def getHardwareClasses():
         cur = get_db().cursor()
         hardware = cur.execute('''
         SELECT DT.*, COUNT(inClassId) as quantity FROM
-        (SELECT * FROM HardwareClass) DT
+        (SELECT * FROM HardwareClass WHERE deleted = 0) DT
         LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
@@ -466,7 +518,7 @@ def getSoftwareClasses():
         cur = get_db().cursor()
         software = cur.execute('''
         SELECT DT.*, COUNT(inClassId) as quantity FROM
-        (SELECT * FROM SoftwareClass) DT
+        (SELECT * FROM SoftwareClass WHERE deleted = 0) DT
         LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
@@ -478,7 +530,7 @@ def getRooms():
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
         software = cur.execute('''
-        SELECT * FROM Rooms
+        SELECT * FROM Rooms WHERE deleted = 0
         ''').fetchall()
         return json.dumps(software)
 
@@ -641,7 +693,7 @@ def getHardware():
         SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
         (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inClassId) as identifier, inTypeId, HardwareClass.*
-        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
+        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId) WHERE deleted = 0) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
         LEFT JOIN 
@@ -661,7 +713,7 @@ def getSoftware():
         SELECT generalObjectID, identifier, name, brand, description, operativeSystem, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
         (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inClassId) as identifier, inTypeId, SoftwareClass.*
-        FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId)) DT
+        FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId) WHERE deleted = 0) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.sO)) DT2
         LEFT JOIN 
@@ -681,7 +733,7 @@ def getRoomsApp():
         SELECT generalObjectID, name, description, location, capacity, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT Rooms.*, AvailableObjects.generalObjectID, AvailableObjects.rO FROM 
         Rooms INNER JOIN AvailableObjects 
-        ON (Rooms.roomId = AvailableObjects.rO)) DT2
+        ON (Rooms.roomId = AvailableObjects.rO) WHERE deleted = 0) DT2
         LEFT JOIN 
         (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
         BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
@@ -706,8 +758,8 @@ def getTimeRanges():
         respBody = cur.execute('''
         SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
         strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
-        FROM ReservationTicket WHERE startDay = date(?) AND ReservationTicket.objectId = ?
-        ''', (body["date"], body["objectId"])).fetchall()
+        FROM ReservationTicket WHERE (startDay = date(?) OR endDay = date(?)) AND ReservationTicket.objectId = ?
+        ''', (body["date"], body["date"], body["objectId"])).fetchall()
         return json.dumps(respBody)
 
 @app.route("/app/api/getTimeRangesForDays", methods=["POST"])
@@ -758,7 +810,7 @@ def getTicket():
         
         if body["objectType"] == "HRDWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
-                                DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, HardwareClass.name, 
+                                DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, HardwareClass.name, 
                                 HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
                                 (SELECT DT2.*, HardwareObjects.classId FROM 
                                 (SELECT DT.*, AvailableObjects.hO FROM 
@@ -768,7 +820,7 @@ def getTicket():
                                 INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)'''
         elif body["objectType"] == "SFTWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
-                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, SoftwareClass.name, 
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, SoftwareClass.name, 
                        SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
                        (SELECT DT2.*, SoftwareObjects.classId FROM 
                        (SELECT DT.*, AvailableObjects.sO FROM 
@@ -779,7 +831,7 @@ def getTicket():
                        '''
         elif body["objectType"] == "ROOM":
             query = '''SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
-                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, Rooms.name, 
+                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, DT2.weight, Rooms.name, 
                        Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
                        (SELECT DT.*, AvailableObjects.rO FROM 
                        (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
