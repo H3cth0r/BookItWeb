@@ -115,16 +115,6 @@ def getSoftwareView():
 
 # Show rooms view
 @app.route("/admin/materialesSalas", methods=["GET"])
-def getSoftwareView():
-    if True:
-        cur = get_db().cursor()
-        rooms = cur.execute('''
-        SELECT * FROM Rooms WHERE deleted = 0
-        ''').fetchall()
-        return render_template('materialesSalas.html', salas=rooms)
-
-# Show users view
-@app.route("/admin/materialesSalas", methods=["GET"])
 def getSalasView():
     if True:
         cur = get_db().cursor()
@@ -543,7 +533,7 @@ def deleteSoftware():
 
 # Expecting request: {"roomId":roomId}
 @app.route("/api/deleteRooms", methods=["POST"])
-def deleteHardware():
+def deleteRooms():
     if jwtValidated(request.cookies.get('jwt')):
         userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
         if userData["admin"] == 0:
@@ -577,7 +567,7 @@ def deleteTicket():
         body = request.get_json()
         cur = get_db().cursor()
         cur.execute('''
-        DELETE FROM ReservationTicket WHERE ticketId = ? AND userId = ?;
+        DELETE FROM ReservationTicket WHERE ticketId = ?;
         ''',
         (body["ticketId"], userData["userId"]))
         respBody = {"ticketDeleted":True}
