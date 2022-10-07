@@ -67,6 +67,11 @@ def genQr(code):
 def mainView(): 
     return render_template('main.html')
 
+@app.route("/authPrev", methods=["GET"])
+def authPrevView():
+    if True:
+        return render_template('LogandReg.html')
+
 @app.route("/login", methods=["GET"])
 def loginView():
     if True:
@@ -76,6 +81,34 @@ def loginView():
 def registerView():
     if True:
         return render_template('reg.html')
+
+@app.route("/register/verifying", methods=["GET"])
+def registerVerifying():
+    if True:
+        return render_template('verify.html')
+
+'''---RESERVATIONS---'''
+
+@app.route("/reservations/currentBookings", methods=["GET"])
+def currentBookingsView():
+    if jwtValidated(request.cookies.get('jwt')):
+        body = {}
+        userData = jwt.decode(request.cookies.get("jwt"), jwtKey, algorithms="HS256")
+        if "ignoreTicket" in body:
+            ignoreTicket = body["ignoreTicket"]
+        else:
+            ignoreTicket = "-1"
+
+        cur = get_db().cursor()
+        tickets = cur.execute('''SELECT ticketId, objectType, objectName, startDate, endDate FROM ReservationTicket 
+                                 WHERE ReservationTicket.userId = ?
+                                 AND ReservationTicket.endDate > datetime('now', '-5 hours') 
+                                 AND ticketId != ?
+                                 ORDER BY startDate''', 
+        (userData["userId"], ignoreTicket)).fetchall()
+        print(tickets)
+        return render_template('currBooks.html', tickets=tickets)
+
 
 '''---ADMIN---'''
 
@@ -126,12 +159,14 @@ def getSalasView():
 # Show users view
 @app.route("/admin/tickets", methods=["GET"])
 def getTicketsView():
-    if True:
+    if True:   
         cur = get_db().cursor()
-        rooms = cur.execute('''
-        SELECT * FROM ReservationTickets WHERE weight > 0
+        tickets = cur.execute('''
+        SELECT DT.*, Users.username FROM
+        (SELECT * FROM ReservationTicket WHERE weight > 0) DT
+        LEFT JOIN Users ON (Users.userId =  DT.userId)
         ''').fetchall()
-        return render_template('materialesSalas.html', salas=rooms)
+        return render_template('reservaciones.html', res=tickets)
 
 
 '''-------------------'''
@@ -987,12 +1022,8 @@ def getTicketWithQr(qr):
                        INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)
                        '''
         ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
-        qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
-        with open(qrPath, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-        ticket["qrCode"] = encoded_string.decode('utf-8')
-        #return render_template('ticketWithQr.html', ticket=ticket)
-        return ticket
+        #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
+        return render_template('ticketWithQr.html', ticket=ticket)
 
 @app.route("/api/updateQrCodes", methods=["GET"])
 def updateQrCodes():
