@@ -75,3 +75,7 @@ function save_button(id_val){
 }
 }
 
+function add_button(){
+    window.location.href = "/admin/nuevoObjeto" //añadir ruta de la página de añadir objeto
+}
+
