@@ -10,12 +10,13 @@ for (var i = 0; i < hardW.length; i++) {
 
     let the = `<div class="single_row_user" id="`+ hardwareID +`">
       
-                        <p id="prefijo">`+ hardwarePrefix +`</p>
-                        <p id="nombreObjeto">`+ hardwareName +`</p>
-                        <p id="descripcionObjeto">`+ hardwareDescription +`</p>
+                        <input type="text" value="`+ hardwarePrefix +`" id="prefijo">
+                        <input type="text" value="`+ hardwareName +`" id="nombreObjeto">
+                        <label for="descripcion">Descripcion</label>
+                        <textarea rows="2" cols="10" value="`+ hardwareDescription +`" id="descripcionObjeto"></textarea>
                         <input type="number" name="cantidad" id="cantidad" class="numero" value = `+ hardwareQuantity +`>
-                        <p id="tipo"> Hardware </p>
-                        <p id="tipo">`+ hardwareOS +`</p>
+                        <p> id="tipo"> Hardware </p>
+                        <input type="text" value"`+ hardwareOS +`" id="tipo">
                         <div class="checkbox">
                                     <input type="checkbox" name="disponible" id="disponible" class="checkbox">
                         </div>
@@ -37,6 +38,7 @@ function move_rows(id_val){
 // animation make smaller row div
 // delete the div
 function delete_button(id_val){
+    if (confirm ("¿Estás seguro de que quieres eliminar este objeto?")) {
     anime({
         targets: `#${id_val}`,
         translateX: 1500,
@@ -55,8 +57,10 @@ function delete_button(id_val){
     
         });
 }
+}
 
 function save_button(id_val){
+    if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
     alert("saved " + id_val)
     $.ajax({ 
     url: 'api/edit/hardware', //cambiar esto por la ruta del servidor y añadir bien el json
@@ -70,8 +74,8 @@ function save_button(id_val){
 
     });
 }
+}
 
-//ajax para guardar en la base de datos
-function save_all(){
-    alert("saved all")
+function add_button(){
+    window.location.href = "/admin/nuevoObjeto" //añadir ruta de la página de añadir objeto
 }

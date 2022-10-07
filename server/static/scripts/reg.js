@@ -4,7 +4,7 @@ var username = /^[a-zA-Z0-9\_\-]{4,16}$/; // Letras, numeros, guion y guion_bajo
 var email  = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 var emailTec  = /^[a-zA-Z0-9_.+-]+@tec.mx$/;
 var password = /^.{8,16}$/; // 4 a 16 digitos.
-var age1  = /^[0-9]{1,2}$/;
+
 
 
 $(document).ready(function () {
@@ -55,9 +55,6 @@ $(document).ready(function () {
             case (age == ""):
                 $("#age").focus();
                 $("#ageid").css("color", "red");
-            case (!age1.test(age)):
-                $("#age").focus();
-                $("#ageid").css("color", "red");
             case (contrasena == ""):
                 $("#password").focus();
                 $("#passwordid").css("color", "red");
@@ -105,7 +102,7 @@ $(document).ready(function () {
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) {
-                            console.log(data);
+                            window.location.href = "verify.html";
                         },
                         failure: function (errMsg) {
                             alert(errMsg);

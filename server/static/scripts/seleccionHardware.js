@@ -1,21 +1,3 @@
-var hardw = [
-    {
-        "quantity":3,
-        "name":"iPhone 11",
-        "operativeSystem":"iOS 12",
-        "description":"Núcleos = 4\nRAM = 6GB\nSSD = 64GB",
-        "prefix":"IPHONE11",
-        "maxDays":"15"
-      },
-      {
-        "quantity":3,
-        "name":"iPhone 11",
-        "operativeSystem":"iOS 12",
-        "description":"Núcleos = 4\nRAM = 6GB\nSSD = 64GB",
-        "prefix":"IPHONE11",
-        "maxDays":"15"
-      }
-];
 
 /*for (var i = 0; i < softW.length; i++) {
     var software = softW[i];

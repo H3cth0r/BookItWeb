@@ -53,46 +53,367 @@
                 <div class="form-group">
                     <label for="contry" id="country">"country":{</label>
                     <select name="country" id="countryId">
-                        <option value="1">Mexico </option>
-                        <option value="2">USA</option>
-                        <option value="3">Canada</option>
-                        <option value="4">Spain</option>
-                        <option value="5">France</option>
-                        <option value="6">Germany</option>
-                        <option value="7">Italy</option>
-                        <option value="8">England</option>
-                        <option value="9">Brazil</option>
-                        <option value="10">Argentina</option>
-                        <option value="11">Chile</option>
-                        <option value="12">Colombia</option>
-                        <option value="13">Peru</option>
-                        <option value="14">Venezuela</option>
-                        <option value="15">Ecuador</option>
-                        <option value="16">Uruguay</option>
-                        <option value="17">Paraguay</option>
-                        <option value="18">Bolivia</option>
-                        <option value="19">Costa Rica</option>
-                        <option value="20">El Salvador</option>
-                        <option value="21">Guatemala</option>
-                        <option value="22">Honduras</option>
-                        <option value="23">Nicaragua</option>
-                        <option value="24">Panama</option>
-                        <option value="25">Dominican Republic</option>
-                        <option value="26">Puerto Rico</option>
-                        <option value="27">Cuba</option>
-                        <option value="28">Jamaica</option>
-                        <option value="29">Haiti</option>
-                        <option value="30">Trinidad and Tobago</option>
-                        <option value="31">Barbados</option>
-                        <option value="32">Saint Lucia</option>
-                        <option value="33">Saint Vincent and the Grenadines</option>
-                        <option value="34">Grenada</option>
-                        <option value="35">Saint Kitts and Nevis</option>
-                        <option value="36">Antigua and Barbuda</option>
-                        <option value="37">Bahamas</option>
-                        <option value="38">Belize</option>
-                        <option value="39">Dominica</option>
-                        <option value="40">other</option>
+                        <!--
+INSERT INTO Countries VALUES(1,'Afghanistan');
+INSERT INTO Countries VALUES(2,'Aland Islands');
+INSERT INTO Countries VALUES(3,'Albania');
+INSERT INTO Countries VALUES(4,'Algeria');
+INSERT INTO Countries VALUES(5,'American Samoa');
+INSERT INTO Countries VALUES(6,'Andorra');
+INSERT INTO Countries VALUES(7,'Angola');
+INSERT INTO Countries VALUES(8,'Anguilla');
+INSERT INTO Countries VALUES(9,'Antarctica');
+INSERT INTO Countries VALUES(10,'Antigua and Barbuda');
+INSERT INTO Countries VALUES(11,'Argentina');
+INSERT INTO Countries VALUES(12,'Armenia');
+INSERT INTO Countries VALUES(13,'Aruba');
+INSERT INTO Countries VALUES(14,'Australia');
+INSERT INTO Countries VALUES(15,'Austria');
+INSERT INTO Countries VALUES(16,'Azerbaijan');
+INSERT INTO Countries VALUES(17,'Bahamas');
+INSERT INTO Countries VALUES(18,'Bahrain');
+INSERT INTO Countries VALUES(19,'Bangladesh');
+INSERT INTO Countries VALUES(20,'Barbados');
+INSERT INTO Countries VALUES(21,'Belarus');
+INSERT INTO Countries VALUES(22,'Belgium');
+INSERT INTO Countries VALUES(23,'Belize');
+INSERT INTO Countries VALUES(24,'Benin');
+INSERT INTO Countries VALUES(25,'Bermuda');
+INSERT INTO Countries VALUES(26,'Bhutan');
+INSERT INTO Countries VALUES(27,'Bolivia');
+INSERT INTO Countries VALUES(28,'Bonaire, Sint Eustatius and Saba');
+INSERT INTO Countries VALUES(29,'Bosnia and Herzegovina');
+INSERT INTO Countries VALUES(30,'Botswana');
+INSERT INTO Countries VALUES(31,'Bouvet Island');
+INSERT INTO Countries VALUES(32,'Brazil');
+INSERT INTO Countries VALUES(33,'British Indian Ocean Territory');
+INSERT INTO Countries VALUES(34,'Brunei Darussalam');
+INSERT INTO Countries VALUES(35,'Bulgaria');
+INSERT INTO Countries VALUES(36,'Burkina Faso');
+INSERT INTO Countries VALUES(37,'Burundi');
+INSERT INTO Countries VALUES(38,'Cambodia');
+INSERT INTO Countries VALUES(39,'Cameroon');
+INSERT INTO Countries VALUES(40,'Canada');
+INSERT INTO Countries VALUES(41,'Cape Verde');
+INSERT INTO Countries VALUES(42,'Cayman Islands');
+INSERT INTO Countries VALUES(43,'Central African Republic');
+INSERT INTO Countries VALUES(44,'Chad');
+INSERT INTO Countries VALUES(45,'Chile');
+INSERT INTO Countries VALUES(46,'China');
+INSERT INTO Countries VALUES(47,'Christmas Island');
+INSERT INTO Countries VALUES(48,'Cocos (Keeling) Islands');
+INSERT INTO Countries VALUES(49,'Colombia');
+INSERT INTO Countries VALUES(50,'Comoros');
+INSERT INTO Countries VALUES(51,'Congo');
+INSERT INTO Countries VALUES(52,'Congo, Democratic Republic of the Congo');
+INSERT INTO Countries VALUES(53,'Cook Islands');
+INSERT INTO Countries VALUES(54,'Costa Rica');
+INSERT INTO Countries VALUES(55,'Cote D''Ivoire');
+INSERT INTO Countries VALUES(56,'Croatia');
+INSERT INTO Countries VALUES(57,'Cuba');
+INSERT INTO Countries VALUES(58,'Curacao');
+INSERT INTO Countries VALUES(59,'Cyprus');
+INSERT INTO Countries VALUES(60,'Czech Republic');
+INSERT INTO Countries VALUES(61,'Denmark');
+INSERT INTO Countries VALUES(62,'Djibouti');
+INSERT INTO Countries VALUES(63,'Dominica');
+INSERT INTO Countries VALUES(64,'Dominican Republic');
+INSERT INTO Countries VALUES(65,'Ecuador');
+INSERT INTO Countries VALUES(66,'Egypt');
+INSERT INTO Countries VALUES(67,'El Salvador');
+INSERT INTO Countries VALUES(68,'Equatorial Guinea');
+INSERT INTO Countries VALUES(69,'Eritrea');
+INSERT INTO Countries VALUES(70,'Estonia');
+INSERT INTO Countries VALUES(71,'Ethiopia');
+INSERT INTO Countries VALUES(72,'Falkland Islands (Malvinas)');
+INSERT INTO Countries VALUES(73,'Faroe Islands');
+INSERT INTO Countries VALUES(74,'Fiji');
+INSERT INTO Countries VALUES(75,'Finland');
+INSERT INTO Countries VALUES(76,'France');
+INSERT INTO Countries VALUES(77,'French Guiana');
+INSERT INTO Countries VALUES(78,'French Polynesia');
+INSERT INTO Countries VALUES(79,'French Southern Territories');
+INSERT INTO Countries VALUES(80,'Gabon');
+INSERT INTO Countries VALUES(81,'Gambia');
+INSERT INTO Countries VALUES(82,'Georgia');
+INSERT INTO Countries VALUES(83,'Germany');
+INSERT INTO Countries VALUES(84,'Ghana');
+INSERT INTO Countries VALUES(85,'Gibraltar');
+INSERT INTO Countries VALUES(86,'Greece');
+INSERT INTO Countries VALUES(87,'Greenland');
+INSERT INTO Countries VALUES(88,'Grenada');
+INSERT INTO Countries VALUES(89,'Guadeloupe');
+INSERT INTO Countries VALUES(90,'Guam');
+INSERT INTO Countries VALUES(91,'Guatemala');
+INSERT INTO Countries VALUES(92,'Guernsey');
+INSERT INTO Countries VALUES(93,'Guinea');
+INSERT INTO Countries VALUES(94,'Guinea-Bissau');
+INSERT INTO Countries VALUES(95,'Guyana');
+INSERT INTO Countries VALUES(96,'Haiti');
+INSERT INTO Countries VALUES(97,'Heard Island and Mcdonald Islands');
+INSERT INTO Countries VALUES(98,'Holy See (Vatican City State)');
+INSERT INTO Countries VALUES(99,'Honduras');
+INSERT INTO Countries VALUES(100,'Hong Kong');
+INSERT INTO Countries VALUES(101,'Hungary');
+INSERT INTO Countries VALUES(102,'Iceland');
+INSERT INTO Countries VALUES(103,'India');
+INSERT INTO Countries VALUES(104,'Indonesia');
+INSERT INTO Countries VALUES(105,'Iran, Islamic Republic of');
+INSERT INTO Countries VALUES(106,'Iraq');
+INSERT INTO Countries VALUES(107,'Ireland');
+INSERT INTO Countries VALUES(108,'Isle of Man');
+INSERT INTO Countries VALUES(109,'Israel');
+INSERT INTO Countries VALUES(110,'Italy');
+INSERT INTO Countries VALUES(111,'Jamaica');
+INSERT INTO Countries VALUES(112,'Japan');
+INSERT INTO Countries VALUES(113,'Jersey');
+INSERT INTO Countries VALUES(114,'Jordan');
+INSERT INTO Countries VALUES(115,'Kazakhstan');
+INSERT INTO Countries VALUES(116,'Kenya');
+INSERT INTO Countries VALUES(117,'Kiribati');
+INSERT INTO Countries VALUES(118,'Korea, Democratic People''s Republic of');
+INSERT INTO Countries VALUES(119,'Korea, Republic of');
+INSERT INTO Countries VALUES(120,'Kosovo');
+INSERT INTO Countries VALUES(121,'Kuwait');
+INSERT INTO Countries VALUES(122,'Kyrgyzstan');
+INSERT INTO Countries VALUES(123,'Lao People''s Democratic Republic');
+INSERT INTO Countries VALUES(124,'Latvia');
+INSERT INTO Countries VALUES(125,'Lebanon');
+INSERT INTO Countries VALUES(126,'Lesotho');
+INSERT INTO Countries VALUES(127,'Liberia');
+INSERT INTO Countries VALUES(128,'Libyan Arab Jamahiriya');
+INSERT INTO Countries VALUES(129,'Liechtenstein');
+INSERT INTO Countries VALUES(130,'Lithuania');
+INSERT INTO Countries VALUES(131,'Luxembourg');
+INSERT INTO Countries VALUES(132,'Macao');
+INSERT INTO Countries VALUES(133,'Macedonia, the Former Yugoslav Republic of');
+INSERT INTO Countries VALUES(134,'Madagascar');
+INSERT INTO Countries VALUES(135,'Malawi');
+INSERT INTO Countries VALUES(136,'Malaysia');
+INSERT INTO Countries VALUES(137,'Maldives');
+INSERT INTO Countries VALUES(138,'Mali');
+INSERT INTO Countries VALUES(139,'Malta');
+INSERT INTO Countries VALUES(140,'Marshall Islands');
+INSERT INTO Countries VALUES(141,'Martinique');
+INSERT INTO Countries VALUES(142,'Mauritania');
+INSERT INTO Countries VALUES(143,'Mauritius');
+INSERT INTO Countries VALUES(144,'Mayotte');
+INSERT INTO Countries VALUES(145,'Mexico');
+INSERT INTO Countries VALUES(146,'Micronesia, Federated States of');
+INSERT INTO Countries VALUES(147,'Moldova, Republic of');
+INSERT INTO Countries VALUES(148,'Monaco');
+INSERT INTO Countries VALUES(149,'Mongolia');
+INSERT INTO Countries VALUES(150,'Montenegro');
+INSERT INTO Countries VALUES(151,'Montserrat');
+INSERT INTO Countries VALUES(152,'Morocco');
+INSERT INTO Countries VALUES(153,'Mozambique');
+INSERT INTO Countries VALUES(154,'Myanmar');
+INSERT INTO Countries VALUES(155,'Namibia');
+INSERT INTO Countries VALUES(156,'Nauru');
+INSERT INTO Countries VALUES(157,'Nepal');
+INSERT INTO Countries VALUES(158,'Netherlands');
+INSERT INTO Countries VALUES(159,'Netherlands Antilles');
+INSERT INTO Countries VALUES(160,'New Caledonia');
+INSERT INTO Countries VALUES(161,'New Zealand');
+INSERT INTO Countries VALUES(162,'Nicaragua');
+INSERT INTO Countries VALUES(163,'Niger');
+INSERT INTO Countries VALUES(164,'Nigeria');
+INSERT INTO Countries VALUES(165,'Niue');
+INSERT INTO Countries VALUES(166,'Norfolk Island');
+INSERT INTO Countries VALUES(167,'Northern Mariana Islands');
+INSERT INTO Countries VALUES(168,'Norway');
+INSERT INTO Countries VALUES(169,'Oman');
+INSERT INTO Countries VALUES(170,'Pakistan');
+INSERT INTO Countries VALUES(171,'Palau');
+INSERT INTO Countries VALUES(172,'Palestinian Territory, Occupied');
+INSERT INTO Countries VALUES(173,'Panama');
+INSERT INTO Countries VALUES(174,'Papua New Guinea');
+INSERT INTO Countries VALUES(175,'Paraguay');
+INSERT INTO Countries VALUES(176,'Peru');
+INSERT INTO Countries VALUES(177,'Philippines');
+INSERT INTO Countries VALUES(178,'Pitcairn');
+INSERT INTO Countries VALUES(179,'Poland');
+INSERT INTO Countries VALUES(180,'Portugal');
+INSERT INTO Countries VALUES(181,'Puerto Rico');
+INSERT INTO Countries VALUES(182,'Qatar');
+INSERT INTO Countries VALUES(183,'Reunion');
+INSERT INTO Countries VALUES(184,'Romania');
+INSERT INTO Countries VALUES(185,'Russian Federation');
+INSERT INTO Countries VALUES(186,'Rwanda');
+INSERT INTO Countries VALUES(187,'Saint Barthelemy');
+INSERT INTO Countries VALUES(188,'Saint Helena');
+INSERT INTO Countries VALUES(189,'Saint Kitts and Nevis');
+INSERT INTO Countries VALUES(190,'Saint Lucia');
+INSERT INTO Countries VALUES(191,'Saint Martin');
+INSERT INTO Countries VALUES(192,'Saint Pierre and Miquelon');
+INSERT INTO Countries VALUES(193,'Saint Vincent and the Grenadines');
+INSERT INTO Countries VALUES(194,'Samoa');
+INSERT INTO Countries VALUES(195,'San Marino');
+INSERT INTO Countries VALUES(196,'Sao Tome and Principe');
+INSERT INTO Countries VALUES(197,'Saudi Arabia');
+INSERT INTO Countries VALUES(198,'Senegal');
+INSERT INTO Countries VALUES(199,'Serbia');
+INSERT INTO Countries VALUES(200,'Serbia and Montenegro');
+INSERT INTO Countries VALUES(201,'Seychelles');
+INSERT INTO Countries VALUES(202,'Sierra Leone');
+INSERT INTO Countries VALUES(203,'Singapore');
+INSERT INTO Countries VALUES(204,'Sint Maarten');
+INSERT INTO Countries VALUES(205,'Slovakia');
+INSERT INTO Countries VALUES(206,'Slovenia');
+INSERT INTO Countries VALUES(207,'Solomon Islands');
+INSERT INTO Countries VALUES(208,'Somalia');
+INSERT INTO Countries VALUES(209,'South Africa');
+INSERT INTO Countries VALUES(210,'South Georgia and the South Sandwich Islands');
+INSERT INTO Countries VALUES(211,'South Sudan');
+INSERT INTO Countries VALUES(212,'Spain');
+INSERT INTO Countries VALUES(213,'Sri Lanka');
+INSERT INTO Countries VALUES(214,'Sudan');
+INSERT INTO Countries VALUES(215,'Suriname');
+INSERT INTO Countries VALUES(216,'Svalbard and Jan Mayen');
+INSERT INTO Countries VALUES(217,'Swaziland');
+INSERT INTO Countries VALUES(218,'Sweden');
+INSERT INTO Countries VALUES(219,'Switzerland');
+INSERT INTO Countries VALUES(220,'Syrian Arab Republic');
+INSERT INTO Countries VALUES(221,'Taiwan, Province of China');
+INSERT INTO Countries VALUES(222,'Tajikistan');
+INSERT INTO Countries VALUES(223,'Tanzania, United Republic of');
+INSERT INTO Countries VALUES(224,'Thailand');
+INSERT INTO Countries VALUES(225,'Timor-Leste');
+INSERT INTO Countries VALUES(226,'Togo');
+INSERT INTO Countries VALUES(227,'Tokelau');
+INSERT INTO Countries VALUES(228,'Tonga');
+INSERT INTO Countries VALUES(229,'Trinidad and Tobago');
+INSERT INTO Countries VALUES(230,'Tunisia');
+INSERT INTO Countries VALUES(231,'Turkey');
+INSERT INTO Countries VALUES(232,'Turkmenistan');
+INSERT INTO Countries VALUES(233,'Turks and Caicos Islands');
+INSERT INTO Countries VALUES(234,'Tuvalu');
+INSERT INTO Countries VALUES(235,'Uganda');
+INSERT INTO Countries VALUES(236,'Ukraine');
+INSERT INTO Countries VALUES(237,'United Arab Emirates');
+INSERT INTO Countries VALUES(238,'United Kingdom');
+INSERT INTO Countries VALUES(239,'United States');
+INSERT INTO Countries VALUES(240,'United States Minor Outlying Islands');
+INSERT INTO Countries VALUES(241,'Uruguay');
+INSERT INTO Countries VALUES(242,'Uzbekistan');
+INSERT INTO Countries VALUES(243,'Vanuatu');
+INSERT INTO Countries VALUES(244,'Venezuela');
+INSERT INTO Countries VALUES(245,'Viet Nam');
+INSERT INTO Countries VALUES(246,'Virgin Islands, British');
+INSERT INTO Countries VALUES(247,'Virgin Islands, U.s.');
+INSERT INTO Countries VALUES(248,'Wallis and Futuna');
+INSERT INTO Countries VALUES(249,'Western Sahara');
+INSERT INTO Countries VALUES(250,'Yemen');
+INSERT INTO Countries VALUES(251,'Zambia');
+INSERT INTO Countries VALUES(252,'Zimbabwe');-->
+                        <option value="0">Select Country</option>
+                        <option value="1">Afghanistan</option>
+                        <option value="2">Aland Islands</option>
+                        <option value="3">Albania</option>
+                        <option value="4">Algeria</option>
+                        <option value="5">American Samoa</option>
+                        <option value="6">Andorra</option>
+                        <option value="7">Angola</option>
+                        <option value="8">Anguilla</option>
+                        <option value="9">Antarctica</option>
+                        <option value="10">Antigua and Barbuda</option>
+                        <option value="11">Argentina</option>
+                        <option value="12">Armenia</option>
+                        <option value="13">Aruba</option>
+                        <option value="14">Australia</option>
+                        <option value="15">Austria</option>
+                        <option value="16">Azerbaijan</option>
+                        <option value="17">Bahamas</option>
+                        <option value="18">Bahrain</option>
+                        <option value="19">Bangladesh</option>
+                        <option value="20">Barbados</option>
+                        <option value="21">Belarus</option>
+                        <option value="22">Belgium</option>
+                        <option value="23">Belize</option>
+                        <option value="24">Benin</option>
+                        <option value="25">Bermuda</option>
+                        <option value="26">Bhutan</option>
+                        <option value="27">Bolivia</option>
+                        <option value="28">Bosnia and Herzegovina</option>
+                        <option value="29">Botswana</option>
+                        <option value="30">Bouvet Island</option>
+                        <option value="31">Brazil</option>
+                        <option value="32">British Indian Ocean Territory</option>
+                        <option value="33">Brunei Darussalam</option>
+                        <option value="34">Bulgaria</option>
+                        <option value="35">Burkina Faso</option>
+                        <option value="36">Burundi</option>
+                        <option value="37">Cambodia</option>
+                        <option value="38">Cameroon</option>
+                        <option value="39">Canada</option>
+                        <option value="40">Cape Verde</option>
+                        <option value="41">Cayman Islands</option>
+                        <option value="42">Central African Republic</option>
+                        <option value="43">Chad</option>
+                        <option value="44">Chile</option>
+                        <option value="45">China</option>
+                        <option value="46">Christmas Island</option>
+                        <option value="47">Cocos (Keeling) Islands</option>
+                        <option value="48">Colombia</option>
+                        <option value="49">Comoros</option>
+                        <option value="50">Congo</option>
+                        <option value="51">Congo, The Democratic Republic of the</option>
+                        <option value="52">Cook Islands</option>
+                        <option value="53">Costa Rica</option>
+                        <option value="54">Cote D'Ivoire</option>
+                        <option value="55">Croatia</option>
+                        <option value="56">Cuba</option>
+                        <option value="57">Cyprus</option>
+                        <option value="58">Czech Republic</option>
+                        <option value="59">Denmark</option>
+                        <option value="60">Djibouti</option>
+                        <option value="61">Dominica</option>
+                        <option value="62">Dominican Republic</option>
+                        <option value="63">Ecuador</option>
+                        <option value="64">Egypt</option>
+                        <option value="65">El Salvador</option>
+                        <option value="66">Equatorial Guinea</option>
+                        <option value="67">Eritrea</option>
+                        <option value="68">Estonia</option>
+                        <option value="69">Ethiopia</option>
+                        <option value="70">Falkland Islands (Malvinas)</option>
+                        <option value="71">Faroe Islands</option>
+                        <option value="72">Fiji</option>
+                        <option value="73">Finland</option>
+                        <option value="74">France</option>
+                        <option value="75">French Guiana</option>
+                        <option value="76">French Polynesia</option>
+                        <option value="77">French Southern Territories</option>
+                        <option value="78">Gabon</option>
+                        <option value="79">Gambia</option>
+                        <option value="80">Georgia</option>
+                        <option value="81">Germany</option>
+                        <option value="82">Ghana</option>
+                        <option value="83">Gibraltar</option>
+                        <option value="84">Greece</option>
+                        <option value="85">Greenland</option>
+                        <option value="86">Grenada</option>
+                        <option value="87">Guadeloupe</option>
+                        <option value="88">Guam</option>
+                        <option value="89">Guatemala</option>
+                        <option value="90">Guernsey</option>
+                        <option value="91">Guinea</option>
+                        <option value="92">Guinea-Bissau</option>
+                        <option value="93">Guyana</option>
+                        <option value="94">Haiti</option>
+                        <option value="95">Heard Island and Mcdonald Islands</option>
+                        <option value="96">Holy See (Vatican City State)</option>
+                        <option value="97">Honduras</option>
+                        <option value="98">Hong Kong</option>
+                        <option value="99">Hungary</option>
+                        <option value="100">Iceland</option>
+                        <option value="101">India</option>
+                        <option value="102">Indonesia</option>
+                        <option value="103">Iran, Islamic Republic Of</option>
+                        <option value="104">Iraq</option>
+                        <option value="105">Ireland</option>
+                        <option value="106">Isle of man </option>
+                        
                     </select>
                 </div>
               <div class="form-group" >
