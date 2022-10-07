@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>BookMe</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="{{ url_for('static',filename='scripts/reservar.js') }}"></script> " 
+    <script>
+        var softW = {{SFTWR|tojson}};
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/seleccionSoftware.css') }}">
+
+</head>
+<body>
+    <div id="numAssist">
+        <button id="btnMenos">-</button>
+        <div id="numAsistentes"></div>
+        <button id="btnMas">+</button> 
+
+    </div>
+    <div id="carrusel">
+
+    </div>
+    <div id="reloj">
+
+    </div>
+    <div id="guardar">
+
+    </div>
+    
+</body>
+
+
+
