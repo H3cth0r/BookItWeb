@@ -48,7 +48,7 @@ function delete_button(id_val){
     });
     setTimeout(move_rows, 800, id_val);
     $.ajax({
-        url: 'api/edit/software', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: 'api/edit/user', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
         data: JSON.stringify({ "userId" : userID }),
         contentType: "application/json",
@@ -64,7 +64,7 @@ function save_button(id_val){
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
     
     $.ajax({
-        url: 'api/edit/software', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: 'api/edit/user', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
         data: JSON.stringify({ "userId" : userID , "firstName" : firstName, "lastName" : lastName, "birthDate" : birthDate, "email" : email, "countryId" : countryId, "admin" : admin }),
         contentType: "application/json",
@@ -75,8 +75,4 @@ function save_button(id_val){
     });
     
 }
-}
-
-function add_button(){
-    window.location.href = "/admin/nuevoObjeto" //añadir ruta de la página de añadir objeto
 }
