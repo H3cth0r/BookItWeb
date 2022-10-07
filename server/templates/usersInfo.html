@@ -10,5 +10,16 @@
     <link rel="stylesheet" href="ticketWithQr.css">
 </head>
 <body>
+    <div id="fotoperfil">
+
+    </div>
+    <div id="infoUsuario">
+        
+    </div>
+    <script>
+        var userData = {{userData|tojson}};
+    </script>
+    <script src="{{ url_for('static',filename='scripts/materialesHard.js') }}"></script>
     
 </body>
+
