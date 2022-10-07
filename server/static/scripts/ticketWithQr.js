@@ -10,22 +10,22 @@ user    Name
 
 */ 
 
-for (var i = 0; i < HRDWR.length; i++) {
-    var ticked = HRDWR[i];
-    var ticketId = HRDWR.ticketId;
-    var userId = HRDWR.userId;
-    var dateRegistered = HRDWR.dateRegistered;
-    var startDate = HRDWR.startDate;
-    var endDate = HRDWR.endDate;
-    var objectId = HRDWR.objectId;
-    var objectType = HRDWR.objectType;
-    var objectName = HRDWR.objectName;
-    var ticketDescription = HRDWR.ticketDescription;
-    var qrCode = HRDWR.qrCode;
-    var weight = HRDWR.weight;
-    var name = HRDWR.name;
-    var operativeSystem = HRDWR.operativeSystem;
-    var objectDescription = HRDWR.objectDescription;
+for (var i = 0; i < hardW.length; i++) {
+    var hardware = hardW[i];
+    var ticketId = hardware.ticketId;
+    var userId = hardware.userId;
+    var dateRegistered = hardware.dateRegistered;
+    var startDate = hardware.startDate;
+    var endDate = hardware.endDate;
+    var objectId = hardware.objectId;
+    var objectType = hardware.objectType;
+    var objectName = hardware.objectName;
+    var ticketDescription = hardware.ticketDescription;
+    var qrCode = hardware.qrCode;
+    var weight = hardware.weight;
+    var name = hardware.name;
+    var operativeSystem = hardware.operativeSystem;
+    var objectDescription = hardware.objectDescription;
      /* aqui añadir el html del ticket */
     let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
     let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
@@ -108,23 +108,23 @@ for (var i = 0; i < HRDWR.length; i++) {
                        DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, SoftwareClass.name, 
                        SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription*/
 
-for (var i = 0; i < SFTWR.length; i++) {
-    var ticked = SFTWR[i];
-    var ticketId = SFTWR.ticketId;
-    var userId = SFTWR.userId;
-    var dateRegistered = SFTWR.dateRegistered;
-    var startDate = SFTWR.startDate;
-    var endDate = SFTWR.endDate;
-    var objectId = SFTWR.objectId;
-    var objectType = SFTWR.objectType;
-    var objectName = SFTWR.objectName;
-    var ticketDescription = SFTWR.ticketDescription;
-    var qrCode = SFTWR.qrCode;
-    var weight = SFTWR.weight;
-    var name = SFTWR.name;
-    var brand = SFTWR.brand;
-    var operativeSystem = SFTWR.operativeSystem;
-    var objectDescription = SFTWR.objectDescription;
+for (var i = 0; i < softW.length; i++) {
+    var software = softW[i];
+    var ticketId = software.ticketId;
+    var userId = software.userId;
+    var dateRegistered = software.dateRegistered;
+    var startDate = software.startDate;
+    var endDate = software.endDate;
+    var objectId = software.objectId;
+    var objectType = software.objectType;
+    var objectName = software.objectName;
+    var ticketDescription = software.ticketDescription;
+    var qrCode = software.qrCode;
+    var weight = software.weight;
+    var name = software.name;
+    var brand = software.brand;
+    var operativeSystem = software.operativeSystem;
+    var objectDescription = software.objectDescription;
         /* aqui añadir el html del ticket */
 
     let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
@@ -207,23 +207,23 @@ for (var i = 0; i < SFTWR.length; i++) {
                        DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, DT2.weight, Rooms.name, 
                        Rooms.label, Rooms.location, Rooms.description as objectDescription*/
 
-for (var i = 0; i < ROOM.length; i++) {
-    var ticked = ROOM[i];
-    var ticketId = ROOM.ticketId;
-    var userId = ROOM.userId;
-    var dateRegistered = ROOM.dateRegistered;
-    var startDate = ROOM.startDate;
-    var endDate = ROOM.endDate;
-    var objectId = ROOM.objectId;
-    var objectType = ROOM.objectType;
-    var objectName = ROOM.objectName;
-    var ticketDescription = ROOM.ticketDescription;
-    var qrCode = ROOM.qrCode;
-    var weight = ROOM.weight;
-    var name = ROOM.name;
-    var label = ROOM.label;
-    var location = ROOM.location;
-    var objectDescription = ROOM.objectDescription;
+for (var i = 0; i < salas.length; i++) {
+    var sala = salas[i];
+    var ticketId = sala.ticketId;
+    var userId = sala.userId;
+    var dateRegistered = sala.dateRegistered;
+    var startDate = sala.startDate;
+    var endDate = sala.endDate;
+    var objectId = sala.objectId;
+    var objectType = sala.objectType;
+    var objectName = sala.objectName;
+    var ticketDescription = sala.ticketDescription;
+    var qrCode = sala.qrCode;
+    var weight = sala.weight;
+    var name = sala.name;
+    var label = sala.label;
+    var location = sala.location;
+    var objectDescription = sala.objectDescription;
         /* aqui añadir el html del ticket */
     
     let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;

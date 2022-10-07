@@ -6,8 +6,11 @@
     <meta name="author" content="">
     <title>BookMe</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="seleccionHardware.js"></script> " 
-    <link rel="stylesheet" href="ticketWithQr.css">
+    <script src="{{ url_for('static',filename='script/seleccionHardware.js') }}"></script>
+    <script>
+      var hardware = {{HRDWR|tojson}};
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/seleccionHardware.css') }}">
     <!--  {{
   "roomId":1,
   "name":"Sala de Conferencias 01",
