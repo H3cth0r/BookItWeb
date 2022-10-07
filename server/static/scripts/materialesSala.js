@@ -20,19 +20,19 @@ for (var i = 0; i < rooms.length; i++) {
     var roomDescription = room.description;
     var roomLabel = room.label;
     var roomID = room.roomId;
-    let the = `<div class="single_row_user" id="`+ roomName + `">
-                        <p id="prefijo">`+ roomLabel +` </p>
-                        <p id="nombreObjeto">`+ roomName + `</p>
+    let the = `<div class="single_row_user" id="`+ roomID + `">
+                        <input type="text" value"" id="prefijo">`+ roomLabel +` </p>
+                        <input type="text" value"" id="nombreObjeto">`+ roomName + `</p>
 
-                        <p id="descripcionObjeto">`+ roomDescription + `</p>
+                        <input type="text" value"" id="descripcionObjeto">`+ roomDescription + `</p>
                         <input type="number" name="cantidad" id="cantidad" class="numero">
-                        <p id="tipo"> `+ roomLocation + ` </p>
+                        <input type="text" value"" id="tipo"> `+ roomLocation + ` </p>
                         <div class="checkbox">
                                     <input type="checkbox" name="disponible" id="disponible" class="checkbox">
                         </div>
                         
-                        <div><button id="row_delete" onclick="delete_button('`+ roomName + `');">Delete</button></div>
-                        <div><button id="row_save" onclick="save_button('$`+ roomName + `');">Save</button></div>
+                        <div><button id="row_delete" onclick="delete_button('`+ roomID + `');">Delete</button></div>
+                        <div><button id="row_save" onclick="save_button('$`+ roomID + `');">Save</button></div>
                     </div>
                     <br>`;
         $('.div_list_users').append(the);
@@ -49,21 +49,45 @@ function move_rows(id_val){
 // animation make smaller row div
 // delete the div
 function delete_button(id_val){
+    if (confirm ("¿Estás seguro de que quieres eliminar esta sala?")) {
     anime({
         targets: `#${id_val}`,
         translateX: 1500,
         easing: "easeInOutCubic"
     });
     setTimeout(move_rows, 800, id_val);
+    $.ajax({
+        url: 'api/edit/room', //cambiar esto por la ruta del servidor y añadir bien el json
+        type: 'POST',
+        data: JSON.stringify({ "roomId" : roomID , "name" : roomName, "location" : roomLocation, "label" : roomLabel, "description" : roomDescription, "capacity" : roomCapacity, "availability" : roomAvailability, "maxDays" : roomMaxDays }),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data){
+            alert(data);
+        }
+    
+        });
+}
+    localtion.reload(true);
 }
 
 function save_button(id_val){
-    alert("saved " + id_val)
+    if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
+    $.ajax({
+        url: 'api/edit/room', //cambiar esto por la ruta del servidor y añadir bien el json
+        type: 'POST',
+        data: JSON.stringify({ "roomId" : roomID }),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data){
+            alert(data);
+        }
+    
+        });
+}
     location.reload(true);
 }
 
-
-function block_button(id_val){
-    alert("blocked " + id_val)
-    location.reload(true);
+function add_button(){
+    window.location.href = "" //añadir ruta de la página de añadir objeto
 }
