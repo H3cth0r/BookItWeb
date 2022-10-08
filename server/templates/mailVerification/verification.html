@@ -52,7 +52,7 @@
 			<p id="verification-info" style="font-family: 'Chivo', sans-serif;">Click the following button to verify your account. XD</p>
 
 			<div class="img-div">
-				<a id="verify-button" href="https://www.facebook.com/">
+				<a id="verify-button" href="{{ url_for('registerVerifyView', hashKey=hashKey, _external=True) }}">
 					<img src="https://raw.githubusercontent.com/H3cth0r/BookMeWeb/main/webDesign/mailVerification/verifyButtonMail.png">
 				</a>
 			</div>
