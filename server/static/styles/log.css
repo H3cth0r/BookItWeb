@@ -114,7 +114,10 @@ body {
     text-align: left;
   }
 
-
+  .prevMsg {
+    text-align: center;
+    font-size: 25px;
+  }
   .error {
     color: #ff0000;
   }
@@ -168,7 +171,7 @@ body {
     background: rgba(0,0,0,1);
     opacity: 1;
     position: relative;
-    top: 80%;
+    top: 60%;
     left: 60%;
     overflow: hidden;
   }
@@ -179,7 +182,7 @@ body {
     background: rgba(0,0,0,1);
     opacity: 1;
     position: relative;
-    top: 60%;
+    top: 40%;
     left: 20%;
     overflow: hidden;
     color: white;

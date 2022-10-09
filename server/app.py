@@ -1,4 +1,4 @@
-from flask import Flask, request, g, make_response, redirect, render_template
+from flask import Flask, request, g, make_response, redirect, render_template, url_for
 from flask_mail import Mail, Message
 from hashlib import new, sha256, sha1
 from hmac import compare_digest
@@ -86,6 +86,8 @@ def authPrevView():
 def loginView():
     if True:
         return render_template('log.html')
+        
+        
 
 @app.route("/register", methods=["GET"])
 def registerView():
@@ -109,14 +111,22 @@ def registerVerifying():
 def registerVerifyView(hashKey):
     if True:
         cur = get_db().cursor()
-        u = cur.execute('''SELECT * FROM ToVerify WHERE hashKey = ? ORDER BY id DESC''').fetchone()
+        u = cur.execute('''SELECT * FROM ToVerify WHERE hashKey = ? ORDER BY id DESC''', (hashKey,)).fetchone()
+        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (u["email"],)).fetchone()
+        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (u["username"],)).fetchone()
+        if emailSearch is not None:
+            print(emailSearch)
+            return redirect("/login?error=110", code=302) 
+        elif usernameSearch is not None:
+            return redirect("/login?error=111", code=302) 
         dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         cur.execute('''INSERT INTO "main"."Users" ("dateRegistered", "firstName", "lastName", "username", "birthDate",
                        "organization", "email", "ocupation", "countryId", "hashPassword", "admin", "blocked", "deleted") 
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                        (dateRegistered, u["firstName"], u["lastName"], u["username"], u["birthDate"],
                        u["organization"], u["email"], u["ocupation"], u["countryId"], u["hashPassword"], 0, 0, 0))
-        return redirect("/login", code=302) # maybe redirect to confirmation
+        cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ?''', (u["email"], u["username"]))
+        return redirect("/login?fromVerify=true", code=302) 
 
 '''---RESERVATIONS---'''
 
@@ -285,6 +295,8 @@ def login(name=None):
     else:
         user = None
     
+    body["password"] = sha256(body["password"].encode('utf-8')).hexdigest()
+
     if user is None:
         respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid username or email"
     elif user["blocked"]:
@@ -295,7 +307,8 @@ def login(name=None):
         respBody = json.dumps({"authorized":True})
         resp.set_cookie("jwt", jwt.encode(user, jwtKey, algorithm="HS256"))
     else:
-        respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
+        print(user["hashPassword"])
+        print(body["password"])
 
     resp.set_data(respBody)
     return resp
@@ -955,11 +968,16 @@ def getTimeRanges():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
+        if "ignoreTicket" in body:
+            ignoreTicket = body["ignoreTicket"]
+        else:
+            ignoreTicket = "-1"
         respBody = cur.execute('''
         SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
         strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
-        FROM ReservationTicket WHERE (startDay = date(?) OR endDay = date(?)) AND ReservationTicket.objectId = ? AND weight > 0
-        ''', (body["date"], body["date"], body["objectId"])).fetchall()
+        FROM ReservationTicket 
+        WHERE (startDay = date(?) OR endDay = date(?)) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
+        ''', (body["date"], body["date"], body["objectId"], ignoreTicket)).fetchall()
         return json.dumps(respBody)
 
 @app.route("/app/api/getTimeRangesForDays", methods=["POST"])
@@ -967,12 +985,16 @@ def getTimeRangesForDays():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
+        if "ignoreTicket" in body:
+            ignoreTicket = body["ignoreTicket"]
+        else:
+            ignoreTicket = "-1"
         respBody = cur.execute('''
         SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
         strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
         FROM ReservationTicket WHERE ((startDay BETWEEN date(?) AND date(?))
-		OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ? AND weight > 0
-        ''', (body["startDate"], body["endDate"], body["startDate"], body["endDate"], body["objectId"])).fetchall()
+		OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
+        ''', (body["startDate"], body["endDate"], body["startDate"], body["endDate"], body["objectId"], ignoreTicket)).fetchall()
         return json.dumps(respBody)
 
 # Get user's tickets by userId
@@ -984,18 +1006,13 @@ def getTickets():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
-        if "ignoreTicket" in body:
-            ignoreTicket = body["ignoreTicket"]
-        else:
-            ignoreTicket = "-1"
 
         cur = get_db().cursor()
         tickets = cur.execute('''SELECT ticketId, objectType, objectName, startDate, endDate FROM ReservationTicket 
                                  WHERE ReservationTicket.userId = ?
-                                 AND ReservationTicket.endDate > datetime('now', '-5 hours') 
-                                 AND ticketId != ?
+                                 AND ReservationTicket.endDate > datetime('now', '-5 hours')
                                  ORDER BY startDate''', 
-        (userData["userId"], ignoreTicket)).fetchall()
+        (userData["userId"],)).fetchall()
         return tickets
 
 # Get user's ticket by ticketId
@@ -1087,7 +1104,7 @@ def newTicket():
         dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S.%f")
         endDate = datetime.strptime(body["endDate"], "%Y-%m-%d %H:%M:%S.%f")
-        weight = (endDate - startDate).seconds / 3600
+        weight = (endDate - startDate).total_seconds() / 3600
         startDate = startDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         endDate = endDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         cur = get_db().cursor()

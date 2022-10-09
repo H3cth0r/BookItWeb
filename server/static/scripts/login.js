@@ -5,6 +5,16 @@
 
 
     $(document).ready(function () {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.has('fromVerify')) {
+            $('.prevMsg').append('<p>Verification was successfull</p>');
+        }
+        if (urlParams.has('error')) {
+            $('.prevMsg').append('<p style="color:#FF0000";>User is alredy verified</p>');
+        }
+
+
         $("#botonenvio").click(function () {
             
             var correo = $("#email").val();
@@ -89,7 +99,7 @@ def login(name=None):
             var correo = $("#email").val();
             if (email.test(correo) == true) {
                 $.ajax({
-                    url: "http://localhost:5000/api/login",
+                    url: "/api/login",
                     type: "POST",
                     data: JSON.stringify({
                         "email": $("#email").val(),
@@ -99,8 +109,7 @@ def login(name=None):
                     dataType: "json",
                     success: function (data) {
                         if (data.authorized) {
-                            //window.location.replace("http://localhost:5000/main");
-                            console.log("AAAAAGH")
+                            window.location.replace("/main");
                         } else {
                             $("#error").html("Usuario o contraseña incorrectos");
                         }
