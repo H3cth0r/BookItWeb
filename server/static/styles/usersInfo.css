@@ -1,0 +1,101 @@
+#fotoperfil {
+    width: 100%;
+    height: 30%;
+    margin-left: 10px;
+    border: 1px solid #000;
+}
+
+#infousuario {
+    width: 100%;
+    height: 70%;
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid black;
+    margin-left: 10px;
+    
+}
+
+.error {
+    color: #ff0000;
+  }
+  .is-valid {
+    color: #00ff00;
+  }
+  h3 {
+    color: #fff;
+  }
+  label {
+    color: #fff;
+  }
+  input {
+    color: black;
+    background-color: transparent;
+    margin:  0 0 10px 0;
+    border: 0;
+  }
+  .reg{
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  .forms {
+    width: 100%;
+    height: 100%;
+    padding-left: 30%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+  }
+  button {
+    width: 30%;
+    height: 30%;
+    background: rgba(0,0,0,1);
+    color : #fff;
+    border: 2px solid #fff;
+  }
+
+  .contenedor_boton {
+    width: 30%;
+    height: 20%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 80%;
+    left: 60%;
+    overflow: hidden;
+  }
+
+  .contenedor_terminos {
+    width: 20%;
+    height: 20%;
+    background: rgba(0,0,0,1);
+    opacity: 1;
+    position: relative;
+    top: 60%;
+    left: 20%;
+    overflow: hidden;
+    color: white;
+  }
+
+  .contenedor_boton a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  #birthdate {
+    filter: invert(100%);
+    color : black;
+  }
+
+  .todocompleto {
+    background-color: black;
+  }
