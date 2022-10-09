@@ -201,7 +201,7 @@ def getTicketWithQr(qr):
         ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
         print(ticket)
         #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
-        return render_template('ticketWithQr.html', TICKET=ticket)
+        return render_template('ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"])
 
 '''---ADMIN---'''
 
