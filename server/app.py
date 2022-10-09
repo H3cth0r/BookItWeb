@@ -152,6 +152,56 @@ def currentBookingsView():
     else:
         return redirect("/login", code=302)
 
+@app.route("/reservations/getTicket/<qr>", methods=["GET"])
+def getTicketWithQr(qr):
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+
+        cur = get_db().cursor()
+        ticketInfo = cur.execute('''SELECT ticketId, objectType, userId FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
+
+        if userData["admin"] == 0 and userData["id"] != ticketInfo["userId"]:
+            return make_response("Only admins", 401)
+        if ticketInfo["objectType"] == "HRDWR":
+            query = '''SELECT DT4.*, Users.username, Users.firstName, Users.lastName, Users.organization, Users.birthDate FROM
+                       (SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, HardwareClass.name, 
+                       HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
+                       (SELECT DT2.*, HardwareObjects.classId FROM 
+                       (SELECT DT.*, AvailableObjects.hO FROM 
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN HardwareObjects ON (DT2.hO = HardwareObjects.inTypeId)) DT3
+                       INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)) DT4
+                       LEFT JOIN Users ON (DT4.userId = Users.userId)'''
+        elif ticketInfo["objectType"] == "SFTWR":
+            query = '''SELECT DT4.*, Users.username, Users.firstName, Users.lastName, Users.organization, Users.birthDate FROM
+                       (SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, SoftwareClass.name, 
+                       SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
+                       (SELECT DT2.*, SoftwareObjects.classId FROM 
+                       (SELECT DT.*, AvailableObjects.sO FROM 
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN SoftwareObjects ON (DT2.sO = SoftwareObjects.inTypeId)) DT3
+                       INNER JOIN SoftwareClass ON (DT3.classId = SoftwareClass.classId)) DT4
+                       LEFT JOIN Users ON (DT4.userId = Users.userId)
+                       '''
+        elif ticketInfo["objectType"] == "ROOM":
+            query = '''SELECT DT3.*, Users.username, Users.firstName, Users.lastName, Users.organization, Users.birthDate FROM
+                       (SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
+                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, DT2.weight, Rooms.name, 
+                       Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
+                       (SELECT DT.*, AvailableObjects.rO FROM 
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)) DT3
+                       LEFT JOIN Users ON (DT3.userId = Users.userId)
+                       '''
+        ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
+        print(ticket)
+        #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
+        return render_template('ticketWithQr.html', TICKET=ticket)
 
 '''---ADMIN---'''
 
@@ -1062,6 +1112,31 @@ def getTicket():
             encoded_string = base64.b64encode(image_file.read())
         ticket["qrCode64"] = encoded_string.decode('utf-8')
         return ticket
+
+
+# Get user's ticket by qrcode
+# This is expected to be a web path
+# Expecting request: {"jwt":jwt}
+# Ej.                {"jwt":"asdfg"}
+# Response 
+'''
+{
+    "dateRegistered": "2022-10-02 14:32:41.845",
+    "endDate": "2022-10-02 22:00:00.000",
+    "name": "DELL PC",
+    "objectDescription": "CPU = i5\nRAM = 8 GB\nROM = 1TB\nIdeal para trabajos de oficina.",
+    "objectId": 4,
+    "objectName": "DELL PC",
+    "objectType": "HRDWR",
+    "operativeSystem": "Windows 10",
+    "qrCode": "iVBORw0KGgoAAAANSUhEUgAAAPgAAAD4AQAAAADpqhamAAABg0lEQVR4nOWYwZLDMAhDnzr5/1/WHhBOZg+9xewm6TR14RA5yCCQ+Xp9vrv/vZ/ev521Xd+yTuO7239k10JGlrNo6zS+DfH3ujcDLtZpfBvin8vKL7rkhGl8+/yyQSCMBp4/4z9YKVC2igViWafx7cv/vz6xTuO723+eddHhv0qCaXw74u9V8yMAOvvjN8RfRjhrLCiDjB6//4Nk/JQ/YyQshPA4vh36J+wP7Uv8Rg49Pv4qvlP3FH8vSjx+/+UXBgmwcF6J5efz/0Orvtp386GMb+h/jF0p4Cz8/ff557/6H1nXFKBTFk3j2xH/M/m764HB9gv63w8yCKUBbPFDjPP47vabkrxA5cD0wPUS5vHd6z9y1KN6sVVJAFmex7ez/yvtL7DclXAa34b418I4k58agZQAGse3of6F/x3yUICaCU/j29P/dfsL1BwsE7Dn67/Tr7yH1f7pDf3vZf7d/F+zD17C/+K9ovovw9935L8e9jvTMFEFQP4D+PbV/5nnT/t/AFuu3pX9L0YAAAAAAElFTkSuQmCC",
+    "startDate": "2022-10-02 12:00:00.000",
+    "ticketDescription": "Reserva Dell",
+    "ticketId": 22,
+    "userId": 1
+}
+'''
+
 
 @app.route("/api/updateQrCodes", methods=["GET"])
 def updateQrCodes():
