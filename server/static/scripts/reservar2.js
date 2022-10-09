@@ -126,6 +126,7 @@ $(document).ready(function() {
     
 
     selectorDias();
+    selectorDias2();
     $("#ticketSalida").hide();
 
    
