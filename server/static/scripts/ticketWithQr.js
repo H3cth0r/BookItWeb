@@ -40,7 +40,7 @@ $(document).ready(function () {
         let tickId = `<p>`+ qrCode + `</p>`;
 
         $('#qrCode').append(qrImage);
-        $('#profile').append(imagenes);
+        //$('#profile').append(imagenes);
         $('#ticketsid').append(tickId);
         var tickedInside = `<div class="ticket">
             <div class="ticket__header">
@@ -139,7 +139,7 @@ $(document).ready(function () {
         let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
         let tickId = `<p>`+ ticketId + `</p>`;
         $('#qrCode').append(qrImage);
-        $('#profile').append(imagenes);
+        //$('#profile').append(imagenes);
         $('#ticketsid').append(tickId);
         var tickedInside = `<div class="ticket">
             <div class="ticket__header">
@@ -234,9 +234,11 @@ $(document).ready(function () {
             /* aqui añadir el html del ticket */
         
         let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
+        let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
         let tickId = `<p>`+ ticketId + `</p>`;
         $('#qrCode').append(qrImage);
-        $('#profile').append(imagenes);
+        //$('#profile').append(imagenes);
+        $('#ticketsid').append(tickId);
         var tickedInside = `<div class="ticket">
             <div class="ticket__header">
                 <h2 class="ticket__title">{</h2>

@@ -126,9 +126,14 @@ def registerVerifyView(hashKey):
                        (dateRegistered, u["firstName"], u["lastName"], u["username"], u["birthDate"],
                        u["organization"], u["email"], u["ocupation"], u["countryId"], u["hashPassword"], 0, 0, 0))
         cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ?''', (u["email"], u["username"]))
-        return redirect("/login?fromVerify=true", code=302) 
+        return redirect("/login?fromVerify=true", code=302)
 
 '''---RESERVATIONS---'''
+
+@app.route("/reservations/makeReservation", methods=["GET"])
+def reserveView():
+    if jwtValidated(request.cookies.get('jwt')):
+        
 
 @app.route("/reservations/currentBookings", methods=["GET"])
 def currentBookingsView():
