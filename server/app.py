@@ -337,13 +337,21 @@ def register():
     elif usernameSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":111})#, "desc":"Username is already registered"
     else:
-        
-        cur.execute('''INSERT INTO "main"."Users"
-                       ("dateRegistered", "firstName", "lastName", "username", "birthDate", "organization", 
-                       "email", "ocupation", "countryId", "hashPassword")
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
-                       (datetime.now(timezone(-timedelta(hours=5))).strftime("%Y-%m-%d %H:%M:%S"), body["firstName"], body["lastName"], body["username"],
-                       body["birthDate"], body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        key = body["username"] + body["email"] + dateRegistered
+        hashKey = sha256(key.encode('utf-8')).hexdigest()[:20]
+        msg = Message("Verify your new BooKMe account!",
+                       sender="bookmebot@gmail.com",
+                       recipients=[body["email"]])
+        msg.body = render_template("mailVerification/verification.html", hashKey=hashKey)
+        msg.html = render_template("mailVerification/verification.html", hashKey=hashKey)
+        mail.send(msg)
+        cur.execute('''
+                    INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
+                    "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                    (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                    body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
         respBody = json.dumps({"registered":True})
     return respBody
 
