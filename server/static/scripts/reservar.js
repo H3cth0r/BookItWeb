@@ -1,10 +1,10 @@
 var day = new Date();
-var maxDays = 15;
+//var maxDays = 15;
 var dayCount = 0;
 var dayStr;
-var maxPeople =10;
+//var maxPeople =10;
 var peopleCount = 0;
-//var roomID = room.roomId;
+var roomID = room.roomId;
 //var maxDays = room.maxDays;
 //var maxPeople = room.maxPeople;
 
@@ -53,8 +53,8 @@ function selectorDias() {
 
     $("#btnSaveD").click(function() {
         $("#contenedorDias").hide();
+        $("#ticketSalida").show();
         ticket();
-        $("#ticket").show();
     });
     
 }
@@ -82,7 +82,9 @@ function selectorPersonas() {
 }
 
 function ticket() {
-    $("#ticket").append("<p>Fecha: " + getDayName(day.getDay()) + " " + day.getDate() + "/" + (day.getMonth() + 1) + "/" + day.getFullYear() + "</p>");
+
+    $("#ticket").append("<p>From: </p>");
+    $("#ticket").append(getDayName(day.getDay()) + " " + day.getDate() + "/" + (day.getMonth() + 1) + "/" + day.getFullYear() + "</p>");
     $("#ticket").append("<p>Personas: " + peopleCount + "</p>");
     $("#btnSaveT").click(function() {
         $.ajax({
