@@ -359,6 +359,7 @@ def register():
         msg.body = render_template("mailVerification/verification.html", hashKey=hashKey)
         msg.html = render_template("mailVerification/verification.html", hashKey=hashKey)
         mail.send(msg)
+        body["hashPassword"] = sha256(body["hashPassword"].encode('utf-8')).hexdigest()
         cur.execute('''
                     INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
                     "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
@@ -831,7 +832,7 @@ def registerApp():
                     INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
                     "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
-                    (dateRegistered, body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                    (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
                     body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
         respBody = json.dumps({"readyToVerify":True})
     return respBody
@@ -1061,8 +1062,6 @@ def getTicket():
             encoded_string = base64.b64encode(image_file.read())
         ticket["qrCode64"] = encoded_string.decode('utf-8')
         return ticket
-
-
 
 @app.route("/api/updateQrCodes", methods=["GET"])
 def updateQrCodes():
