@@ -66,10 +66,10 @@ $(document).ready(function () {
             </div>`;
             
         
-        $('#datosTicket').append(tickedInside);
+        $('#textoTicket').append(tickedInside);
 
         if ($('#edit').click(function(){
-            $('#datosTicket').empty();
+            $('#textoTicket').empty();
                 var tickedInside = `<div class="ticket">
                 <div class="ticket__header">
                     <h2 class="ticket__title">{</h2>
@@ -92,7 +92,7 @@ $(document).ready(function () {
 
                 </div>
                 </div>`;
-            $('#datosTicket').append(tickedInside);
+            $('#textoTicket').append(tickedInside);
 
             if (('#safe').click(function(){
                 $.ajax({
@@ -164,11 +164,11 @@ $(document).ready(function () {
             </div>
             </div>`;
 
-        $('#datosTicket').append(tickedInside);
+        $('#textoTicket').append(tickedInside);
 
         if ($('#edit').click(function(){
 
-            $('#datosTicket').empty();
+            $('#textoTicket').empty();
             var tickedInside = `<div class="ticket">
             <div class="ticket__header">
                 <h2 class="ticket__title">{</h2>
@@ -191,7 +191,7 @@ $(document).ready(function () {
 
             </div>
             </div>`;
-            $('#datosTicket').append(tickedInside);
+            $('#textoTicket').append(tickedInside);
 
             if (('#safe').click(function(){
                 $.ajax({
@@ -259,10 +259,10 @@ $(document).ready(function () {
 
             </div>
             </div>`;
-        $('#datosTicket').append(tickedInside);
+        $('#textoTicket').append(tickedInside);
         if ($('#edit').click(function(){
 
-            $('#datosTicket').empty();
+            $('#textoTicket').empty();
             var tickedInside = `<div class="ticket">
             <div class="ticket__header">
                 <h2 class="ticket__title">{</h2>
@@ -285,7 +285,7 @@ $(document).ready(function () {
 
             </div>
             </div>`;
-            $('#datosTicket').append(tickedInside);
+            $('#textoTicket').append(tickedInside);
 
             if (('#safe').click(function(){
                 $.ajax({
@@ -314,6 +314,6 @@ $(document).ready(function () {
     let fechas = `<p>`+ diaInicial + ` ` + diaI + ` </p>
                     <p>`+ diaFinal + ` ` + diaF + ` </p>`;
 
-    $('#diaTIckets').append(fechas);
+    $('#diaTicket').append(fechas);
 
 })
