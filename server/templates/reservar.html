@@ -6,31 +6,47 @@
     <meta name="author" content="">
     <title>BookMe</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="{{ url_for('static',filename='scripts/reservar.js') }}"></script> " 
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservar.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
+	
+    <!--<script src="{{ url_for('static',filename='scripts/ticketWithQr.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/ticketWithQr.css') }}">
+   
+    <script type="text/javascript">
+        var sala = {{SALA|tojson}};
+    </script> -->
+    <script src="{{ url_for('static',filename='scripts/reservar.css') }}"></script>
     <script>
-        var softW = {{SFTWR|tojson}};
+        var rooms = {{ ROOMS | tojson }};
     </script>
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles/seleccionSoftware.css') }}">
-
 </head>
-<body>
-    <div id="numAssist">
-        <button id="btnMenos">-</button>
-        <div id="numAsistentes"></div>
-        <button id="btnMas">+</button> 
 
-    </div>
-    <div id="carrusel">
+<html>
+    <body>
+        <div id="contenedorPersonas">
+            <button id="btnAdd"><img src="{{ url_for('static',filename='resources/flecha mas.png') }}" alt="+"></button>
+            <div id="personas">
+            </div>
+            <button id="btnRemove"><img src="{{ url_for('static',filename='resources/flecha menos.png') }}" alt="-"></button>
+            <button id="btnSaveP">Next</button>
+            <p id="numberA">Number of Assistants </p>
+        </div>
+        <div id="contenedorDias">
+            <button id="menos"><img src="{{ url_for('static',filename='resources/menos.png') }}" ></button>
+            <div id="dia">
 
-    </div>
-    <div id="reloj">
+            </div>
+            
+            <button id="mas"><img src="{{ url_for('static',filename='resources/mas.png') }}" ></button>
+            <button id="btnSaveD">Next</button>
+        </div>
+        <div id="ticketSalida">
+            <div id="ticket">
+            </div>
+            <button id="btnSaveT"><img src=""{{ url_for('static',filename='resources/guardar.png') }}></button>
+        </div>
 
-    </div>
-    <div id="guardar">
 
-    </div>
-    
-</body>
+    </body>
 
-
-
+</html>

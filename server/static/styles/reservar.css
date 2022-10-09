@@ -1,0 +1,132 @@
+body {
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+#btnAdd {
+    background-color: transparent;
+
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-decoration: none;
+    align-items: center;   
+    margin-left: 44%; 
+}
+#btnRemove {
+    background-color: transparent;
+
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-decoration: none;
+    margin-left: 44%;
+}
+#personas {
+    background-color: #000000;
+    font-size: 3cm;
+    color: #FFFFFF;
+    text-align: center;
+}
+#menos {
+    background-color: transparent;
+    font-size: 3cm;
+    color: #FFFFFF;
+    text-align: center;
+}
+#mas {
+    background-color: transparent;
+    font-size: 3cm;
+    color: #FFFFFF;
+    text-align: center;
+}
+#dia {
+    background-color: white;
+    width: 40%;
+    height: 35%;
+    font-size: 3cm;
+    color: #000000;
+    text-align: center;
+}
+
+#contenedorDias {
+    background-color: #000000;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#ticketSalida {
+    background-color: white;
+    color : #000000;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#ticket {
+    background-color: white;
+    color : #000000;
+    width: 45%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+
+    font-size: 1.5cm;
+    box-shadow: #605f5f 2px 2px 5px 5px;
+
+}
+
+#btnSaveP {
+    background-color: transparent;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    font-size: 1cm;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-decoration: none;
+    margin-left: 60%;
+}
+
+#numberA {
+    background-color: transparent;
+    color: #FFFFFF;
+    font-size: 1.5cm;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-decoration: none;
+    margin-left: 32%;
+}
+
+#btnSaveD {
+    background-color: transparent;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    font-size: 1cm;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-decoration: none;
+    
+}
+#btnSaveT {
+    background-color: transparent;
+    color: #FFFFFF;
+    border: 1px solid transparent;
+    padding-top: 10px;
+    
+    
+}
