@@ -9,6 +9,9 @@ user    Name
         organization
 
 */ 
+objeto = ticket.objectType;
+
+if (objeto == "Hardware") {
 
 for (var i = 0; i < hardW.length; i++) {
     var hardware = hardW[i];
@@ -103,11 +106,13 @@ for (var i = 0; i < hardW.length; i++) {
     }
     ));
 }
+}
 
 /*SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
                        DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, SoftwareClass.name, 
                        SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription*/
 
+if (objeto == "Software") {
 for (var i = 0; i < softW.length; i++) {
     var software = softW[i];
     var ticketId = software.ticketId;
@@ -202,11 +207,12 @@ for (var i = 0; i < softW.length; i++) {
     }
     ));
 }
-
+}
 /*SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
                        DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, DT2.weight, Rooms.name, 
                        Rooms.label, Rooms.location, Rooms.description as objectDescription*/
 
+if (objeto == "Room") {
 for (var i = 0; i < salas.length; i++) {
     var sala = salas[i];
     var ticketId = sala.ticketId;
@@ -298,6 +304,7 @@ for (var i = 0; i < salas.length; i++) {
         }));
     }
     ));
+}
 }
 
 
