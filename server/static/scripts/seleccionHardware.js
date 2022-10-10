@@ -28,10 +28,7 @@ $(document).ready(function () {
         var hardware = hardw[i];
         var generalObjectId = hardware.generalObjectId;
         var hardwareName = hardware.name;
-        var hardwareOS = hardware.operativeSystem;
-        var hardwareDescription = hardware.description;
         var hardwarePrefix = hardware.identifier;
-        var hardwareMaxDays = hardware.maxDays;
         var hardwareWeight = hardware.totalWeight;
         
         var hardwareHTML = "<div class='hardware'>";
@@ -44,7 +41,7 @@ $(document).ready(function () {
         else {
             hardwareHTML += "<p>Not Available       🔴</p>";
         }
-        hardwareHTML += "<button name='generalObjectId' value='" + generalObjectId + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
+        hardwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
         hardwareHTML += "</div>";
         
         document.write(hardwareHTML);
@@ -53,15 +50,29 @@ $(document).ready(function () {
     }
 
     //si da click en un botón, mandar:
-    /*
-    {
-        "objectType" : "HRDWR",
-        "objectId" : 3,
-        "objectName" : "Dell PC"
+        /*
+        {
+            "objectType" : "HRDWR",
+            "objectId" : 3,
+            "objectName" : "Dell PC"
+        }
+        Al servicio:
+        /reservations/makeReservation
+        como POST
+        */
+    $("#botonenvio").click(function () {
+        let index = $('#botonenvio').val();
+        
+        $.ajax({
+            url: "/Reservas/Reservas",
+            type: "POST",
+            data: {"objectType" : "hardware",
+                   "objectId" : hardw[index].generalObjectId, 
+                   "objectName" : hardw[index].name}
+
+        });
     }
-    Al servicio:
-    /reservations/makeReservation
-    como POST
-    */
+    );
+    
     
 })
