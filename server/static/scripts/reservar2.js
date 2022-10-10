@@ -51,12 +51,6 @@ function selectorDias() {
                 $("#dia").text(getDayName(day.getDay()) + " " +day.getDate() + "/" + (day.getMonth() + 1) + "/" + day.getFullYear());
             }
     }); 
-
-    $("#btnSaveD").click(function() {
-        $("#contenedorDias").hide();
-        $("#ticketSalida").show();
-        ticket();
-    });
     
 }
 function selectorDias2() {
@@ -86,6 +80,7 @@ function selectorDias2() {
 
     $("#btnSaveD").click(function() {
         $("#contenedorDias").hide();
+        $("#contenedorDias2").hide();
         $("#ticketSalida").show();
         ticket();
     });
@@ -103,10 +98,11 @@ function ticket() {
     $("#ticket").append("<p>Personas: " + peopleCount + "</p>");
     $("#btnSaveT").click(function() {
         $.ajax({
-            url: "http://localhost:8080/Reservas/Reservas",
+            url: "/Reservas/Reservas",
             type: "POST",
             data: {
-                fechas: day,
+                fechasInicio: day,
+                fechasFin: day2,
                 personas: peopleCount,
                 roomId : roomID
             },

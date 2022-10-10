@@ -88,7 +88,7 @@ function ticket() {
     $("#ticket").append("<p>Personas: " + peopleCount + "</p>");
     $("#btnSaveT").click(function() {
         $.ajax({
-            url: "http://localhost:8080/Reservas/Reservas",
+            url: "Reservas/Reservas",
             type: "POST",
             data: {
                 fechas: day,
