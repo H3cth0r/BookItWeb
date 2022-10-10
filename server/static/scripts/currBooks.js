@@ -1,11 +1,14 @@
-for (var i = 0; i < currBooks.length; i++) {
-    var currBook = currBooks[i];
-    var currBookTyoe = currBook.type;
-    var currBookName = currBook.prefix;
-    var currBookStart = currBook.start;
-    var currBookEnd = currBook.end;
+$(document).ready(function(){
+    console.log(currBooks.length)
+    for (var i = 0; i < currBooks.length; i++) {
+        var currBook = currBooks[i];
+        var currBookID = currBook.ticketId;
+        var currBookType = currBook.objectType;
+        var currBookName = currBook.objectName;
+        var currBookStart = currBook.startDate;
+        var currBookEnd = currBook.endDate;
 
-    let the = `<div class="single_row_user" id="`+ currBookID + `">
+        let the = `<div class="single_row_user" id="`+ currBookID + `">
                     <div class="single_row_user" id="nombre">
                         <p>`+ currBookName +` </p>
                         <p>`+ currBookType + `</p>
@@ -17,13 +20,14 @@ for (var i = 0; i < currBooks.length; i++) {
                     <div class="single_row_user" id="botones">
                         <div><button id="qrCode" > <img src="{{ url_for('static',filename='resources/qr.png') }}" alt="QR Code" width="30" height="30"> </button></div>
                         <div><button id="row_delete" onclick="delete_button('`+ currBookID + `');">Delete</button></div>
-
+                    </div>
                     <br>`;
         $('#currBookings').append(the);
         console.log("lol");
-    
-    
-}
+    }
+})
+
+
 
 
 function delete_button(id_val){

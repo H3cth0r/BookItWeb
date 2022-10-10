@@ -97,12 +97,12 @@ $(document).ready(function () {
             
                     $.ajax({
                         type: "POST",
-                        url: "http://localhost:5000/api/register",
+                        url: "/api/register",
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) {
-                            window.location.href = "verify.html";
+                            window.location.href = "/register/verifying";
                         },
                         failure: function (errMsg) {
                             alert(errMsg);

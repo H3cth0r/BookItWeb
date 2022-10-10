@@ -1,5 +1,5 @@
-from flask import Flask, request, g, make_response
-from flask import render_template
+from flask import Flask, request, g, make_response, redirect, render_template, url_for
+from flask_mail import Mail, Message
 from hashlib import new, sha256, sha1
 from hmac import compare_digest
 import json
@@ -11,7 +11,17 @@ from qrcode import QRCode, constants
 
 print("Server started")
 
+mail = Mail()
 app = Flask(__name__)
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'bookmebot@gmail.com'
+app.config['MAIL_PASSWORD'] = 'czufauxtrhvdwnic'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 DATABASE = 'DB\BookMeDB.db'
 jwtKey = 'BooKMeIsCool'
@@ -29,11 +39,6 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE)
         db.row_factory = make_dicts
     return db
-
-@app.route("/")
-def hello_world(name=None): 
-    a = {"a":1, "b":2}
-    return render_template('main.html', test=a)
 
 def createJWT(jsnDict):
     return jwt.encode(jsnDict, jwtKey, algorithm="HS256")
@@ -68,32 +73,257 @@ def genQr(code):
 
 '''---VIEWS---'''
 
+@app.route("/")
+def mainView(): 
+    return render_template('main.html')
+
+@app.route("/authPrev", methods=["GET"])
+def authPrevView():
+    if True:
+        return render_template('LogandReg.html')
+
+@app.route("/login", methods=["GET"])
+def loginView():
+    if True:
+        return render_template('log.html')
+        
+        
+
 @app.route("/register", methods=["GET"])
 def registerView():
-    if True:#jwtValidated(request.cookies.get('jwt')):
-        return render_template('reg.html', hardW=[])
+    if True:
+        return render_template('reg.html')
 
-# Show materials
-@app.route("/admin/materialesHardware", methods=["GET"])
-def getHardwareView():
-    if True:#jwtValidated(request.cookies.get('jwt')):
-        # if user is admin
+@app.route("/logout", methods=['GET'])
+def logoutView(name=None):
+    resp = make_response(redirect('/', ))
+    resp.set_cookie("JWT", expires=0)
+    resp.set_cookie("testCookie", expires=0)
+    resp.set_cookie("jwt", expires=0)
+    return resp
+
+@app.route("/register/verifying", methods=["GET"])
+def registerVerifying():
+    if True:
+        return render_template('verify.html')
+
+@app.route("/register/verify/<hashKey>", methods=["GET"])
+def registerVerifyView(hashKey):
+    if True:
+        cur = get_db().cursor()
+        u = cur.execute('''SELECT * FROM ToVerify WHERE hashKey = ? ORDER BY id DESC''', (hashKey,)).fetchone()
+        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (u["email"],)).fetchone()
+        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (u["username"],)).fetchone()
+        if emailSearch is not None:
+            print(emailSearch)
+            return redirect("/login?error=110", code=302) 
+        elif usernameSearch is not None:
+            return redirect("/login?error=111", code=302) 
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        cur.execute('''INSERT INTO "main"."Users" ("dateRegistered", "firstName", "lastName", "username", "birthDate",
+                       "organization", "email", "ocupation", "countryId", "hashPassword", "admin", "blocked", "deleted") 
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                       (dateRegistered, u["firstName"], u["lastName"], u["username"], u["birthDate"],
+                       u["organization"], u["email"], u["ocupation"], u["countryId"], u["hashPassword"], 0, 0, 0))
+        cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ?''', (u["email"], u["username"]))
+        return redirect("/login?fromVerify=true", code=302)
+
+'''---RESERVATIONS---'''
+
+@app.route("/reservations/showHardware", methods=["GET"])
+def showHardwareView():
+    if jwtValidated(request.cookies.get('jwt')):
         cur = get_db().cursor()
         hardware = cur.execute('''
         SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
-        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inTypeId) as identifier, inTypeId, HardwareClass.*
-        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inClassId) as identifier, inTypeId, HardwareClass.*
+        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId) WHERE deleted = 0) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
         LEFT JOIN 
-        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1 
         GROUP BY DT2.generalObjectID
+        ''').fetchall()
+        return render_template("seleccionHardware.html", HRDWR=hardware)
+
+
+@app.route("/reservations/makeReservation", methods=["GET"])
+def reserveView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template("reservar.html")
+
+@app.route("/reservations/currentBookings", methods=["GET"])
+def currentBookingsView():
+    if jwtValidated(request.cookies.get('jwt')):
+        body = {}
+        userData = jwt.decode(request.cookies.get("jwt"), jwtKey, algorithms="HS256")
+        if "ignoreTicket" in body:
+            ignoreTicket = body["ignoreTicket"]
+        else:
+            ignoreTicket = "-1"
+
+        cur = get_db().cursor()
+        tickets = cur.execute('''SELECT ticketId, objectType, objectName, startDate, endDate FROM ReservationTicket 
+                                 WHERE ReservationTicket.userId = ?
+                                 AND ReservationTicket.endDate > datetime('now', '-5 hours') 
+                                 AND ticketId != ?
+                                 ORDER BY startDate''', 
+        (userData["userId"], ignoreTicket)).fetchall()
+        print(tickets)
+        return render_template('currBooks.html', tickets=tickets)
+    else:
+        return redirect("/login", code=302)
+
+@app.route("/reservations/getTicket/<qr>", methods=["GET"])
+def getTicketWithQr(qr):
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+
+        cur = get_db().cursor()
+        ticketInfo = cur.execute('''SELECT ticketId, objectType, userId FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
+
+        if userData["admin"] == 0 and userData["id"] != ticketInfo["userId"]:
+            return make_response("Only admins", 401)
+        if ticketInfo["objectType"] == "HRDWR":
+            query = '''SELECT DT4.*, Users.username, Users.firstName, Users.lastName, Users.organization, Users.birthDate FROM
+                       (SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, HardwareClass.name, 
+                       HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
+                       (SELECT DT2.*, HardwareObjects.classId FROM 
+                       (SELECT DT.*, AvailableObjects.hO FROM 
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN HardwareObjects ON (DT2.hO = HardwareObjects.inTypeId)) DT3
+                       INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)) DT4
+                       LEFT JOIN Users ON (DT4.userId = Users.userId)'''
+        elif ticketInfo["objectType"] == "SFTWR":
+            query = '''SELECT DT4.*, Users.username, Users.firstName, Users.lastName, Users.organization, Users.birthDate FROM
+                       (SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, SoftwareClass.name, 
+                       SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
+                       (SELECT DT2.*, SoftwareObjects.classId FROM 
+                       (SELECT DT.*, AvailableObjects.sO FROM 
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN SoftwareObjects ON (DT2.sO = SoftwareObjects.inTypeId)) DT3
+                       INNER JOIN SoftwareClass ON (DT3.classId = SoftwareClass.classId)) DT4
+                       LEFT JOIN Users ON (DT4.userId = Users.userId)
+                       '''
+        elif ticketInfo["objectType"] == "ROOM":
+            query = '''SELECT DT3.*, Users.username, Users.firstName, Users.lastName, Users.organization, Users.birthDate FROM
+                       (SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
+                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, DT2.weight, Rooms.name, 
+                       Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
+                       (SELECT DT.*, AvailableObjects.rO FROM 
+                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
+                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
+                       INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)) DT3
+                       LEFT JOIN Users ON (DT3.userId = Users.userId)
+                       '''
+        ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
+        print(ticket)
+        #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
+        return render_template('ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"])
+
+'''---ADMIN---'''
+
+# Show new object view
+@app.route("/admin/nuevoObjeto", methods=["GET"])
+def newObjectView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        return render_template('objeto_nuevo.html')
+    else:
+        return redirect("/login", code=302)
+
+# Show hardware view
+@app.route("/admin/materialesHardware", methods=["GET"])
+def getHardwareView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        cur = get_db().cursor()
+        hardware = cur.execute('''
+        SELECT DT.*, COUNT(inClassId) as quantity FROM
+        (SELECT * FROM HardwareClass WHERE deleted = 0) DT
+        LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
+        GROUP BY DT.classId
         ''').fetchall()
 
         return render_template('materialesHard.html', hardW=hardware)
+    else:
+        return redirect("/login", code=302)
+
+# Show software view
+@app.route("/admin/materialesSoftware", methods=["GET"])
+def getSoftwareView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        cur = get_db().cursor()
+        software = cur.execute('''
+        SELECT DT.*, COUNT(inClassId) as quantity FROM
+        (SELECT * FROM SoftwareClass WHERE deleted = 0) DT
+        LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
+        GROUP BY DT.classId
+        ''').fetchall()
+        return render_template('materialesSoftware.html', softW=software)
+    else:
+        return redirect("/login", code=302)
+
+# Show rooms view
+@app.route("/admin/materialesSalas", methods=["GET"])
+def getSalasView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        cur = get_db().cursor()
+        rooms = cur.execute('''
+        SELECT * FROM Rooms WHERE deleted = 0
+        ''').fetchall()
+        return render_template('materialesSalas.html', salas=rooms)
+    else:
+        return redirect("/login", code=302)
+
+# Show rooms view
+@app.route("/admin/users", methods=["GET"])
+def getUsersView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        cur = get_db().cursor()
+        rooms = cur.execute('''
+        SELECT * FROM Users WHERE deleted = 0
+        ''').fetchall()
+        return render_template('materialesSalas.html', salas=rooms)
+    else:
+        return redirect("/login", code=302)
+
+# Show users view
+@app.route("/admin/tickets", methods=["GET"])
+def getTicketsView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        cur = get_db().cursor()
+        tickets = cur.execute('''
+        SELECT DT.*, Users.username FROM
+        (SELECT * FROM ReservationTicket WHERE weight > 0) DT
+        LEFT JOIN Users ON (Users.userId =  DT.userId)
+        ''').fetchall()
+        return render_template('reservaciones.html', res=tickets)
+    else:
+        return redirect("/login", code=302)
 
 
 '''-------------------'''
@@ -140,6 +370,8 @@ def login(name=None):
     else:
         user = None
     
+    body["password"] = sha256(body["password"].encode('utf-8')).hexdigest()
+
     if user is None:
         respBody = json.dumps({"authorized":False, "errorId":101}) #, "desc":"Invalid username or email"
     elif user["blocked"]:
@@ -150,13 +382,14 @@ def login(name=None):
         respBody = json.dumps({"authorized":True})
         resp.set_cookie("jwt", jwt.encode(user, jwtKey, algorithm="HS256"))
     else:
-        respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
+        print(user["hashPassword"])
+        print(body["password"])
 
     resp.set_data(respBody)
     return resp
 
 
-@app.route("/api/logout", methods=['POST'])
+@app.route("/api/logout", methods=['GET'])
 def logout(name=None):
     resp = make_response('main.html')
     resp.set_cookie("JWT", expires=0)
@@ -192,13 +425,22 @@ def register():
     elif usernameSearch is not None:
         respBody = json.dumps({"registered":False, "errorId":111})#, "desc":"Username is already registered"
     else:
-        
-        cur.execute('''INSERT INTO "main"."Users"
-                       ("dateRegistered", "firstName", "lastName", "username", "birthDate", "organization", 
-                       "email", "ocupation", "countryId", "hashPassword")
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
-                       (datetime.now(timezone(-timedelta(hours=5))).strftime("%Y-%m-%d %H:%M:%S"), body["firstName"], body["lastName"], body["username"],
-                       body["birthDate"], body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        key = body["username"] + body["email"] + dateRegistered
+        hashKey = sha256(key.encode('utf-8')).hexdigest()[:20]
+        msg = Message("Verify your new BooKMe account!",
+                       sender="bookmebot@gmail.com",
+                       recipients=[body["email"]])
+        msg.body = render_template("mailVerification/verification.html", hashKey=hashKey)
+        msg.html = render_template("mailVerification/verification.html", hashKey=hashKey)
+        mail.send(msg)
+        body["hashPassword"] = sha256(body["hashPassword"].encode('utf-8')).hexdigest()
+        cur.execute('''
+                    INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
+                    "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                    (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                    body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
         respBody = json.dumps({"registered":True})
     return respBody
 
@@ -220,7 +462,7 @@ def newHardware():
             return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
-
+    
         cur.execute('''INSERT INTO "main"."HardwareClass" ("name", "operativeSystem", "description", "prefix","maxDays")
                             VALUES (?, ?, ?, ?, ?);''',
                             (body["name"], body["operativeSystem"], body["description"], body["prefix"], 
@@ -322,7 +564,7 @@ def editHardware():
         body = request.get_json()
         cur = get_db().cursor()
         oldHardware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
-                                     (SELECT * FROM HardwareClass WHERE classId = ?) DT
+                                     (SELECT * FROM HardwareClass WHERE classId = ? AND deleted = 0) DT
                                      LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
                                      GROUP BY DT.classId''', (body["classId"],)).fetchone()
         oldQuantity = oldHardware["quantity"]
@@ -333,12 +575,13 @@ def editHardware():
                 cur.execute('''INSERT INTO HardwareObjects (classId, inClassId) VALUES (?, ?)''', (body["classId"], i))
                 cur.execute('''INSERT INTO AvailableObjects (hO) VALUES (?)''', (cur.lastrowid, ))
         elif dObjects < 0:
+            cur.execute("PRAGMA foreign_keys = ON")
             for i in range(oldQuantity, newQuantity, -1):
                 inTypeId = cur.execute('''SELECT HardwareObjects.inTypeId FROM HardwareObjects WHERE classId = ? AND inClassId = ?''',
                                        (body["classId"], i)).fetchone()["inTypeId"]
                 print(inTypeId)
                 cur.execute('''DELETE FROM HardwareObjects WHERE inTypeId = ?''', (inTypeId, ))
-        
+        cur.execute("PRAGMA foreign_keys = OFF")
         cur.execute('''
                     UPDATE HardwareClass SET name = ?, operativeSystem = ?, description = ?, prefix = ?, 
                     availability = ?, maxDays = ? WHERE classId = ?''',
@@ -372,7 +615,7 @@ def editSoftware():
         body = request.get_json()
         cur = get_db().cursor()
         oldSoftware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
-                                     (SELECT * FROM SoftwareClass WHERE classId = ?) DT
+                                     (SELECT * FROM SoftwareClass WHERE classId = ? AND deleted = 0) DT
                                      LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
                                      GROUP BY DT.classId''', (body["classId"],)).fetchone()
         oldQuantity = oldSoftware["quantity"]
@@ -383,8 +626,8 @@ def editSoftware():
                 cur.execute('''INSERT INTO SoftwareObjects (classId, inClassId) VALUES (?, ?)''', (body["classId"], i))
                 cur.execute('''INSERT INTO AvailableObjects (sO) VALUES (?)''', (cur.lastrowid, ))
         elif dObjects < 0:
-            for i in range(oldQuantity, newQuantity, -1):
-                cur.execute("PRAGMA foreign_keys = ON")
+            cur.execute("PRAGMA foreign_keys = ON")
+            for i in range(oldQuantity, newQuantity, -1):    
                 inTypeId = cur.execute('''SELECT SoftwareObjects.inTypeId FROM SoftwareObjects WHERE classId = ? AND inClassId = ?''',
                                        (body["classId"], i)).fetchone()["inTypeId"]
                 print(inTypeId)
@@ -431,6 +674,112 @@ def editRooms():
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
 
+@app.route("/api/editUser", methods=["POST"])
+def editUser():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],)).fetchone()
+        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],)).fetchone()
+        if emailSearch is not None:
+            print(emailSearch)
+            respBody = json.dumps({"saved":False, "errorId":110})#, "desc":"Email is already registered"
+        elif usernameSearch is not None:
+            respBody = json.dumps({"saved":False, "errorId":111})#, "desc":"Username is already registered"
+        else:
+            cur.execute('''
+                        UPDATE Users SET firstName = ?, lastName = ?, username = ?, birthDate = ?, organization = ?, email = ?, ocupation = ?,
+                        countryId = ?, hashPassword = ?, admin = ?, blocked = ?
+                        WHERE userId = ?''',
+                        (body["firstName"], body["lastName"], body["username"], body["birthDate"], body["organization"], body["email"],
+                        body["ocupation"], body["countryId"], body["hashPassword"], body["admin"], body["blocked"], body["userId"]))
+            respBody = json.dumps({"saved":True})
+        return respBody
+    return json.dumps({"saved":False})
+
+
+# Expecting request: {"classId":classId}
+@app.route("/api/deleteHardwareClass", methods=["POST"])
+def deleteHardware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE HardwareClass SET deleted = 1 WHERE classId = ?''', (body["classId"],))
+        cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
+                (SELECT AvailableObjects.generalObjectID FROM 
+                (SELECT HardwareObjects.inTypeId FROM HardwareObjects WHERE classId = ?) DT
+                LEFT JOIN AvailableObjects ON (DT.inTypeId = AvailableObjects.hO))''', (body["classId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+# Expecting request: {"classId":classId}
+@app.route("/api/deleteSoftwareClass", methods=["POST"])
+def deleteSoftware():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE SoftwareClass SET deleted = 1 WHERE classId = ?''', (body["classId"],))
+        cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
+                       (SELECT AvailableObjects.generalObjectID FROM 
+                       (SELECT SoftwareObjects.inTypeId FROM SoftwareObjects WHERE classId = ?) DT
+                       LEFT JOIN AvailableObjects ON (DT.inTypeId = AvailableObjects.sO))''', (body["classId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+# Expecting request: {"roomId":roomId}
+@app.route("/api/deleteRooms", methods=["POST"])
+def deleteRooms():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE Rooms SET deleted = 1 WHERE roomId = ?''',(body["roomId"]))
+        cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
+                       (SELECT AvailableObjects.generalObjectID FROM Rooms
+                       LEFT JOIN AvailableObjects ON (Rooms.roomId = AvailableObjects.rO))''', (body["roomId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+@app.route("/api/deleteUser", methods=["POST"])
+def deleteUser():
+    if jwtValidated(request.cookies.get("jwt")):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''UPDATE delete = 1, username = 'DELETED', email = 'DELETED' WHERE userId = ?''', (body["userId"],))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
+@app.route("/api/deleteTicket", methods=["POST"])
+def deleteTicket():
+    if jwtValidated(request.cookies.get("jwt")):
+        userData = jwt.decode(request.cookies.get("jwt"), jwtKey, algorithms="HS256")
+
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''
+        DELETE FROM ReservationTicket WHERE ticketId = ?;
+        ''',
+        (body["ticketId"], userData["userId"]))
+        respBody = {"ticketDeleted":True}
+        return json.dumps(respBody)
+    else:
+        respBody = {"ticketDeleted":False, "errorId": 100}
+        return json.dumps(respBody)
+
 @app.route("/api/getHardwareClasses", methods=["POST"])
 def getHardwareClasses():
     body = request.get_json()
@@ -438,7 +787,7 @@ def getHardwareClasses():
         cur = get_db().cursor()
         hardware = cur.execute('''
         SELECT DT.*, COUNT(inClassId) as quantity FROM
-        (SELECT * FROM HardwareClass) DT
+        (SELECT * FROM HardwareClass WHERE deleted = 0) DT
         LEFT JOIN HardwareObjects ON (DT.classId = HardwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
@@ -451,7 +800,7 @@ def getSoftwareClasses():
         cur = get_db().cursor()
         software = cur.execute('''
         SELECT DT.*, COUNT(inClassId) as quantity FROM
-        (SELECT * FROM SoftwareClass) DT
+        (SELECT * FROM SoftwareClass WHERE deleted = 0) DT
         LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
@@ -462,10 +811,10 @@ def getRooms():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
-        software = cur.execute('''
-        SELECT * FROM Rooms
+        rooms = cur.execute('''
+        SELECT * FROM Rooms WHERE deleted = 0
         ''').fetchall()
-        return json.dumps(software)
+        return json.dumps(rooms)
 
 '''------------------'''
 '''------APP API-----'''
@@ -547,12 +896,19 @@ def registerApp():
         respBody = json.dumps({"readyToVerify":False, "errorId":111})#, "desc":"Username is already registered"
     else:
         dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        key = body["username"] + body["email"] + dateRegistered
+        hashKey = sha256(key.encode('utf-8')).hexdigest()[:20]
+        msg = Message("Verify your new BooKMe account!",
+                       sender="bookmebot@gmail.com",
+                       recipients=[body["email"]])
+        msg.body = render_template()
+        mail.send(msg)
         cur.execute('''
-                    INSERT INTO Users (dateRegistered, firstName, lastName, username, birthDate, 
-                    organization, email, ocupation, countryId, hashPassword)
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                    (dateRegistered, body["firstName"], body["lastName"], body["username"], body["birthDate"], 
-                    body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"]))
+                    INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
+                    "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                    (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                    body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
         respBody = json.dumps({"readyToVerify":True})
     return respBody
 
@@ -626,13 +982,13 @@ def getHardware():
         SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
         (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inClassId) as identifier, inTypeId, HardwareClass.*
-        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId)) DT
+        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId) WHERE deleted = 0) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.hO)) DT2
         LEFT JOIN 
-        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
-        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1 
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return json.dumps(hardware)
@@ -646,12 +1002,12 @@ def getSoftware():
         SELECT generalObjectID, identifier, name, brand, description, operativeSystem, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
         (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inClassId) as identifier, inTypeId, SoftwareClass.*
-        FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId)) DT
+        FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId) WHERE deleted = 0) DT
         INNER JOIN AvailableObjects 
         ON (DT.inTypeId = AvailableObjects.sO)) DT2
         LEFT JOIN 
-        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
         ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
@@ -666,10 +1022,10 @@ def getRoomsApp():
         SELECT generalObjectID, name, description, location, capacity, maxDays, SUM(ResTicket.weight) as totalWeight FROM
         (SELECT Rooms.*, AvailableObjects.generalObjectID, AvailableObjects.rO FROM 
         Rooms INNER JOIN AvailableObjects 
-        ON (Rooms.roomId = AvailableObjects.rO)) DT2
+        ON (Rooms.roomId = AvailableObjects.rO) WHERE deleted = 0) DT2
         LEFT JOIN 
-        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE  ReservationTicket.startDate 
-        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) ResTicket
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
         ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
         GROUP BY DT2.generalObjectID
         ''').fetchall()
@@ -688,11 +1044,16 @@ def getTimeRanges():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
+        if "ignoreTicket" in body:
+            ignoreTicket = body["ignoreTicket"]
+        else:
+            ignoreTicket = "-1"
         respBody = cur.execute('''
         SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
         strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
-        FROM ReservationTicket WHERE startDay = date(?) AND ReservationTicket.objectId = ?
-        ''', (body["date"], body["objectId"])).fetchall()
+        FROM ReservationTicket 
+        WHERE (startDay = date(?) OR endDay = date(?)) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
+        ''', (body["date"], body["date"], body["objectId"], ignoreTicket)).fetchall()
         return json.dumps(respBody)
 
 @app.route("/app/api/getTimeRangesForDays", methods=["POST"])
@@ -700,12 +1061,16 @@ def getTimeRangesForDays():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         cur = get_db().cursor()
+        if "ignoreTicket" in body:
+            ignoreTicket = body["ignoreTicket"]
+        else:
+            ignoreTicket = "-1"
         respBody = cur.execute('''
         SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
         strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
         FROM ReservationTicket WHERE ((startDay BETWEEN date(?) AND date(?))
-		OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ?
-        ''', (body["startDate"], body["endDate"], body["startDate"], body["endDate"], body["objectId"])).fetchall()
+		OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
+        ''', (body["startDate"], body["endDate"], body["startDate"], body["endDate"], body["objectId"], ignoreTicket)).fetchall()
         return json.dumps(respBody)
 
 # Get user's tickets by userId
@@ -717,18 +1082,13 @@ def getTickets():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
-        if "ignoreTicket" in body:
-            ignoreTicket = body["ignoreTicket"]
-        else:
-            ignoreTicket = "-1"
 
         cur = get_db().cursor()
         tickets = cur.execute('''SELECT ticketId, objectType, objectName, startDate, endDate FROM ReservationTicket 
                                  WHERE ReservationTicket.userId = ?
-                                 AND ReservationTicket.endDate > datetime('now', '-5 hours') 
-                                 AND ticketId != ?
+                                 AND ReservationTicket.endDate > datetime('now', '-5 hours')
                                  ORDER BY startDate''', 
-        (userData["userId"], ignoreTicket)).fetchall()
+        (userData["userId"],)).fetchall()
         return tickets
 
 # Get user's ticket by ticketId
@@ -743,7 +1103,7 @@ def getTicket():
         
         if body["objectType"] == "HRDWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
-                                DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, HardwareClass.name, 
+                                DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, HardwareClass.name, 
                                 HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
                                 (SELECT DT2.*, HardwareObjects.classId FROM 
                                 (SELECT DT.*, AvailableObjects.hO FROM 
@@ -753,7 +1113,7 @@ def getTicket():
                                 INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)'''
         elif body["objectType"] == "SFTWR":
             query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
-                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, SoftwareClass.name, 
+                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, DT3.weight, SoftwareClass.name, 
                        SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
                        (SELECT DT2.*, SoftwareObjects.classId FROM 
                        (SELECT DT.*, AvailableObjects.sO FROM 
@@ -764,7 +1124,7 @@ def getTicket():
                        '''
         elif body["objectType"] == "ROOM":
             query = '''SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
-                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, Rooms.name, 
+                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, DT2.weight, Rooms.name, 
                        Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
                        (SELECT DT.*, AvailableObjects.rO FROM 
                        (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
@@ -777,6 +1137,7 @@ def getTicket():
             encoded_string = base64.b64encode(image_file.read())
         ticket["qrCode64"] = encoded_string.decode('utf-8')
         return ticket
+
 
 # Get user's ticket by qrcode
 # This is expected to be a web path
@@ -800,54 +1161,7 @@ def getTicket():
     "userId": 1
 }
 '''
-@app.route("/api/getTicket/<qr>", methods=["GET"])
-def getTicketWithQr(qr):
-    if jwtValidated(request.cookies.get('jwt')):
-        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
 
-        cur = get_db().cursor()
-        ticketInfo = cur.execute('''SELECT ticketId, objectType, userId FROM ReservationTicket WHERE qrCode = ?''', (qr,)).fetchone()
-
-        if userData["admin"] == 0 and userData["id"] != ticketInfo["userId"]:
-            return make_response("Only admins", 401)
-
-        if ticketInfo["objectType"] == "HRDWR":
-            query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType, 
-                                DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, HardwareClass.name, 
-                                HardwareClass.operativeSystem, HardwareClass.description as objectDescription FROM
-                                (SELECT DT2.*, HardwareObjects.classId FROM 
-                                (SELECT DT.*, AvailableObjects.hO FROM 
-                                (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
-                                INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
-                                INNER JOIN HardwareObjects ON (DT2.hO = HardwareObjects.inTypeId)) DT3
-                                INNER JOIN HardwareClass ON (DT3.classId = HardwareClass.classId)'''
-        elif ticketInfo["objectType"] == "SFTWR":
-            query = '''SELECT DT3.ticketId, DT3.userId, DT3.dateRegistered, DT3.startDate, DT3.endDate, DT3.objectId, DT3.objectType,
-                       DT3.objectName, DT3.description as ticketDescription, DT3.qrCode, SoftwareClass.name, 
-                       SoftwareClass.brand, SoftwareClass.operativeSystem, SoftwareClass.description as objectDescription FROM
-                       (SELECT DT2.*, SoftwareObjects.classId FROM 
-                       (SELECT DT.*, AvailableObjects.sO FROM 
-                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
-                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
-                       INNER JOIN SoftwareObjects ON (DT2.sO = SoftwareObjects.inTypeId)) DT3
-                       INNER JOIN SoftwareClass ON (DT3.classId = SoftwareClass.classId)
-                       '''
-        elif ticketInfo["objectType"] == "ROOM":
-            query = '''SELECT DT2.ticketId, DT2.userId, DT2.dateRegistered, DT2.startDate, DT2.endDate, DT2.objectId, DT2.objectType,
-                       DT2.objectName, DT2.description as ticketDescription, DT2.qrCode, Rooms.name, 
-                       Rooms.label, Rooms.location, Rooms.description as objectDescription FROM
-                       (SELECT DT.*, AvailableObjects.rO FROM 
-                       (SELECT * FROM ReservationTicket WHERE ticketId = ?) DT
-                       INNER JOIN AvailableObjects ON (DT.objectId = AvailableObjects.generalObjectID)) DT2
-                       INNER JOIN Rooms ON (DT2.rO = Rooms.roomId)
-                       '''
-        ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
-        qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
-        with open(qrPath, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-        ticket["qrCode"] = encoded_string.decode('utf-8')
-        #return render_template('ticketWithQr.html', ticket=ticket)
-        return ticket
 
 @app.route("/api/updateQrCodes", methods=["GET"])
 def updateQrCodes():
@@ -889,7 +1203,7 @@ def newTicket():
         dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S.%f")
         endDate = datetime.strptime(body["endDate"], "%Y-%m-%d %H:%M:%S.%f")
-        weight = (endDate - startDate).seconds / 3600
+        weight = (endDate - startDate).total_seconds() / 3600
         startDate = startDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         endDate = endDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
         cur = get_db().cursor()
@@ -899,7 +1213,7 @@ def newTicket():
         (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
         (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight))
-        # ticketId + userId + objectId
+        # ticketId + userId + objectId + dateRegistered
         qr = str(cur.lastrowid) + str(userData["userId"]) + str(body["objectId"]) + dateRegistered
         qr = qr.encode('utf-8')
         qr = sha1(qr).hexdigest()[:10]
@@ -921,7 +1235,7 @@ def newTicket():
 }
 '''
 @app.route("/app/api/deleteTicket", methods=["POST"])
-def deleteTicket():
+def deleteTicketApp():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")

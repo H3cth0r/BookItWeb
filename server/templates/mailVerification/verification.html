@@ -47,13 +47,13 @@
 	</head>
 	<body>
 		<div class="main-div">
-
-			<p id="bme-title" style="font-family: 'Chivo', sans-serif;">BooKMe</h1>
+ 
+			<p id="bme-title" style="font-family: 'Chivo', sans-serif;">BooKMe</p>
 			<p id="verification-info" style="font-family: 'Chivo', sans-serif;">Click the following button to verify your account. XD</p>
 
 			<div class="img-div">
-				<a id="verify-button" href="https://www.facebook.com/">
-					<img src="https://raw.githubusercontent.com/H3cth0r/BookMeWeb/main/webDesign/mailVerification/verifyButtonMail.png">
+				<a id="verify-button" href="{{ url_for('registerVerifyView', hashKey=hashKey, _external=True, toVetify=True) }}">
+					<img src="https://raw.githubusercontent.com/H3cth0r/BookMeWeb/main/server/static/resources/verifyButtonMail.png">
 				</a>
 			</div>
 		</div>

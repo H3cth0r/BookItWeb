@@ -1,11 +1,13 @@
+console.log(tickets)
+    for(let i = 0; i < tickets.length; i++){
+        var ticket = tickets[i];
+        var ticketID = ticket.ticketId;
+        var username = ticket.username;
+        var objetoID = ticket.objectId;
+        var fecha_inicio = ticket.startDate;
+        var fecha_fin = ticket.endDate;
 
-    for(let i = 0; i < tickets; i++){
-        var tickets = tickets[i];
-        var ticketID = tickets.ticketId;
-        var username = tickets.username;
-        var objetoID = tickets.objectId;
-        var fecha_inicio = tickets.startDate;
-        var fecha_fin = tickets.endDate;
+        console.log(fecha_fin)
 
         let the = `<div class="single_row_user" id="`+ ticketID +`" >
                         <p id="ticketId"> `+ ticketID +`</p>
@@ -27,14 +29,9 @@
 
     function delete_button(id_val){
         if (confirm ("¿Estás seguro de que quieres eliminar este objeto?")) {
-        anime({
-            targets: `#${id_val}`,
-            translateX: 1500,
-            easing: "easeInOutCubic"
-        });
-        setTimeout(move_rows, 800, id_val);
+
         $.ajax({
-            url: 'api/edit/software', //cambiar esto por la ruta del servidor y añadir bien el json
+            url: '../api/editSoftware', //cambiar esto por la ruta del servidor y añadir bien el json
             type: 'POST',
             data: JSON.stringify({ "ticketID " : ticketID }),
             contentType: "application/json",
@@ -50,7 +47,7 @@
         if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
         
         $.ajax({
-            url: 'api/edit/software', //cambiar esto por la ruta del servidor y añadir bien el json
+            url: '../api/editSoftware', //cambiar esto por la ruta del servidor y añadir bien el json
             type: 'POST',
             data: JSON.stringify({ "ticketID " : ticketID, "username" : username, "objetoID" : objetoID, "fecha_inicio" : fecha_inicio, "fecha_fin" : fecha_fin }),
             contentType: "application/json",
