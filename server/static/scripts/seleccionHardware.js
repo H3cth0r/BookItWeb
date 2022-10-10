@@ -64,7 +64,7 @@ $(document).ready(function () {
         let index = $('#botonenvio').val();
         
         $.ajax({
-            url: "/Reservas/Reservas",
+            url: "/makeReservation",
             type: "POST",
             data: {"objectType" : "hardware",
                    "objectId" : hardw[index].generalObjectId, 
