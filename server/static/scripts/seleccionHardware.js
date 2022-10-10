@@ -23,29 +23,45 @@
     softwareHTML += "</div>";
     document.write(softwareHTML);
 }*/
+$(document).ready(function () {
+    for (var i = 0; i < hardw.length; i++) {
+        var hardware = hardw[i];
+        var generalObjectId = hardware.generalObjectId;
+        var hardwareName = hardware.name;
+        var hardwareOS = hardware.operativeSystem;
+        var hardwareDescription = hardware.description;
+        var hardwarePrefix = hardware.identifier;
+        var hardwareMaxDays = hardware.maxDays;
+        var hardwareWeight = hardware.totalWeight;
+        
+        var hardwareHTML = "<div class='hardware'>";
+        hardwareHTML += "<p>" + hardwareName + "</p>";
+        hardwareHTML += "<p>" + hardwarePrefix + "</p>";
+        
+        if (hardwareWeight < 150) {
+            hardwareHTML += "<p>Available       🟢</p>";
+        }
+        else {
+            hardwareHTML += "<p>Not Available       🔴</p>";
+        }
+        hardwareHTML += "<button name='generalObjectId' value='" + generalObjectId + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
+        hardwareHTML += "</div>";
+        
+        document.write(hardwareHTML);
+        console.log(i)
 
-for (var i = 0; i < hardw.length; i++) {
-    var hardware = hardw[i];
-    var hardwareName = hardware.name;
-    var hardwareOS = hardware.operativeSystem;
-    var hardwareDescription = hardware.description;
-    var hardwarePrefix = hardware.prefix;
-    var hardwareMaxDays = hardware.maxDays;
-    var hardwareQuantity = hardware.quantity;
-    
-    var hardwareHTML = "<div class='hardware'>";
-    hardwareHTML += "<p>" + hardwareName + "</p>";
-    hardwareHTML += "<p>" + hardwarePrefix + "</p>";
-
-    if (hardwareQuantity > 0) {
-        hardwareHTML += "<p>Available       🟢</p>";
     }
-    else {
-        hardwareHTML += "<p>Not Available       🔴</p>";
-    }
-    
-    hardwareHTML += "</div>";
-    
-    document.write(hardwareHTML);
 
-}
+    //si da click en un botón, mandar:
+    /*
+    {
+        "objectType" : "HRDWR",
+        "objectId" : 3,
+        "objectName" : "Dell PC"
+    }
+    Al servicio:
+    /reservations/makeReservation
+    como POST
+    */
+    
+})

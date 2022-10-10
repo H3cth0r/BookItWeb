@@ -130,10 +130,30 @@ def registerVerifyView(hashKey):
 
 '''---RESERVATIONS---'''
 
+@app.route("/reservations/showHardware", methods=["GET"])
+def showHardwareView():
+    if jwtValidated(request.cookies.get('jwt')):
+        cur = get_db().cursor()
+        hardware = cur.execute('''
+        SELECT generalObjectID, identifier, description, operativeSystem, name, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.hO FROM 
+        (SELECT (HardwareClass.prefix || "-" || HardwareObjects.inClassId) as identifier, inTypeId, HardwareClass.*
+        FROM HardwareObjects LEFT JOIN HardwareClass ON (HardwareClass.classId = HardwareObjects.classId) WHERE deleted = 0) DT
+        INNER JOIN AvailableObjects 
+        ON (DT.inTypeId = AvailableObjects.hO)) DT2
+        LEFT JOIN 
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1 
+        GROUP BY DT2.generalObjectID
+        ''').fetchall()
+        return render_template("seleccionHardware.html", HRDWR=hardware)
+
+
 @app.route("/reservations/makeReservation", methods=["GET"])
 def reserveView():
     if jwtValidated(request.cookies.get('jwt')):
-        
+        return render_template("reservar.html")
 
 @app.route("/reservations/currentBookings", methods=["GET"])
 def currentBookingsView():
