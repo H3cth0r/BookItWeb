@@ -4,7 +4,7 @@ for (var i = 0; i < rooms.length; i++) {
     var roomName = room.name;
     var roomLocation = room.location;
     var roomCapacity = room.capacity;
-    var roomAvailability = room.availability;
+    var roomWeight = room.totalWeight;
     var roomMaxDays = room.maxDays;
     var roomDescription = room.description;
     var roomLabel = room.label;
@@ -15,7 +15,7 @@ for (var i = 0; i < rooms.length; i++) {
     roomHTML += "<p>" + roomLocation + "</p>";
     roomHTML += "<p>" + roomDescription + "</p>";
     roomHTML += "<p>Capacidad: " + roomCapacity + "</p>";
-    if (roomAvailability) {
+    if (roomWeight < 150) {
         roomHTML += "<p>Available       🟢</p>";
     }
     else {
