@@ -18,9 +18,22 @@ for (var i = 0; i < softW.length; i++) {
     } else {
         softwareHTML += "<p>No disponible 🔴</p>";
     }
-    
+    softwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
     softwareHTML += "</div>";
     
     softwareHTML += "</div>";
     document.write(softwareHTML);
+    $("#botonenvio").click(function () {
+        let index = $('#botonenvio').val();
+        
+        $.ajax({
+            url: "/makeReservation",
+            type: "POST",
+            data: {"objectType" : "software",
+                   "objectId" : softW[index].generalObjectId, 
+                   "objectName" : softW[index].name}
+
+        });
+    }
+    );
 }

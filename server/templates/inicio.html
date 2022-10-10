@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="{{ url_for('static',filename='scripts/inicio.js') }}"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
+		<meta charset="utf-8"></meta>
+		<link rel="stylesheet" href="{{ url_for('static',filename='styles/inicio.css') }}"></link>
+		<title>BookMe</title>
+
+	</head>
+    <body>
+    <div class="contenedorMain">
+      <div id="navbar">
+            <h1>
+            BooKMe
+          </h1>
+      </div>
+        <div class="iframes">
+          <div id="selector">
+
+            
+              <button type="button"  class="button" id="newbook"><img src="{{ url_for('static',filename='resources/newbook.png') }}" width="90%"> </button> 
+           
+            <br> <br>   
+            
+             <button type="button" class="button" id="currbook"><img src="{{ url_for('static',filename='resources/currbook.png') }}" width="90%"> </button>
+          
+            <br> <br>
+             
+                <button type="button" class="button" id="stats"><img src="{{ url_for('static',filename='resources/stats.png') }}" width="90%"> </button>
+            
+            <br> <br> 
+          </div>
+          <div class="embed-container" id="contIframe">
+            
+          </div>
+        </div>
+    </div>
+    </body>
+</html>

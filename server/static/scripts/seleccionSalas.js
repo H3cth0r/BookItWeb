@@ -22,7 +22,21 @@ for (var i = 0; i < rooms.length; i++) {
         roomHTML += "<p>Not Available       🔴</p>";
     }
     roomHTML += "<p>Días máximos de reserva: " + roomMaxDays + "</p>";
-    roomHTML += "<a href='" + roomLink + "'>BookMe</a>";
+    roomHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
     roomHTML += "</div>";
     document.write(roomHTML);
+
+    $("#botonenvio").click(function () {
+        let index = $('#botonenvio').val();
+        
+        $.ajax({
+            url: "/makeReservation",
+            type: "POST",
+            data: {"objectType" : "room",
+                   "objectId" : rooms[index].generalObjectId, 
+                   "objectName" : rooms[index].name}
+
+        });
+    }
+    );
 }
