@@ -1,4 +1,5 @@
 var day = new Date();
+var day2 = new Date();
 //var maxDays = 15;
 var dayCount = 0;
 var dayStr;
@@ -50,35 +51,44 @@ function selectorDias() {
                 $("#dia").text(getDayName(day.getDay()) + " " +day.getDate() + "/" + (day.getMonth() + 1) + "/" + day.getFullYear());
             }
     }); 
+    
+}
+function selectorDias2() {
+
+    if (day < day2) {
+       
+
+    $("#dia2").text(getDayName(day2.getDay()) + " " +  day2.getDate() + "/" + (day2.getMonth() + 1) + "/" + day2.getFullYear());
+    
+    $("#menos2").click(function() {
+        if (dayCount > 0) {
+            dayCount--;
+            day2.setDate(day2.getDate() - 1);
+            var dayString = getDayName(day2.getDay()) + " " + day2.getDate() + "/" + (day2.getMonth() + 1) + "/" + day2.getFullYear()
+            $("#dia2").text(dayString);
+            
+        }
+    });
+    
+    $("#mas2").click(function() {
+            if (dayCount < maxDays) {
+                dayCount++;
+                day2.setDate(day2.getDate() + 1);
+                $("#dia2").text(getDayName(day.getDay()) + " " +day2.getDate() + "/" + (day2.getMonth() + 1) + "/" + day2.getFullYear());
+            }
+    }); 
 
     $("#btnSaveD").click(function() {
         $("#contenedorDias").hide();
+        $("#contenedorDias2").hide();
         $("#ticketSalida").show();
         ticket();
     });
-    
-}
-function selectorPersonas() {
-    $("#personas").text(peopleCount);
-    $("#btnAdd").click(function() {
-        if (peopleCount < maxPeople) {
-            peopleCount++;
-        }
-        $("#personas").text(peopleCount);
-    });
 
-    $("#btnRemove").click(function() {
-        if (peopleCount > 0) {
-            peopleCount--;
-        }
-        $("#personas").text(peopleCount);
+    } else {
+        alert("La fecha de salida debe ser posterior a la de entrada");
+    }
     
-    });
-    $("#btnSaveP").click(function() {
-        $("#contenedorPersonas").hide();
-        selectorDias();
-        $("#contenedorDias").show();
-    });
 }
 
 function ticket() {
@@ -88,10 +98,11 @@ function ticket() {
     $("#ticket").append("<p>Personas: " + peopleCount + "</p>");
     $("#btnSaveT").click(function() {
         $.ajax({
-            url: "Reservas/Reservas",
+            url: "/Reservas/Reservas",
             type: "POST",
             data: {
-                fechas: day,
+                fechasInicio: day,
+                fechasFin: day2,
                 personas: peopleCount,
                 roomId : roomID
             },
@@ -110,8 +121,8 @@ function ticket() {
 $(document).ready(function() {
     
 
-    selectorPersonas();
-    $("#contenedorDias").hide();
+    selectorDias();
+    selectorDias2();
     $("#ticketSalida").hide();
 
    

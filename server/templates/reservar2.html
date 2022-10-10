@@ -1,0 +1,55 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>BookMe</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservar2.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
+	
+    <!--<script src="{{ url_for('static',filename='scripts/ticketWithQr.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/ticketWithQr.css') }}">
+   
+    <script type="text/javascript">
+        var sala = {{SALA|tojson}};
+    </script> -->
+    <script src="{{ url_for('static',filename='scripts/reservar.css') }}"></script>
+    <script>
+        var rooms = {{ ROOMS | tojson }};
+    </script>
+</head>
+
+<html>
+    <body>
+        <div id="contenedorDias">
+            <div id="contenedorDias1">
+                <button id="menos"><img src="{{ url_for('static',filename='resources/menos.png') }}" ></button>
+                <div id="dia">
+
+                </div>
+                
+                <button id="mas"><img src="{{ url_for('static',filename='resources/mas.png') }}" ></button>
+                <button id="btnSaveD">Next</button>
+            </div>
+            <div id="contenedorDias2">
+                <button id="menos2"><img src="{{ url_for('static',filename='resources/menos.png') }}" ></button>
+                <div id="dia2">
+
+                </div>
+                
+                <button id="mas2"><img src="{{ url_for('static',filename='resources/mas.png') }}" ></button>
+                <button id="btnSaveD">Next</button>
+            </div>
+        </div>
+        <div id="ticketSalida">
+            <div id="ticket">
+            </div>
+            <button id="btnSaveT"><img src=""{{ url_for('static',filename='resources/guardar.png') }}></button>
+        </div>
+
+
+    </body>
+
+</html>
