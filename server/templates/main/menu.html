@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; 
+        script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+        connect-src * data: blob: 'unsafe-inline'; 
+        img-src * data: blob: 'unsafe-inline'; 
+        frame-src * data: blob: ; 
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        frame-ancestors * data: blob: 'unsafe-inline';                                                    
+        " />
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com"> 
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href=" {{ url_for('static',filename='styles/main/menu_style.css') }} ">
+        <link rel="stylesheet" href=" {{ url_for('static',filename='styles/generalStyle.css') }} "> 
+
+        <title>BookMe</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src=" {{ url_for('static',filename='scripts/main/generalMainMenuFuncs.js') }} "></script>
+    </head>
+    <body>
+        <!-- Navbar -->
+        <div class = "nav-bar">
+            <a href="#">Usuarios</a>
+            <a href="#">Estadisticas</a>
+            <p id="bookMeTitle">BookMe</p>
+            <a href="#">Recursos</a>
+            <a href="#">Reservas</a>
+        </div>        
+
+
+        <!-- To sides container-->
+        <div class = "to_sides_container">
+            <iframe src="/menu/main" title="first"></iframe>
+            <iframe src="/menu/objectTypeSelection" title="second"></iframe>
+        </div>
+
+    </body>
+</html>

@@ -6,6 +6,7 @@ import json
 import jwt
 import sqlite3
 import base64
+from os.path import exists
 from datetime import datetime, timedelta, timezone
 from qrcode import QRCode, constants
 
@@ -87,7 +88,20 @@ def loginView():
     if True:
         return render_template('log.html')
         
-        
+@app.route("/menu", methods=["GET"])
+def menuView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/menu.html')
+
+@app.route("/menu/main", methods=["GET"])
+def mainAppMenuView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/mainAppMenu.html')
+
+@app.route("/menu/objectTypeSelection", methods=["GET"])
+def menuObjectTypeSelectionView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/objectTypeSelection.html')
 
 @app.route("/register", methods=["GET"])
 def registerView():
@@ -912,6 +926,25 @@ def registerApp():
         respBody = json.dumps({"readyToVerify":True})
     return respBody
 
+@app.route("/app/api/getUserData", methods=["POST"])
+def getUserDataApp():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        cur = get_db().cursor()
+        respBody = cur.execute('''SELECT * FROM Users WHERE userId = ?''', (userData["userId"],)).fetchone()
+        pfpPath = "static/resources/pfps/" + userData["userId"] +".png"
+        if exists(pfpPath):
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        else:
+            pfpPath = "static/resources/pfps/generic.png"
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        respBody["profilePic"] = encoded_string
+
+
+
 # Check if new user data is valid.
 # Expecting request: {"jwt":jwt, "username":newUsername (or the same username as before), 
 # "email":newEmail (or the same username as before)}
@@ -919,19 +952,20 @@ def registerApp():
 @app.route("/app/api/verifyNewUserData", methods=["POST"])
 def verifyNewUserData():
     body = request.get_json()
-    userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
-    cur = get_db().cursor()
-    respBody = {"available":True, "errorIds":[]}
-    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ? AND userId != ?", (body["email"], userData["userId"])).fetchone()
-    if emailSearch is not None:
-        respBody["available"] = False
-        respBody["errorIds"].append(110) #, "desc":"Email is already registered"
-    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ? AND userId != ?", (body["username"], userData["userId"])).fetchone()
-    if usernameSearch is not None:
-        respBody["available"] = False
-        respBody["errorIds"].append(111) #, "desc":"Username is already registered"
-    
-    return json.dumps(respBody)
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        cur = get_db().cursor()
+        respBody = {"available":True, "errorIds":[]}
+        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ? AND userId != ?", (body["email"], userData["userId"])).fetchone()
+        if emailSearch is not None:
+            respBody["available"] = False
+            respBody["errorIds"].append(110) #, "desc":"Email is already registered"
+        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ? AND userId != ?", (body["username"], userData["userId"])).fetchone()
+        if usernameSearch is not None:
+            respBody["available"] = False
+            respBody["errorIds"].append(111) #, "desc":"Username is already registered"
+        
+        return json.dumps(respBody)
 
 # Change user data if old password is correct.
 # Expecting request: {"jwt":jwt, "oldHashPassword":hashPassword ,"firstName":newName, "lastName":newSurname, "username":newUsername, "birthDate":newBirth, 

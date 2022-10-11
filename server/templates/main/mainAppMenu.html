@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; 
+        script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+        connect-src * data: blob: 'unsafe-inline'; 
+        img-src * data: blob: 'unsafe-inline'; 
+        frame-src * data: blob: ; 
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        frame-ancestors * data: blob: 'unsafe-inline';                                                    
+        " />
+
+        <link rel="stylesheet" href=" {{ url_for('static',filename='styles/main/mainAppMenu.css') }} ">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <script src=" {{ url_for('static',filename='scripts/main/mainMenuAppFuncs.js') }} "></script>
+
+    </head>
+    <body>
+
+        <!-- Selection row buttons -->
+        <div class="selection_row_div">
+            <input id="newBookingButton"type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/newBookingButton.imageset/newBookingButton-2.png?raw=true" name="submit">
+            <input id= "currentBookingsButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/currentBookingsButton.imageset/currentBookingsButton-2.png?raw=true" name="submit">
+            <input id="statsButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/statsButton.imageset/statsButton-2.png?raw=true" name="submit">
+        </div>
+
+    </body>
+</html>
