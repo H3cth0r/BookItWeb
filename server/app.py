@@ -870,7 +870,7 @@ def loginApp(name=None):
                                      Users.hashPassword,
                                      Users.admin,
                                      Users.blocked
-                                     FROM Users WHERE username = ?''', #es sensible que el usuario tenga acceso a su id?
+                                     FROM Users WHERE username = ?''', 
                            (body['username'],)).fetchone()
     else:
         user = None
@@ -882,6 +882,15 @@ def loginApp(name=None):
     elif user["hashPassword"] == body["password"]:
         user.pop("hashPassword")
         user["exp"] = datetime.now(timezone.utc) + timedelta(days=7)
+        pfpPath = "static/resources/pfps/" + user["userId"] +".png"
+        if exists(pfpPath):
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        else:
+            pfpPath = "static/resources/pfps/generic.png"
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        user["pfp"] = encoded_string.decode('utf-8')
         respBody = json.dumps({"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")})
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
@@ -926,25 +935,6 @@ def registerApp():
         respBody = json.dumps({"readyToVerify":True})
     return respBody
 
-@app.route("/app/api/getUserData", methods=["POST"])
-def getUserDataApp():
-    body = request.get_json()
-    if jwtValidated(body["jwt"]):
-        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
-        cur = get_db().cursor()
-        respBody = cur.execute('''SELECT * FROM Users WHERE userId = ?''', (userData["userId"],)).fetchone()
-        pfpPath = "static/resources/pfps/" + userData["userId"] +".png"
-        if exists(pfpPath):
-            with open(pfpPath, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-        else:
-            pfpPath = "static/resources/pfps/generic.png"
-            with open(pfpPath, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read())
-        respBody["profilePic"] = encoded_string
-
-
-
 # Check if new user data is valid.
 # Expecting request: {"jwt":jwt, "username":newUsername (or the same username as before), 
 # "email":newEmail (or the same username as before)}
@@ -968,7 +958,7 @@ def verifyNewUserData():
         return json.dumps(respBody)
 
 # Change user data if old password is correct.
-# Expecting request: {"jwt":jwt, "oldHashPassword":hashPassword ,"firstName":newName, "lastName":newSurname, "username":newUsername, "birthDate":newBirth, 
+# Expecting request: {"jwt":jwt, "oldHashPassword":hashPassword, "pfp":base64Pfp, "firstName":newName, "lastName":newSurname, "username":newUsername, "birthDate":newBirth, 
 # "organization":newOrganization, "email":newEmail, "hashPassword":newHashPassword}
 # Response: {"saved":bool}
 
@@ -998,9 +988,11 @@ def changeUserData():
                         userData["userId"])
 
         cur.execute(query, toInsert)
-
-        respBody = {"saved":True}
-        return json.dumps(respBody)
+        if body["pfp"] != "":
+            with open("static/resources/pfps/" + userData["userId"] + ".png", "wb") as fh:
+                fh.write(base64.decodebytes(body["pfp"]))
+            respBody = {"saved":True}
+            return json.dumps(respBody)
 
 '''---RESERVATION MANAGEMENT---'''
 # Get available objects
