@@ -1,3 +1,4 @@
+from pprint import pp
 from flask import Flask, request, g, make_response, redirect, render_template, url_for
 from flask_mail import Mail, Message
 from hashlib import new, sha256, sha1
@@ -6,6 +7,7 @@ import json
 import jwt
 import sqlite3
 import base64
+from os.path import exists
 from datetime import datetime, timedelta, timezone
 from qrcode import QRCode, constants
 
@@ -61,7 +63,7 @@ def genQr(code):
                 box_size=8,
                 border=1,
     )
-    qr.add_data(baseUrl + "/api/getTicket/" + code[:10]) #would idealy show ticket html
+    qr.add_data(baseUrl + "/api/getTicket/" + code[:10]) 
     qr.make(fit=True)
     img = qr.make_image(fill_color='black', black_color='white')
     print(type(img))
@@ -86,8 +88,6 @@ def authPrevView():
 def loginView():
     if True:
         return render_template('log.html')
-        
-        
 
 @app.route("/register", methods=["GET"])
 def registerView():
@@ -130,6 +130,21 @@ def registerVerifyView(hashKey):
 
 '''---RESERVATIONS---'''
 
+@app.route("/menu", methods=["GET"])
+def menuView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/menu.html')
+
+@app.route("/menu/main", methods=["GET"])
+def mainAppMenuView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/mainAppMenu.html')
+
+@app.route("/menu/objectTypeSelection", methods=["GET"])
+def menuObjectTypeSelectionView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/objectTypeSelection.html')
+
 @app.route("/reservations/showHardware", methods=["GET"])
 def showHardwareView():
     if jwtValidated(request.cookies.get('jwt')):
@@ -153,7 +168,11 @@ def showHardwareView():
 @app.route("/reservations/makeReservation", methods=["GET"])
 def reserveView():
     if jwtValidated(request.cookies.get('jwt')):
-        return render_template("reservar.html")
+        cur = get_db().cursor()
+        rooms = cur.execute('''
+        SELECT * FROM Rooms WHERE deleted = 0
+        ''').fetchall()
+        return render_template("reservar2.html", ROOMS=rooms)
 
 @app.route("/reservations/currentBookings", methods=["GET"])
 def currentBookingsView():
@@ -301,10 +320,10 @@ def getUsersView():
         if userData["admin"] == 0:
             return "Only admins"
         cur = get_db().cursor()
-        rooms = cur.execute('''
+        users = cur.execute('''
         SELECT * FROM Users WHERE deleted = 0
         ''').fetchall()
-        return render_template('materialesSalas.html', salas=rooms)
+        return render_template('users.html', users=users)
     else:
         return redirect("/login", code=302)
 
@@ -856,7 +875,7 @@ def loginApp(name=None):
                                      Users.hashPassword,
                                      Users.admin,
                                      Users.blocked
-                                     FROM Users WHERE username = ?''', #es sensible que el usuario tenga acceso a su id?
+                                     FROM Users WHERE username = ?''', 
                            (body['username'],)).fetchone()
     else:
         user = None
@@ -868,6 +887,15 @@ def loginApp(name=None):
     elif user["hashPassword"] == body["password"]:
         user.pop("hashPassword")
         user["exp"] = datetime.now(timezone.utc) + timedelta(days=7)
+        pfpPath = "static/resources/pfps/" + user["userId"] +".png"
+        if exists(pfpPath):
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        else:
+            pfpPath = "static/resources/pfps/generic.png"
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        user["pfp"] = encoded_string.decode('utf-8')
         respBody = json.dumps({"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")})
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
@@ -919,22 +947,23 @@ def registerApp():
 @app.route("/app/api/verifyNewUserData", methods=["POST"])
 def verifyNewUserData():
     body = request.get_json()
-    userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
-    cur = get_db().cursor()
-    respBody = {"available":True, "errorIds":[]}
-    emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ? AND userId != ?", (body["email"], userData["userId"])).fetchone()
-    if emailSearch is not None:
-        respBody["available"] = False
-        respBody["errorIds"].append(110) #, "desc":"Email is already registered"
-    usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ? AND userId != ?", (body["username"], userData["userId"])).fetchone()
-    if usernameSearch is not None:
-        respBody["available"] = False
-        respBody["errorIds"].append(111) #, "desc":"Username is already registered"
-    
-    return json.dumps(respBody)
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        cur = get_db().cursor()
+        respBody = {"available":True, "errorIds":[]}
+        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ? AND userId != ?", (body["email"], userData["userId"])).fetchone()
+        if emailSearch is not None:
+            respBody["available"] = False
+            respBody["errorIds"].append(110) #, "desc":"Email is already registered"
+        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ? AND userId != ?", (body["username"], userData["userId"])).fetchone()
+        if usernameSearch is not None:
+            respBody["available"] = False
+            respBody["errorIds"].append(111) #, "desc":"Username is already registered"
+        
+        return json.dumps(respBody)
 
 # Change user data if old password is correct.
-# Expecting request: {"jwt":jwt, "oldHashPassword":hashPassword ,"firstName":newName, "lastName":newSurname, "username":newUsername, "birthDate":newBirth, 
+# Expecting request: {"jwt":jwt, "oldHashPassword":hashPassword, "pfp":base64Pfp, "firstName":newName, "lastName":newSurname, "username":newUsername, "birthDate":newBirth, 
 # "organization":newOrganization, "email":newEmail, "hashPassword":newHashPassword}
 # Response: {"saved":bool}
 
@@ -964,9 +993,11 @@ def changeUserData():
                         userData["userId"])
 
         cur.execute(query, toInsert)
-
-        respBody = {"saved":True}
-        return json.dumps(respBody)
+        if body["pfp"] != "":
+            with open("static/resources/pfps/" + userData["userId"] + ".png", "wb") as fh:
+                fh.write(base64.decodebytes(body["pfp"]))
+            respBody = {"saved":True}
+            return json.dumps(respBody)
 
 '''---RESERVATION MANAGEMENT---'''
 # Get available objects
