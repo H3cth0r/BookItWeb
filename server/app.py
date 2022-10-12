@@ -1,3 +1,4 @@
+from pprint import pp
 from flask import Flask, request, g, make_response, redirect, render_template, url_for
 from flask_mail import Mail, Message
 from hashlib import new, sha256, sha1
@@ -62,7 +63,7 @@ def genQr(code):
                 box_size=8,
                 border=1,
     )
-    qr.add_data(baseUrl + "/api/getTicket/" + code[:10]) #would idealy show ticket html
+    qr.add_data(baseUrl + "/api/getTicket/" + code[:10]) 
     qr.make(fit=True)
     img = qr.make_image(fill_color='black', black_color='white')
     print(type(img))
@@ -87,21 +88,6 @@ def authPrevView():
 def loginView():
     if True:
         return render_template('log.html')
-        
-@app.route("/menu", methods=["GET"])
-def menuView():
-    if jwtValidated(request.cookies.get('jwt')):
-        return render_template('main/menu.html')
-
-@app.route("/menu/main", methods=["GET"])
-def mainAppMenuView():
-    if jwtValidated(request.cookies.get('jwt')):
-        return render_template('main/mainAppMenu.html')
-
-@app.route("/menu/objectTypeSelection", methods=["GET"])
-def menuObjectTypeSelectionView():
-    if jwtValidated(request.cookies.get('jwt')):
-        return render_template('main/objectTypeSelection.html')
 
 @app.route("/register", methods=["GET"])
 def registerView():
@@ -144,6 +130,21 @@ def registerVerifyView(hashKey):
 
 '''---RESERVATIONS---'''
 
+@app.route("/menu", methods=["GET"])
+def menuView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/menu.html')
+
+@app.route("/menu/main", methods=["GET"])
+def mainAppMenuView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/mainAppMenu.html')
+
+@app.route("/menu/objectTypeSelection", methods=["GET"])
+def menuObjectTypeSelectionView():
+    if jwtValidated(request.cookies.get('jwt')):
+        return render_template('main/objectTypeSelection.html')
+
 @app.route("/reservations/showHardware", methods=["GET"])
 def showHardwareView():
     if jwtValidated(request.cookies.get('jwt')):
@@ -167,7 +168,11 @@ def showHardwareView():
 @app.route("/reservations/makeReservation", methods=["GET"])
 def reserveView():
     if jwtValidated(request.cookies.get('jwt')):
-        return render_template("reservar.html")
+        cur = get_db().cursor()
+        rooms = cur.execute('''
+        SELECT * FROM Rooms WHERE deleted = 0
+        ''').fetchall()
+        return render_template("reservar2.html", ROOMS=rooms)
 
 @app.route("/reservations/currentBookings", methods=["GET"])
 def currentBookingsView():
@@ -315,10 +320,10 @@ def getUsersView():
         if userData["admin"] == 0:
             return "Only admins"
         cur = get_db().cursor()
-        rooms = cur.execute('''
+        users = cur.execute('''
         SELECT * FROM Users WHERE deleted = 0
         ''').fetchall()
-        return render_template('materialesSalas.html', salas=rooms)
+        return render_template('users.html', users=users)
     else:
         return redirect("/login", code=302)
 

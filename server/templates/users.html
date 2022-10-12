@@ -7,8 +7,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
          crud style -->
-        <link rel="stylesheet" href="users.css">
-        <link rel="stylesheet" href="{{ url_for('static',filename='style/users.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/users.css') }}">
         <!-- import crud functionality -->
         <title>BookMe</title>
     
@@ -65,9 +64,9 @@
             </div>
 
             <script>
-                var userData = {{userData|tojson}};
+                var users = {{users|tojson}};
             </script>
-            <script src="{{ url_for('static',filename='scripts/materialesHard.js') }}"></script>
+            <script src="{{ url_for('static',filename='scripts/users.js') }}"></script>
             
         </div>
     </body>

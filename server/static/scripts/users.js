@@ -1,6 +1,6 @@
-
-for (i = 0; i < usersData.length; i++) {
-    var user = usersData[i];
+console.log(users)
+for (i = 0; i < users.length; i++) {
+    var user = users[i];
     var username = user.username;
     var firstName = user.firstName;
     var lastName = user.lastName;
