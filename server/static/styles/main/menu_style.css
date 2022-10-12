@@ -6,10 +6,7 @@
     align-items: center;
     justify-content: center;
 }
-#navbar_button_holder input{
-    width: 50%;
-    height: 25%;
-}
+
 
 /* Navbar style*/
 .nav-bar {
@@ -73,6 +70,11 @@
   
   .dropdown:hover .dropdown-content {
     display: block;
+  }
+
+  .dropbtn img{
+    width: 50%;
+    height: 50%;
   }
 
 
