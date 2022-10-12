@@ -1,0 +1,60 @@
+body{
+    background-color: black;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.upper-div-spacer{
+    width: 100vw;
+    height: 20vh;
+}
+
+.date-selection-div{
+    width: 100vw;
+    height: 60vh;
+
+    display: flex;
+    flex-direction: row;
+
+    overflow-y: hidden;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+
+}
+.date-selection-div div{
+    width: 70%;
+    min-width: 50%;
+    height: 80%;
+
+    margin-right: 5%;
+    background-color: white;
+}
+.date-selection-div div p{
+    color: black;
+    font-weight: bold;
+    text-align: justify;
+    font-size: 208%;
+    margin-left: 0%;
+    display: inline-flex;
+}
+.date-selection-div div input{
+    height: 12.5%;
+    width: 50%;
+    margin-top: 20%;
+    margin-left: 45%;
+}
+.selection-info-div{
+    width: 100vw;
+    height: 20vh;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+.selection-info-div input{
+    width: 25%;
+    height: 80%;
+    margin-right: 8%;
+    margin-bottom: 5%;;
+}

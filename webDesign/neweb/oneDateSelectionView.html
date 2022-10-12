@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; 
+        script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+        connect-src * data: blob: 'unsafe-inline'; 
+        img-src * data: blob: 'unsafe-inline'; 
+        frame-src * data: blob: ; 
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        frame-ancestors * data: blob: 'unsafe-inline';                                                    
+        " />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        
+        <link rel="stylesheet" href="styles/oneDateSelectionStyle.css">
+        <link rel="stylesheet" href="styles/generalStyle.css"> 
+
+        <script src="scripts/oneDateSelectionFunc.js"></script>
+    </head>
+    <body>
+        
+        <!-- upper div spacer -->
+        <div class="upper-div-spacer">
+
+        </div>
+
+        <!-- date carousel -->
+        <div class="date-selection-div"></div>
+
+        <!-- selection info div-->
+        <div class="selection-info-div">
+                <input id="statsButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/nextButtonSquare.imageset/nextButtonSquare-2.png?raw=true" name="submit">
+        </div>
+        
+    </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; 
+        script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+        connect-src * data: blob: 'unsafe-inline'; 
+        img-src * data: blob: 'unsafe-inline'; 
+        frame-src * data: blob: ; 
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        frame-ancestors * data: blob: 'unsafe-inline';                                                    
+        " />
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com"> 
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="styles/main_style.css">
+        <link rel="stylesheet" href="styles/generalStyle.css"> 
+
+        <title>BookMe</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="scripts/generalMainMenuFuncs.js"></script>
+    </head>
+    <body>
+
+        <!-- Navbar -->
+        <div class = "nav-bar">
+            <div id="navbar_button_holder">
+                <input type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/navMenuButton.imageset/navMenuButton-2.png?raw=true" name="submit">
+            </div>
+            <a href="#">Usuarios</a>
+            <a href="#">Estadisticas</a>
+            <p id="bookMeTitle">BookMe</p>
+            <a href="#">Recursos</a>
+            <a href="#">Reservas</a>
+            <div id="navbar_button_holder"></div>
+        </div>        
+
+
+        <!-- To sides container-->
+        <div class = "to_sides_container">
+            <iframe src="mainAppMenu.html" title="first"></iframe>
+            <iframe src="oneDateSelectionView.html" title="second"></iframe>
+        </div>
+
+    </body>
+</html>

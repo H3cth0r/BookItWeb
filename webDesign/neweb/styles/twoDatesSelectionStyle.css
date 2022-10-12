@@ -1,0 +1,53 @@
+body{
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.upper-band-div{
+    width: 100vw;
+    height: 40vh;
+
+    display: flex;
+    flex-direction: row;
+
+    overflow-y: hidden;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+.upper-band-div div{
+    width: 70%;
+    height: 90%;
+    
+    margin-right: 5%;
+    background-color: white;
+}
+.upper-band-div div p{
+    color: black;
+    font-weight: bold;
+    text-align: justify;
+    font-size: 180%;
+    margin-left: 0%;
+    display: inline-flex;
+}
+.upper-band-div div input{
+    height: 15%;
+    width: 50%;
+    margin-left: 45%;
+}
+
+.surface-div{
+    width: 100vw;
+    height: 20vh;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+.surface-div input{
+    width: 25%;
+    height: 80%;
+    margin-right: 8%;
+}

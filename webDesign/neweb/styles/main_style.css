@@ -1,0 +1,46 @@
+/* navbar button holder */
+#navbar_button_holder{
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#navbar_button_holder input{
+    width: 50%;
+    height: 25%;
+}
+
+/* Navbar style*/
+.nav-bar {
+    width: 100vw;    
+    height: 10vh;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.nav-bar p{
+    width: 5vw;
+}
+#bookMeTitle{
+    font-size: 160%;
+}
+
+/* two sides container style */
+.to_sides_container{
+    width: 100vw;
+    height: 90vh;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.to_sides_container iframe{
+    width: 430px;
+    height: 650px;
+    border: 0;
+}

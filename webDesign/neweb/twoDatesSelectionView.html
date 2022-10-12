@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; 
+        script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+        connect-src * data: blob: 'unsafe-inline'; 
+        img-src * data: blob: 'unsafe-inline'; 
+        frame-src * data: blob: ; 
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        frame-ancestors * data: blob: 'unsafe-inline';                                                    
+        " />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        
+        <link rel="stylesheet" href="styles/twoDatesSelectionStyle.css">
+        <link rel="stylesheet" href="styles/generalStyle.css"> 
+
+        <script src="scripts/twoDatesSelectionFunc.js"></script>
+
+        <title>BookMe</title>
+    </head>
+    <body>
+        <!-- Div for upper band -->
+        <div class="upper-band-div" id="uBand"></div>
+
+        <!-- Div for lower band -->
+        <div class="upper-band-div" id="lBand"></div>
+
+        <!--Div for date selection and next button -->
+        <div class="surface-div">
+                <input id="statsButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/nextButtonSquare.imageset/nextButtonSquare-2.png?raw=true" name="submit">
+        </div>
+        
+    </body>
+</html>
