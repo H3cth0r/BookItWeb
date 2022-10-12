@@ -19,22 +19,11 @@ $(document).ready(function () {
         hardwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
         hardwareHTML += "</div>";
         
-        document.write(hardwareHTML);
+        $('#main_table').append(hardwareHTML);
         console.log(i)
 
     }
 
-    //si da click en un botón, mandar:
-        /*
-        {
-            "objectType" : "HRDWR",
-            "objectId" : 3,
-            "objectName" : "Dell PC"
-        }
-        Al servicio:
-        /reservations/makeReservation
-        como POST
-        */
     $("#botonenvio").click(function () {
         let index = $('#botonenvio').val();
         

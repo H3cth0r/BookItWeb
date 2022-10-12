@@ -1,0 +1,32 @@
+*{
+    font-family: 'Chivo', sans-serif;
+}
+
+body{
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+p{
+    font-weight: normal;
+}
+a:link{
+    color: black;
+    font-weight: lighter;
+    text-decoration: none;
+}
+a:visited {
+    color: black;
+    font-weight: lighter;
+    text-decoration: none;
+}  
+a:hover {
+    color: black;
+    font-weight: normal;
+    text-decoration: none;
+}  
+a:active {
+    color: black;
+    font-weight: lighter;
+    text-decoration: none;
+}  

@@ -23,7 +23,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'bookmebot@gmail.com'
-app.config['MAIL_PASSWORD'] = 'czufauxtrhvdwnic'
+app.config['MAIL_PASSWORD'] = 'mxksqjszdujjspra'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -74,14 +74,16 @@ def genQr(code):
     img.save("static/resources/qrCodes/" + code + ".png")
 
 '''-----------------------'''
-'''----FRONTEND ROUTES----'''
+'''----FRONTEND VIEWS-----'''
 '''-----------------------'''
 
-'''---VIEWS---'''
+'''--- MAIN PAGE ---'''
 
 @app.route("/")
 def mainView(): 
     return render_template('main.html')
+
+'''--- AUTHENTIFICATION ---'''
 
 @app.route("/authPrev", methods=["GET"])
 def authPrevView():
@@ -133,7 +135,7 @@ def registerVerifyView(hashKey):
         cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ?''', (u["email"], u["username"]))
         return redirect("/login?fromVerify=true", code=302)
 
-'''---RESERVATIONS---'''
+'''---MAIN MENU---'''
 
 @app.route("/menu", methods=["GET"])
 def menuView():
@@ -151,6 +153,8 @@ def mainAppMenuView():
 def menuObjectTypeSelectionView():
     if jwtValidated(request.cookies.get('jwt')):
         return render_template('main/objectTypeSelection.html')
+
+'''---RESERVATIONS---'''
 
 @app.route("/reservations/showHardware", methods=["GET"])
 def showHardwareView():
@@ -170,7 +174,6 @@ def showHardwareView():
         GROUP BY DT2.generalObjectID
         ''').fetchall()
         return render_template("seleccionHardware.html", HRDWR=hardware)
-
 
 @app.route("/reservations/makeReservation", methods=["GET"])
 def reserveView():
@@ -254,6 +257,12 @@ def getTicketWithQr(qr):
         #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
         return render_template('ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"])
 
+'''--- USER MANAGEMENT ---'''
+
+@app.route("/auth/forgotPassword", methods=["GET"])
+def forgotPasswordView():
+    return True
+    
 '''---ADMIN---'''
 
 # Show new object view
