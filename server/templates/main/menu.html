@@ -17,7 +17,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;700&display=swap" rel="stylesheet">
 
         <link rel="stylesheet" href=" {{url_for('static', filename='styles/main/menu_style.css')}} ">
-        <link rel="stylesheet" href=" {{url_for('static', filename='styles/generalStyle.css')}} "> 
+        <link rel="stylesheet" href=" {{url_for('static', filename='styles/main/generalStyle.css')}} "> 
 
         <title>BookMe</title>
 
@@ -34,7 +34,14 @@
             <a href="/admin/users">Usuarios</a>
             <a href="/admin/stats">Estadisticas</a>
             <p id="bookMeTitle">BookMe</p>
-            <a href="#">Recursos</a>
+            <div class="dropdown">
+                <a href="#" class="dropbtn">Recursos</a>
+                <div class="dropdown-content">
+                    <a href="#">Software</a>
+                    <a href="#">Hardware</a>
+                    <a href="#">Rooms</a>
+                </div>
+            </div>
             <a href="/admin/tickets">Reservas</a>
             <div id="navbar_button_holder"></div>
         </div>        
@@ -42,8 +49,8 @@
 
         <!-- To sides container-->
         <div class = "to_sides_container">
-            <iframe src="/menu/main" title="first"></iframe>
-            <iframe src="/menu/objectTypeSelection" title="second"></iframe>
+            <iframe src="/menu/main" title="first" id="first"></iframe>
+            <iframe src="/menu/objectTypeSelection" title="second" id="second"></iframe>
         </div>
 
     </body>
