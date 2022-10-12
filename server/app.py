@@ -1,6 +1,7 @@
 from pprint import pp
-from flask import Flask, request, g, make_response, redirect, render_template, url_for
+from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
+from flask_cors import CORS, cross_origin
 from hashlib import new, sha256, sha1
 from hmac import compare_digest
 import json
@@ -15,6 +16,9 @@ print("Server started")
 
 mail = Mail()
 app = Flask(__name__)
+cors = CORS(app)
+
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
@@ -85,6 +89,7 @@ def authPrevView():
         return render_template('LogandReg.html')
 
 @app.route("/login", methods=["GET"])
+@cross_origin(origins='*', supports_credentials=True)
 def loginView():
     if True:
         return render_template('log.html')
@@ -134,6 +139,8 @@ def registerVerifyView(hashKey):
 def menuView():
     if jwtValidated(request.cookies.get('jwt')):
         return render_template('main/menu.html')
+    else:
+        return redirect("/login", code=302)
 
 @app.route("/menu/main", methods=["GET"])
 def mainAppMenuView():
@@ -351,6 +358,13 @@ def getTicketsView():
 
 '''---USER MANAGEMENT---'''
 
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
 # --- auth errors ---
 # 101 invalid email
 # 102 blocked
@@ -359,8 +373,11 @@ def getTicketsView():
 # Expecting request: {("username":newUsername || "email":newEmail), "hashPassword":hashPassword}
 # Response: {"available":bool}
 # Optional response: {"errorId":errorId}
-@app.route("/api/login", methods=['POST'])
+@app.route("/api/login", methods=['POST', 'OPTIONS'])
+@cross_origin(origins='*', supports_credentials=True)
 def login(name=None):
+    if request.method == "OPTIONS": # CORS preflight
+        return _build_cors_preflight_response()
     body = request.get_json()
     cur = get_db().cursor()
     resp = make_response()
@@ -405,6 +422,7 @@ def login(name=None):
         print(body["password"])
 
     resp.set_data(respBody)
+    resp.headers.add("Access-Control-Allow-Origin","*")
     return resp
 
 
@@ -1317,6 +1335,14 @@ def statsApp():
         respBody["favObjectTypeReservations"] = favObjTypeQuery["ammount"]
         return json.dumps(respBody) 
 
+@app.after_request
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    header['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    header['Access-Control-Allow-Methods'] = 'OPTIONS, HEAD, GET, POST, DELETE, PUT'
+    response.headers = header
+    return response
 
 @app.teardown_appcontext
 def close_connection(exception):    

@@ -12,11 +12,12 @@
         frame-ancestors * data: blob: 'unsafe-inline';                                                    
         " />
 
-        <link rel="stylesheet" href=" {{ url_for('static',filename='styles/main/mainAppMenu.css') }} ">
+        <link rel="stylesheet" href=" {{url_for('static', filename='styles/main/mainAppMenu.css')}} ">
+        <link rel="stylesheet" href=" {{url_for('static', filename='styles/generalStyle.css')}} "> 
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-        <script src=" {{ url_for('static',filename='scripts/main/mainMenuAppFuncs.js') }} "></script>
+        <script src=" {{url_for('static', filename='scripts/main/mainMenuAppFuncs.js')}} "></script>
 
     </head>
     <body>

@@ -1,3 +1,15 @@
+/* navbar button holder */
+#navbar_button_holder{
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#navbar_button_holder input{
+    width: 50%;
+    height: 25%;
+}
 
 /* Navbar style*/
 .nav-bar {

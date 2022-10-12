@@ -1,6 +1,12 @@
 *{
     font-family: 'Chivo', sans-serif;
 }
+
+body{
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
 p{
     font-weight: normal;
 }

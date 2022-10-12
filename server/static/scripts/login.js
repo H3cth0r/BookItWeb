@@ -122,7 +122,7 @@ def login(name=None):
             }
             else {
                 $.ajax({
-                    url: "http://localhost:5000/api/login",
+                    url: "/api/login",
                     type: "POST",
                     data: JSON.stringify({
                         "username": $("#email").val(),
