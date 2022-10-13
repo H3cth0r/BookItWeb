@@ -1,0 +1,156 @@
+body{
+    background-color: black;
+}
+
+.navbar-div{
+    width: 100vw;
+    height: 10vh;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#bookMeTitle{
+    font-size: 160%;
+    color: white;
+}
+.spacer-div{
+    height: 10vh;
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.spacer-div{
+    height: 10vh;
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-div-container{
+    width: 100vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container{
+    width: 50vw;
+    height: 90vh;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tab{
+    display: inline-block;
+    margin-left: 40px;
+}
+.form-container p{
+    width: 100%;
+    color: white;
+    line-height: 3;
+}
+
+.input-info-row{
+    width: 100%;
+    height: 2%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.input-info-row p{
+    width: 150px;
+}
+.input-info-row input{
+    width: 150px;
+    background-color: rgb(26, 26, 26);
+    border: none;
+    outline: none;
+    color: white;
+}
+.input-info-row div{
+    width: 38%;
+    height: 1vw;
+}
+
+.button-send-container{
+    width: 100%;
+    height: 12vh;
+
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content: end;
+}
+
+.button-send-container input{
+    height: 40px;
+    width: auto;
+    margin-right: 5vw;
+}
+
+
+
+
+
+
+.dropdown {
+    float: right;
+    position: relative;
+  }
+  
+  .dropbtn{
+    font-weight: lighter;
+  }
+
+  .dropdown .dropbtn {
+    text-align: center;
+    font-size: 15px;
+    padding: 20px 16px;
+    top: 100%;
+    background-color: inherit;
+    margin: 0;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 250px;
+    z-index: 1;
+    top: 100%;
+  }
+  
+  .dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+  
+  .dropdown-content a:hover {
+    color: #ddd;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .dropbtn img{
+    width: 40%;
+    height: 40%;
+  }
