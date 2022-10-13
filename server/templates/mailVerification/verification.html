@@ -41,7 +41,7 @@
             <th><p> </p></th>
             <th>
                 <p id="verification-info" style="font-family: 'Chivo', sans-serif;margin-top: 70px;">Click the following button to verify your account. XD</p>
-                <a id="verify-button" href="{{url_for('registerVerifyView', hashKey=hashKey)}}" style="">
+                <a id="verify-button" href="{{url_for('registerVerifyView', hashKey=hashKey, _external=True)}}" style="">
                     <img style="height: 130px; width: 300px;" src="https://raw.githubusercontent.com/H3cth0r/BookMeWeb/main/server/static/resources/verifyButtonMail.png">
                 </a>
             </th>

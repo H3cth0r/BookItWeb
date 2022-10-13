@@ -4,4 +4,10 @@ $( document ).ready(function() {
             alert('It works!');
         }
     };
+    //document.getElementsByTagName("html")[0].style.visibility = "visible";
+});
+
+
+$(window).on('load', function() {
+    document.getElementsByTagName("html")[0].style.visibility = "visible";
 });

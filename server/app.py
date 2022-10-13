@@ -3,6 +3,7 @@ from sys import base_prefix
 from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
 from flask_cors import CORS, cross_origin
+from app_conf import smpt_password
 from hashlib import new, sha256, sha1
 from hmac import compare_digest
 import json
@@ -24,7 +25,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'bookmebot@gmail.com'
-app.config['MAIL_PASSWORD'] = ''
+app.config['MAIL_PASSWORD'] = smpt_password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -115,11 +116,14 @@ def registerVerifying():
     if True:
         return render_template('verify.html')
 
+# error 112 = no user verification expected from this email
 @app.route("/register/verify/<hashKey>", methods=["GET"])
 def registerVerifyView(hashKey):
     if True:
         cur = get_db().cursor()
         u = cur.execute('''SELECT * FROM ToVerify WHERE hashKey = ? ORDER BY id DESC''', (hashKey,)).fetchone()
+        if u is None:
+            return redirect("/login?error=112", code=302)
         emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (u["email"],)).fetchone()
         usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (u["username"],)).fetchone()
         if emailSearch is not None:
@@ -450,7 +454,7 @@ def logout(name=None):
     return resp
 # --- register errors ---
 # 110 email already registered
-# 111 email already registered
+# 111 user already registered
 
 # Expecting request:
 {
