@@ -1,3 +1,6 @@
+# Specific files
+server/app_conf.py
+
 .DS_Store
 .env
 .flaskenv
