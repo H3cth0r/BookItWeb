@@ -1,53 +1,51 @@
 *{
 	margin		:	0;
 	padding		:	0;
-	font-family: 'Chivo';
-	-ms-flex-align: baseline;
-	
+}
+@font-face{
+	font-family	:	'Roobert';
+	src		:	url('Roobert-Regular.woff2') format('woff2');
+	font-weight	:	normal;
+	font-style	:	normal;
+}
+@font-face{
+	font-family	:	"Roobert";
+	src		:	url('Roobert-Bold.woff2') format('woff2');
+	font-weight	:	bold;
+	font-style	:	normal;
 }
 
-body{
-	overflow-x:hidden;
-}
+
 
 p{
-	font-family	:	'Chivo';
+	font-family	:	'Roobert';
+	font-weight	:	normal;
 	color		:	white;
 }
+a{
+	font-family: 'Roobert';
+	font-weight: normal;
+}
 .canvas-holder{
-	background-color:	blue;
+	background-color:	black;
+	position: relative;
+	width: 100vw;
+	height: 100vh;
 }
 .canvas-holder #maincanvas{
 	position	:	absolute;
-	height		:	260vh;
+	height		:	100vh;
 	width		:	100vw;
 	z-index		:	0;
-	overflow-y: scroll;
-
-	
 }
 #texturecanvas{
 	position	:	absolute;
-	z-index		: 1;
+	z-index		:	1;
 	width		:	100vw;
-	height		:	260vh;
+	height		:	100vh;
 	background-image:	url("../resources/granulatedTexture.png");
-	background-attachment: fixed;
-	
-	
-	background-position: center;
-	
-	
-	background-repeat: repeat;
-	
-	
-	background-size: cover; }
+}
 
-
-
-	
-	
-	
 
 /* main-navar style. This one is on the top */
 .main-navbar{
@@ -56,11 +54,12 @@ p{
 	z-index		:	2;
 	background	:	transparent;
 	/*background-color:	red;*/
-	width		:	98vw;
+	width		:	100vw;
 	height		:	15vh;
 	display		:	flex;
 	flex-direction	:	row;
 	align-items	:	center;
+	justify-content: space-between;
 }
 .main-navbar p{
 	font-size	:	1.2rem;
@@ -76,105 +75,118 @@ p{
 	font-weight	:	bold;
 }
 
-/* INFORMATIVE BANNE* INFORMATIVE BANNER  */
-#bannerId{
-	width		:	100%;
-	height		:	150%;
-	position	:	absolute;
-	top		:	0;
-	left		:	0;
-	display		:	flex;
-	flex-direction	:	column;
-
-}
-
-#bannerId p{
-	display		:	flex;
-	align-items	:	flex-end;
-	align-self	:	center;
-	height		:	50%;
-	font-size	:	30px;
-}
-
-#contenedor {
-  width: 60%;
-  height: 200vh;
-  position: relative;
-  overflow: show;
-  margin-top: 10%;
-  margin-left: 10%;
-  z-index: 1;
-}
-
-#hPrimero {
-	color : white;
-	font-size: 2.8cm;
-	overflow: visible;
+.scrollable-main{
+	width: 100vw;
+	height: 100vh;
+	z-index: 2;
 	position: absolute;
-	top: 5px;
+
+	overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
-#primero {
-	margin-top: -5%
+.single-row-div{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-around;	
 }
 
-#hub {
-  width: 40%;
-  height: 40%;
-  z-index: 2;
-  margin-left: 50%;
-  margin-top: 10%;
+
+#hub-img{
+	width: 30vw;
+	height:auto;
+}
+
+.to-column{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	width: 40vw;
+	text-align: justify;
+}
+#first-info{
+	height: 25vh;
+	line-height: 1.6
+}
+#hub-img{
+	width: 70%;
+	height: auto;
+}
+#second-info{
+	height: 50vh;
+	line-height: 2;
+}
+#third-info{
+	height: 50vh;
+	line-height: 2;
+}
+#fourth-info{
+	justify-content: center;
+}
+
+.main-title{
+	font-size: 150%;
+}
+
+
+
+
+
+.dropdown {
+    float: right;
+    position: relative;
+  }
   
-}
+  .dropbtn{
+    font-weight: lighter;
+  }
 
-#tel {
-  width: 30%;
-  height: 70%;
-  z-index: 1;
-  margin-left: 60%;
-  margin-top: 100%;
-}
+  .dropdown .dropbtn {
+    text-align: center;
+    font-size: 15px;
+    padding: 20px 16px;
+    top: 100%;
+    background-color: inherit;
+    margin: 0;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: whitesmoke;
+	opacity: 0.2;
+    min-width: 250px;
+    z-index: 1;
+    top: 100%;
+  }
+  .dropdown-content a{
+	opacity: 2;
+  }
+  
+  .dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+  
+  .dropdown-content a:hover {
+    color: black;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
 
-#imagenes {
-  width: 60%;
-  height: 100%;
-  position: absolute;
-  top: 20%;
-  margin-left: 40%;
+  .dropbtn img{
+    width: 30%;
+    height: 30%;
+  }
 
-  z-index: 2;
-}
-#hSegundo {
-	color : white;
-	font-size: 1.3cm;
-	overflow: visible;
-	position: absolute;
-	margin-top: 18%;
-}
-#segundo {
-	margin-top: 15%;
-}
-
-#hTercero {
-	color : white;
-	font-size: 1.3cm;
-	overflow: visible;
-	position: absolute;
-	margin-top: 30%;
-	z-index: 1;
-}
-
-#tercero {
-	margin-top: 15%
-}
-#ligas {
-  z-index: 2;
-  font-size: 15px;
-  margin-top: 30px;
-
-}
-
-a {
-  color: white;
-  text-decoration: none;
-}

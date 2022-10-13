@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 	<head>
 
@@ -6,112 +7,95 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-		<script src="scripts/anime-master/lib/anime.min.js"></script>
+		<script src="{{ url_for('static', filename='scripts/anime-master/lib/anime.min.js') }}"></script>
 
 		<meta charset="utf-8"></meta>
-		
-		<link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
-		<link rel="stylesheet" href="{{ url_for('static',filename='styles/main_style.css') }}"></link>
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles/main_style.css') }}"></link>
 		<title>BookMe</title>
 
 	</head>
 	<body>
 		<!-- importing three.js -->
-		<script src="{{ url_for('static',filename='scripts/three.js') }}"></script>
+		<script src="{{ url_for('static', filename='scripts/three.js') }}"></script>
 		<!-- importing three js application -->
-		<script src="{{ url_for('static',filename='scripts/math_graph.js') }}"></script>
-		
-		<!--<script src="{{ url_for('static',filename='scripts/main.js') }}"></script>-->
+		<script src="{{ url_for('static', filename='scripts/math_graph.js') }}"></script>
 
 
-		
 		<!-- surface canvas with texture aka main -->
 		<div class="canvas-holder" id="canvas-holder" onmouseover="mouseCoords(event);">
+
+			<div class="scrollable-main">
+				<div class="single-row-div" id="first-info-div">
+					<div class="to-column" id="first-info">
+						<p class="main-title">HUB de Ciberseguridad</p>
+						<p>El Tec de Monterrey busca crear conciencia entre la sociedad sobre la ciberseguridad. Con una muy prominente presencia tanto en México como en Latinoamérica con el Hub de Ciberseguridad, nos hemos presentado como una plataforma de trabajo abierta interactiva colaborativa multi organizacional.</p>	
+					</div>
+					<div class="to-column">
+						<img id="hub-img" src="https://github.com/H3cth0r/BookMeWeb/blob/main/server/static/resources/IMG_3527.JPG?raw=true" alt="">
+					</div>
+				</div>
+				<div class="single-row-div" id="second-info-div">
+					<div class="to-column" id="second-info">
+						<p class="main-title">¿Cual es su proposito?</p>
+						<p>
+							El objetivo es brindar soporte para individuos y organizaciones que demandan salvaguarda en sus redes de información estratégica. Es por ello que en el Tec hemos apostado en desarrollar recursos y capital humano en esta disciplina qué tanta demanda tiene la actualidad y que estamos seguros se va expandir hacia el futuro. Esto a través de programas de innovación tecnológica de consultoría de capacitación, eventos de difusión y concientización sobre la necesidad permanente de contar con las herramientas con el personal capacitado y los servicios alrededor del tema de ciberseguridad, al igual que proporcionar dichas herramientas.
+						</p>	
+					</div>
+					<div class="to-column">
+						<img id="hub-img" src="https://github.com/H3cth0r/BookMeWeb/blob/main/server/static/resources/main_photo.png?raw=true" alt="">
+					</div>
+				</div>
+				<div class="single-row-div" id="third-info-div">
+					<div class="to-column">
+						<img id="hub-img" src="https://github.com/H3cth0r/BookMeWeb/blob/main/server/static/resources/newPhoneImage.png?raw=true" alt="">
+					</div>
+					<div class="to-column" id="third-info">
+						<p class="main-title">Proporcionando las herramientas necesarias</p>
+						<p>Si eres alguien interesado en esto, podrás hacerlo desde esta misma aplicación: Simplemente seleccona el tipo de recurso que quieres (espacio físico, software o hardware), elige el recurso específico y la fecha inicial y final. </p>
+						<p>Puedes ver tu próxima reserva en forma de ticket, además del resto de reservas.</p>
+						<p>Además, podrás ver tus propias estadísticas, como la cantidad de reservas totales que has hecho.</p>
+					</div>
+				</div>
+				<div class="single-row-div">
+					<div class="to-column" id="fourth-info-div">
+						<a href="#"><p class="main-title">Log Or Sign</p></a>	
+					</div>
+					<div class="to-column">
+						<img id="hub-img" src="https://github.com/H3cth0r/BookMeWeb/blob/main/server/static/resources/logored.png?raw=true" alt="">
+					</div>
+				</div>
+			</div>
+
 			<!-- kind of navbar for main, transparent -->
 			<!-- won't be the one that follows the user-->
 			<div class="main-navbar">
-				
+				<!-- myname on the right -->
 				<div id="myname-title">
 					<p id="myname-name">Book &ensp;</p>
 					<p id="myname-lastname">|&ensp;Me</p>
 				</div>
-			<!--	<nav>
-					<ul>
-						<li><a href="main.html">Welcome</a></li>
-						<li><a href="#">Who are we?</a></li>
-						<li><a href="#">The app</a></li>
-                        <li><a href="LogandReg.html">Login or Register</a></li>
-                        <li><a href="#">Download App</a></li>
-					</ul>
-				</nav>
--->	
-
-
+				<div>
+					<div class="dropdown">
+						<a href="#" class="dropbtn"><img src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/stepControlButtons.imageset/stepControlButtons-1.png?raw=true" alt=""></a>
+						<div class="dropdown-content">
+							<a href="#first-info-div">Sobre el HUB</a>
+							<a href="#second-info-div">Propósito</a>
+							<a href="#third-info-div">Herramientas</a>
+							<a href="#fourth-info-div">Log || Sign</a>
+						</div>
+					</div>
+				</div>
 			</div>
+
+
 
 			<!-- graph & texture for three js surface -->
 			<div id="texturecanvas"></div>
 			<canvas id="maincanvas"></canvas>
-			<div id="bannerId" onmouseover="mouseCoords(event);">
-				<div id="contenedor">
-					<h1 id="hPrimero"><b>HUB</b> de Ciberseguridad</h1>
-					
-					<p id="primero">El Tec de Monterrey busca crear conciencia entre la sociedad sobre la ciberseguridad. 
-		
-						Con una muy prominente presencia tanto en
-						México como en Latinoamérica con el Hub de
-						Ciberseguridad, nos hemos presentado como una plataforma de trabajo abierta interactiva
-						colaborativa multi organizacional.</p>
-					
-					<h3 id="hSegundo">
-						¿Cual es su proposito?
-					</h3>
-					<p id="segundo">El objetivo es brindar soporte para individuos y organizaciones
-						que demandan salvaguarda en sus redes de
-						información estratégica.
-						
-						Es por ello que en el Tec hemos apostado en
-						desarrollar recursos y capital humano en esta
-						disciplina qué tanta demanda tiene la actualidad
-						y que estamos seguros se va expandir hacia el
-						futuro.
-						
-						Esto a través de programas de innovación tecnológica de
-						consultoría de capacitación, eventos de difusión y concientización sobre la necesidad permanente
-						de contar con las herramientas con el personal
-						capacitado y los servicios alrededor del tema de
-						ciberseguridad, al igual que proporcionar dichas herramientas.
-					</p>
-					<h3 id="hTercero">Proporcionando las herramientas necesarias</h3>
-					<p id="tercero">Si eres alguien interesado en esto, podrás hacerlo desde esta misma aplicación: Simplemente seleccona el tipo de recurso que quieres (espacio físico, software o hardware), elige el recurso específico y la fecha inicial y final. 
-		
-						Puedes ver tu próxima reserva en forma de ticket, además del resto de reservas.
-						
-						Además, podrás ver tus propias estadísticas, como la cantidad de reservas totales que has hecho.
-					</p>
-		
-				<div id="ligas">
-	
-					<a href="/authPrev">Da click aqui para empezar a reservar recursos</a>
-				</div>
-	
-			</div>
-		</div>
-		
-		<div id="imagenes">
-			<img src="{{ url_for('static',filename='resources/hub-ciberseguridad.jpg') }}" id="hub">
-			<img src="{{ url_for('static',filename='resources/telefono main.png') }}" id="tel">
-		</div>
-       
-		
-	</div>
-	
 
-		<script src="scripts/animate_navbar.js"></script>
+		</div>
 
+
+		<script src="{{ url_for('static', filename='scripts/animate_navbar.js') }}"></script>
 	</body>
 </html>
-
-<script>
-
-</script>
