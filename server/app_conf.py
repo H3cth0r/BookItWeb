@@ -1,1 +1,0 @@
-smpt_password = 'snwcahmevfononct'
