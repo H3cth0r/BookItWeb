@@ -1,5 +1,5 @@
 # Specific files
-server/app_conf.py
+app_conf.py
 
 .DS_Store
 .env
