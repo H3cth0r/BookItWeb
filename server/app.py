@@ -1,4 +1,5 @@
 from pprint import pp
+from sys import base_prefix
 from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
 from flask_cors import CORS, cross_origin
@@ -23,7 +24,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'bookmebot@gmail.com'
-app.config['MAIL_PASSWORD'] = 'mxksqjszdujjspra'
+app.config['MAIL_PASSWORD'] = ''
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -261,8 +262,12 @@ def getTicketWithQr(qr):
 
 @app.route("/auth/forgotPassword", methods=["GET"])
 def forgotPasswordView():
-    return True
-    
+    return render_template("auth/forgot.html")
+
+@app.route("/auth/newPassword/<hashKey>", methods=["GET"])
+def newPasswordView(hashKey):
+    return render_template("newPassword.html", hashKey=hashKey)
+
 '''---ADMIN---'''
 
 # Show new object view
@@ -427,6 +432,7 @@ def login(name=None):
         respBody = json.dumps({"authorized":True})
         resp.set_cookie("jwt", jwt.encode(user, jwtKey, algorithm="HS256"))
     else:
+        respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong password"
         print(user["hashPassword"])
         print(body["password"])
 
@@ -490,6 +496,30 @@ def register():
         respBody = json.dumps({"registered":True})
     return respBody
 
+@app.route("/api/forgottenPassword", methods=["POST"])
+def forgottenPassword():
+    body = request.get_json()
+    cur = get_db().cursor()
+    dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+    key = body["email"] + dateRegistered
+    hashKey = sha256(key.encode('utf-8')).hexdigest()[:20]
+    cur.execute('''INSERT INTO ForgottenPassword(userId, hashKey) SELECT Users.userId, ? FROM Users WHERE Users.email = ?''',
+                (hashKey, body["email"]))
+    msg = Message("Create a new password!",
+                    sender="bookmebot@gmail.com",
+                    recipients=[body["email"]])
+    msg.html = render_template("auth/forgotPasswordMail.html", hashKey=hashKey)
+    mail.send(msg)
+    return {"sent":True}
+
+@app.route("/api/newPassword", methods=["POST"])
+def newPassword():
+    body = request.get_json()
+    cur = get_db().cursor()
+    cur.execute('''UPDATE Users SET hashPassword = ? WHERE Users.userId IN
+                   (SELECT ForgottenPassword.userId FROM ForgottenPassword WHERE ForgottenPassword.hashKey = ?)''', 
+                (body["hashPassword"], body["hashKey"]))
+    cur.execute('''DELETE ForgottenPassword WHERE userId IN (SELECT ForgottenPassword.userId WHERE hashKey = ?)''', (body["hashKey"],))
 '''
 {
   "quantity":3,
@@ -956,7 +986,8 @@ def registerApp():
         msg = Message("Verify your new BooKMe account!",
                        sender="bookmebot@gmail.com",
                        recipients=[body["email"]])
-        msg.body = render_template()
+        msg.body = render_template("mailVerification/verification.html", hashKey=hashKey)
+        msg.html = render_template("mailVerification/verification.html", hashKey=hashKey)
         mail.send(msg)
         cur.execute('''
                     INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",

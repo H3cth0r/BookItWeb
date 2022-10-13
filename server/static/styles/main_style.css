@@ -1,25 +1,17 @@
 *{
 	margin		:	0;
 	padding		:	0;
-}
-@font-face{
-	font-family	:	'Roobert';
-	src		:	url('Roobert-Regular.woff2') format('woff2');
-	font-weight	:	normal;
-	font-style	:	normal;
-}
-@font-face{
-	font-family	:	"Roobert";
-	src		:	url('Roobert-Bold.woff2') format('woff2');
-	font-weight	:	bold;
-	font-style	:	normal;
+	font-family: 'Chivo';
+	-ms-flex-align: baseline;
+	
 }
 
-
+body{
+	overflow-x:hidden;
+}
 
 p{
-	font-family	:	'Roobert';
-	font-weight	:	normal;
+	font-family	:	'Chivo';
 	color		:	white;
 }
 .canvas-holder{
@@ -27,18 +19,35 @@ p{
 }
 .canvas-holder #maincanvas{
 	position	:	absolute;
-	height		:	100vh;
+	height		:	260vh;
 	width		:	100vw;
 	z-index		:	0;
+	overflow-y: scroll;
+
+	
 }
 #texturecanvas{
 	position	:	absolute;
-	z-index		:	1;
+	z-index		: 1;
 	width		:	100vw;
-	height		:	100vh;
+	height		:	260vh;
 	background-image:	url("../resources/granulatedTexture.png");
-}
+	background-attachment: fixed;
+	
+	
+	background-position: center;
+	
+	
+	background-repeat: repeat;
+	
+	
+	background-size: cover; }
 
+
+
+	
+	
+	
 
 /* main-navar style. This one is on the top */
 .main-navbar{
@@ -47,7 +56,7 @@ p{
 	z-index		:	2;
 	background	:	transparent;
 	/*background-color:	red;*/
-	width		:	100vw;
+	width		:	98vw;
 	height		:	15vh;
 	display		:	flex;
 	flex-direction	:	row;
@@ -70,7 +79,7 @@ p{
 /* INFORMATIVE BANNE* INFORMATIVE BANNER  */
 #bannerId{
 	width		:	100%;
-	height		:	100%;
+	height		:	150%;
 	position	:	absolute;
 	top		:	0;
 	left		:	0;
@@ -84,5 +93,88 @@ p{
 	align-items	:	flex-end;
 	align-self	:	center;
 	height		:	50%;
-	font-size	:	21px;
+	font-size	:	30px;
+}
+
+#contenedor {
+  width: 60%;
+  height: 200vh;
+  position: relative;
+  overflow: show;
+  margin-top: 10%;
+  margin-left: 10%;
+  z-index: 1;
+}
+
+#hPrimero {
+	color : white;
+	font-size: 2.8cm;
+	overflow: visible;
+	position: absolute;
+	top: 5px;
+}
+
+#primero {
+	margin-top: -5%
+}
+
+#hub {
+  width: 40%;
+  height: 40%;
+  z-index: 2;
+  margin-left: 50%;
+  margin-top: 10%;
+  
+}
+
+#tel {
+  width: 30%;
+  height: 70%;
+  z-index: 1;
+  margin-left: 60%;
+  margin-top: 100%;
+}
+
+#imagenes {
+  width: 60%;
+  height: 100%;
+  position: absolute;
+  top: 20%;
+  margin-left: 40%;
+
+  z-index: 2;
+}
+#hSegundo {
+	color : white;
+	font-size: 1.3cm;
+	overflow: visible;
+	position: absolute;
+	margin-top: 18%;
+}
+#segundo {
+	margin-top: 15%;
+}
+
+#hTercero {
+	color : white;
+	font-size: 1.3cm;
+	overflow: visible;
+	position: absolute;
+	margin-top: 30%;
+	z-index: 1;
+}
+
+#tercero {
+	margin-top: 15%
+}
+#ligas {
+  z-index: 2;
+  font-size: 15px;
+  margin-top: 30px;
+
+}
+
+a {
+  color: white;
+  text-decoration: none;
 }

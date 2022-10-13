@@ -166,7 +166,7 @@ p{
 }
 
 #descripcionObjeto{
-    width: 14vw;
+    width: 8vw;
     border: transparent;
     color: black;
     background-color: white;
@@ -202,3 +202,30 @@ p{
     margin : 3px;
 
 }
+#nombreObjeto {
+    width: 8.4vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin : 3px;
+
+}
+
+#checkboxid {
+    width: 2vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin : 3px;
+
+}
+.checkbox input {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    visibility: show;
+  }

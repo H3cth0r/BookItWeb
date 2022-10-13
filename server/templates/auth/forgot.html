@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+		<script src="scripts/anime-master/lib/anime.min.js"></script>
+
+		<script src="{{ url_for('static',filename='scripts/forgot.js')}}"></script>
+
+		<meta charset="utf-8"></meta>
+		
+		<link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet"></link>
+		<link rel="stylesheet" href="{{ url_for('static',filename='styles/forgot.css') }}"></link>
+		<title>BookMe</title>
+
+	</head>
+    <body>
+		<h1>Forgot your password?</h1>
+        <div id="main">
+			
+			<label for="text">{"email" : </label>
+            <input type="text" id="email" placeholder="Email" required>
+			<p>
+			}
+			</p>
+            
+    
+        </div>
+		<button id="send">Send</button>
+
+    </body>

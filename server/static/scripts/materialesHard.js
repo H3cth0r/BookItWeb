@@ -12,13 +12,13 @@ for (var i = 0; i < hardW.length; i++) {
       
                         <input type="text" value="`+ hardwarePrefix +`" id="prefijo">
                         <input type="text" value="`+ hardwareName +`" id="nombreObjeto">
-                        <label for="descripcion">Descripcion</label>
-                        <textarea rows="2" cols="10" value="`+ hardwareDescription +`" id="descripcionObjeto"></textarea>
+                        <textarea rows="2" cols="10" id="descripcionObjeto">`+ hardwareDescription +`</textarea>
+                        
                         <input type="number" name="cantidad" id="cantidad" class="numero" value = `+ hardwareQuantity +`>
-                        <p> id="tipo"> Hardware </p>
-                        <input type="text" value"`+ hardwareOS +`" id="tipo">
-                        <div class="checkbox">
-                                    <input type="checkbox" name="disponible" id="disponible" class="checkbox">
+                        <p id="tipo"> Hardware </p>
+                        <input type="text" value="`+ hardwareOS +`" id="tipo">
+                        <div class="checkbox" id="chechboxid">
+                                    <input type="checkbox" name="disponible" id="disponible">
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('`+ hardwareID +`');">Delete</button></div>

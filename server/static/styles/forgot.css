@@ -1,0 +1,48 @@
+#main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    width: 50vw;
+    background-color: black;
+    color : white;
+    margin-left: 25%;
+}
+body {
+    background-color: black;
+    color: white;
+    
+}
+h1 {
+    font-size: 3cm;
+    font-family: 'Chivo';
+}
+input {
+    font-size: 1cm;
+    font-family: 'Chivo';
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 5px;
+}
+label {
+    font-size: 1cm;
+    font-family: 'Chivo';
+    color: white;
+}
+button {
+    font-size: 1cm;
+    font-family: 'Chivo';
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    margin-left: 60%;
+}
+p {
+    font-size: 1cm;
+    font-family: 'Chivo';
+    color: white;
+}
