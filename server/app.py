@@ -140,6 +140,22 @@ def registerVerifyView(hashKey):
         cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ?''', (u["email"], u["username"]))
         return redirect("/login?fromVerify=true", code=302)
 
+# error 112 = no user verification expected from this email
+@app.route("/auth/verifyMail/<hashKey>", methods=["GET"])
+def verifyMailView(hashKey):
+    if True:
+        cur = get_db().cursor()
+        u = cur.execute('''SELECT * FROM ToVerify WHERE hashKey = ? ORDER BY id DESC''', (hashKey,)).fetchone()
+        if u is None:
+            return redirect("/login?error=112", code=302)
+        cur.execute('''UPDATE Users ("firstName", "lastName", "username", "birthDate",
+                       "organization", "email", "ocupation", "countryId", "hashPassword") 
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                       (u["firstName"], u["lastName"], u["username"], u["birthDate"],
+                       u["organization"], u["email"], u["ocupation"], u["countryId"], u["hashPassword"]))
+        cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ? OR hashKey = ?''', (u["email"], u["username"], hashKey))
+        return redirect("/login?fromVerify=true", code=302)
+
 '''---MAIN MENU---'''
 
 @app.route("/menu", methods=["GET"])
@@ -528,7 +544,7 @@ def register():
         mail.send(msg)
         body["hashPassword"] = sha256(body["hashPassword"].encode('utf-8')).hexdigest()
         cur.execute('''
-                    INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
+                    INSERT INTO "main"."ToVerify" ("firstName", "lastName", "username", "birthDate",
                     "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                     (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
@@ -1030,7 +1046,7 @@ def registerApp():
         msg.html = render_template("mailVerification/verification.html", hashKey=hashKey)
         mail.send(msg)
         cur.execute('''
-                    INSERT INTO "main"."toVerify" ("firstName", "lastName", "username", "birthDate",
+                    INSERT INTO "main"."ToVerify" ("firstName", "lastName", "username", "birthDate",
                     "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                     (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
@@ -1077,6 +1093,23 @@ def changeUserData():
             respBody = {"saved":False, "errorId":103}
             return json.dumps(respBody)
         
+        if body["email"] != userData["email"]:
+            dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+            key = body["username"] + body["email"] + dateRegistered
+            hashKey = sha256(key.encode('utf-8')).hexdigest()[:20]
+            msg = Message("Verify your new email for your current BooKMe account!",
+                        sender="bookmebot@gmail.com",
+                        recipients=[body["email"]])
+            msg.body = render_template("mailVerification/mailVerification.html", hashKey=hashKey)
+            msg.html = render_template("mailVerification/mailVerification.html", hashKey=hashKey)
+            mail.send(msg)
+            cur.execute('''
+                        INSERT INTO "main"."ToVerify" ("firstName", "lastName", "username", "birthDate",
+                        "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                        (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                        body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
+
         if body["hashPassword"] != "":
             query = '''UPDATE Users 
                    SET firstName = ?, lastName = ?, username = ?, birthDate = ?, organization = ?, email = ?, hashPassword = ?
