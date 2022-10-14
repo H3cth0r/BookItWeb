@@ -21,12 +21,15 @@ for (var i = 0; i < rooms.length; i++) {
     var roomLabel = room.label;
     var roomID = room.roomId;
     let the = `<div class="single_row_user" id="`+ roomID + `">
-                        <input type="text" value"" id="prefijo">`+ roomLabel +` </p>
-                        <input type="text" value"" id="nombreObjeto">`+ roomName + `</p>
+                        <input type="text" value="`+ roomLabel +` " id="prefijo">
+    
+                        
+                        <textarea rows="2" cols="10"  id="nombreObjeto">`+ roomName + `</textarea>
+                        <textarea rows="2" cols="10"  id="descripcionObjeto">` + roomDescription +  `</textarea>
+                        
+                        <input type="number" name="cantidad" id="cantidad" class="numero" value=`+roomCapacity+`>
 
-                        <input type="text" value"" id="descripcionObjeto">`+ roomDescription + `</p>
-                        <input type="number" name="cantidad" id="cantidad" class="numero">
-                        <input type="text" value"" id="tipo"> `+ roomLocation + ` </p>
+                        <textarea rows="2" cols="10"  id="tipo">` + roomLocation +  `</textarea>
                         <div class="checkbox">
                                     <input type="checkbox" name="disponible" id="disponible" class="checkbox">
                         </div>
@@ -35,7 +38,7 @@ for (var i = 0; i < rooms.length; i++) {
                         <div><button id="row_save" onclick="save_button('$`+ roomID + `');">Save</button></div>
                     </div>
                     <br>`;
-        $('.div_list_users').append(the);
+        $('#contenedortodo').append(the);
         console.log("lol");
     
 }
@@ -50,16 +53,16 @@ function move_rows(id_val){
 // delete the div
 function delete_button(id_val){
     if (confirm ("¿Estás seguro de que quieres eliminar esta sala?")) {
-    anime({
+   /* anime({
         targets: `#${id_val}`,
         translateX: 1500,
         easing: "easeInOutCubic"
-    });
+    });*/
     setTimeout(move_rows, 800, id_val);
     $.ajax({
-        url: 'api/edit/room', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: '/api/deleteRooms', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
-        data: JSON.stringify({ "roomId" : roomID , "name" : roomName, "location" : roomLocation, "label" : roomLabel, "description" : roomDescription, "capacity" : roomCapacity, "availability" : roomAvailability, "maxDays" : roomMaxDays }),
+        data: JSON.stringify({ "classId" : id_val }), //que victor me diga que mandarle al servidor o que revise porque no se borra
         contentType: "application/json",
         dataType: "json",
         success: function(data){
