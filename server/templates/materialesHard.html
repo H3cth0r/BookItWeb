@@ -14,8 +14,10 @@
     
     </head>
     <body>
-        <div class="header"  id="header">
+        <div class="header"  id="head">
             <br>
+            
+            <h1>Materiales Hardware</h1>
             <br>
         </div>
         <!-- Navbar cambiar -->
@@ -43,6 +45,7 @@
             <!-- username, mail, name, country, birth, gender, creation(not_edit) -->
             <!-- name, lastname, gender, brith -->
             <div class="div_list_users" id="div_list_users_id">
+                <a href="/admin/nuevoObjeto"><img src=" {{ url_for('static',filename='resources/nuevoObjeto.png') }}" id="nuevoObjeto"></a>
 
                 <!-- Label -->
                 <div class="single_row_label" id="single_row_label_id">
@@ -58,11 +61,15 @@
                     <div><p>Guardar</p></div>
                 </div>
                 
+                </div>
+                
                 
 
             </div> 
-        
-
+            <div id="contenedorDeContenedor">
+            <div id="contenedortodo">
+            </div>
+        </div>
         <script>
             var hardW = {{hardW|tojson}};
         </script>

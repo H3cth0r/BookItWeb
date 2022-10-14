@@ -51,7 +51,7 @@ $("select").change(function(){
             <div>
                 <input type="text" id="prefijo" name="prefijo">
             </div>
-            <label for="descripcion">Descripcion</label>
+            <label for="descripcion" id="labelD">Descripcion</label>
             <textarea rows="4" cols="50" id="descripcion" name="descripcion" placeholder="Descripcion"></textarea>
         </div>
             <button id="aceptarSala">Aceptar</button>
@@ -82,10 +82,16 @@ $("select").change(function(){
                         contentType: "application/json",
                         dataType: "json",
                         success: function(data){
-                            alert(data);
+                            alert("Sala creada correctamente");
                         }
                     });
-                }
+                    setTimeout( redirigirH, 3000);
+                    function redirigirH() {
+                        
+                    window.location.href = "/admin/materialesSalas";
+                        }
+                    }
+                
             });
         }
         if($(this).val()=="3"){
@@ -147,7 +153,7 @@ $("select").change(function(){
         
         <div id="Descripcion">
             <div>
-                <label for="prefijo">Prefijo de indice</label>
+                <label for="prefijo" id=labelE>Prefijo de indice</label>
             </div>
             <div>
                 <input type="text" id="prefijo" name="prefijo">
@@ -184,9 +190,14 @@ $("select").change(function(){
                         contentType: "application/json",
                         dataType: "json",
                         success: function(data){
-                            alert(data);
+                            alert("Software creado correctamente");
                         }
                     });
+                    setTimeout( redirigirH, 3000);
+                    function redirigirH() {
+                        
+                    window.location.href = "/admin/materialesSoftware";
+                        }
                 }
             });
         }
@@ -246,7 +257,7 @@ $("select").change(function(){
         
         <div id="Descripcion">
             <div>
-                <label for="prefijo">Prefijo de indice</label>
+                <label for="prefijo" id="labelE">Prefijo de indice</label>
             </div>
             <div>
                 <input type="text" id="prefijo" name="prefijo">
@@ -283,9 +294,15 @@ $("select").change(function(){
                         contentType: "application/json",
                         dataType: "json",
                         success: function(data){
-                            alert(data);
+                            alert("Hardware creado correctamente");
                         }
                     });
+
+                    setTimeout( redirigirH, 3000);
+                    function redirigirH() {
+                        window.location.href = "/admin/materialesHardware";
+                        }
+                    
                 }
             });
         }

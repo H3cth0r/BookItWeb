@@ -86,14 +86,20 @@ p{
 
 .header {
     background-color: black ;
-    height: 9vh;
+    height: 15vh;
 }
 
+.header h1{
+    font-size: 3rem;
+    font-weight: 500;
+    margin-top: 20px;
+    color : white;
+}
 
 /* Main div */
 .main_div{
     width: 100vw;
-    height: 100vh;
+    height: 15vh;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -101,10 +107,9 @@ p{
     justify-content: center;
 }
 
-
 /* div list users */
 .div_list_users{
-    height: 90vh;
+    
     width: 90vw;
     display: flex;
     flex-direction: column;
@@ -165,33 +170,6 @@ p{
     background-color: white;
 }
 
-#descripcionObjeto{
-    width: 8vw;
-    border: transparent;
-    color: black;
-    background-color: white;
-    text-align: center;
-    height: 6vh;
-    overflow: hidden;
-}
-
-.numero{
-    width: 5vw;
-    border: transparent;
-    color: black;
-    background-color: rgb(200, 200, 200);
-    text-align: center;
-    height: 2vh;
-}
-
-#tipo {
-    width: 8vw;
-    border: transparent;
-    color: black;
-    background-color: white;
-    text-align: center;
-    height: 2vh;
-}
 #prefijo {
     width: 8vw;
     border: transparent;
@@ -202,12 +180,107 @@ p{
     margin : 3px;
 
 }
-
 #nombreObjeto {
-    width: 7vw;
+    width: 8.4vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: left;
+    height: 2vh;
+    margin-left : -53px;
+
+
+}
+
+#checkboxid {
+    width: 2vw;
     border: transparent;
     color: black;
     background-color: white;
     text-align: center;
     height: 2vh;
+    margin : 3px;
+
+}
+.checkbox input {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    visibility: show;
+  }
+
+  #descripcionObjeto{
+    width: 8vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 5vh;
+    margin-left: -4%;
+}
+
+#cantidad {
+    width: 8vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin-left : -23px;
+
+
+}
+
+#sistema {
+    width: 8vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin-left: -4%;
+
+}
+
+#nuevoObjeto{
+    width: 25vw;
+    border: 1px solid black;
+    color: black;
+    background-color: white;
+    margin-top: 10px;
+    margin-left: 750px;
+}
+#contenedortodo {
+    width: 100vw;
+    height: 57vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 10px;
+}
+
+#contenedorDeContenedor {
+    width: 100vw;
+    height: 57vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 10px;
+    z-index: 2;
+}
+#tipo {
+    width: 8vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin-left: -5%;
+
 }
