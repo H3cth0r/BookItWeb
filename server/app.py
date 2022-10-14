@@ -1147,7 +1147,7 @@ def changeUserData():
                                      Users.blocked
                                      FROM Users WHERE userId = ?''', 
                            (userData["userId"],)).fetchone()
-        pfpPath = "static/resources/pfps/" + userData["userId"] +".png"
+        pfpPath = "static/resources/pfps/" + str(userData["userId"]) +".png"
         if exists(pfpPath):
             with open(pfpPath, "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
