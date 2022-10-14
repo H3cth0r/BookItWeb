@@ -1,5 +1,8 @@
 $(document).ready(function () {
-    
+    $("#newBookingButton").click(function(){
+        $("#second", parent.document).attr("src", "/menu/objectTypeSelection");
+    })
+    /*
     $("#hSegundo").hide();
     $("#hTercero").hide();
     $("#segundo").hide();
@@ -35,7 +38,7 @@ $(document).ready(function () {
         }
         lastScrollTop = st;
     });
-
+    */
 });
 
     

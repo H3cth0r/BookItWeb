@@ -3,13 +3,14 @@
     <head>
         
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
         <!-- Jquery -->
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
          crud style -->
-        <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservaciones.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/materialesSoftware.css') }}">
         <!-- import crud functionality -->
-        <title>CRUD</title>
+        <title>BookMe</title>
     
     </head>
     <body>
@@ -45,11 +46,14 @@
 
                 <!-- Label -->
                 <div class="single_row_label" id="single_row_label_id">
-                    <div><p>ID</p></div>
-                    <div>&nbsp&nbsp&nbsp<p>Username</p></div>
-                    <div><p>Objeto(id)</p></div>
-                    <div><p>Fecha Inicio</p></div>
-                    <div><p>Fecha Final</p></div>
+                    
+                    <div><p>Prefijo</p></div>
+                    <div><p>Nombre Objeto</p></div>
+                    <div><p>Descripcion</p></div>
+                    <div><p>Cantidad</p></div>
+                    <div><p>Tipo</p></div>
+                    <div><p>Sistema Operativo</p></div>
+                    <div><p>Disponible</p></div>
                     <div><p>Borrar</p></div>
                     <div><p>Guardar</p></div>
                 </div>
@@ -57,12 +61,10 @@
                 
 
             </div>
+            <script>
+                var softW = {{softW|tojson}};
+            </script>
+        <script src="{{ url_for('static',filename='scripts/admin/materialesSoftware.js') }}"></script>
         </div>
-        <script>
-            var tickets = {{res|tojson}};
-        </script>
-        <script src="{{ url_for('static',filename='scripts/reservaciones.js') }}"></script>
-        
-        
     </body>
 </html>

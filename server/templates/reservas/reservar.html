@@ -6,7 +6,7 @@
     <meta name="author" content="">
     <title>BookMe</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservas/reservar.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
 	
     <!--<script src="{{ url_for('static',filename='scripts/ticketWithQr.js') }}"></script>
@@ -15,7 +15,7 @@
     <script type="text/javascript">
         var sala = {{SALA|tojson}};
     </script> -->
-    <script src="{{ url_for('static',filename='scripts/reservar.css') }}"></script>
+    <script src="{{ url_for('static',filename='scripts/reservas/reservar.css') }}"></script>
     <script>
         var rooms = {{ ROOMS | tojson }};
     </script>
@@ -43,7 +43,7 @@
         <div id="ticketSalida">
             <div id="ticket">
             </div>
-            <button id="btnSaveT"><img src=""{{ url_for('static',filename='resources/guardar.png') }}></button>
+            <button id="btnSaveT"><img src="{{ url_for('static',filename='resources/guardar.png') }}"></button>
         </div>
 
 

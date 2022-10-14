@@ -9,7 +9,7 @@
 
         <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
 		<meta charset="utf-8"></meta>
-		<link rel="stylesheet" href="{{ url_for('static',filename='styles/logAndReg.css') }}"></link>
+		<link rel="stylesheet" href="{{ url_for('static',filename='styles/auth/logAndReg.css') }}"></link>
 		<title>BookMe</title>
 
 	</head>
@@ -20,8 +20,8 @@
         </div>
     </div>
     <div>
-        <a href="/login"><img src="{{ url_for('static',filename='resources/log.png') }}" alt="log" id="log"></a>
+        <a href="/login"><img src="{{ url_for('static',filename='resources/auth/log.png') }}" alt="log" id="log"></a>
         <p id = "ortext">or</p>
-        <a href="/register"><img src="{{ url_for('static',filename='resources/reg.png') }}" alt="reg" id="reg"></a>
+        <a href="/register"><img src="{{ url_for('static',filename='resources/auth/reg.png') }}" alt="reg" id="reg"></a>
     </div>
 </body>

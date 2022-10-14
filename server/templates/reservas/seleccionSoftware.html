@@ -6,17 +6,14 @@
     <meta name="author" content="">
     <title>BookMe</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    
+    <script src="{{ url_for('static',filename='scripts/reservas/seleccionSoftware.js') }}"></script>
     <script>
-        var currBooks = {{tickets|tojson}};
+        var softW = {{SFTWR|tojson}};
     </script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservas/seleccionSoftware.css') }}">
 
-    <script src="{{ url_for('static',filename='scripts/currBooks.js') }}"></script>
 </head>
 <body>
-    <div id="currBookings">
-        
-    </div>
     
 </body>
 

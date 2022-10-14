@@ -90,18 +90,18 @@ def mainView():
 @app.route("/authPrev", methods=["GET"])
 def authPrevView():
     if True:
-        return render_template('LogandReg.html')
+        return render_template('auth/LogandReg.html')
 
 @app.route("/login", methods=["GET"])
 @cross_origin(origins='*', supports_credentials=True)
 def loginView():
     if True:
-        return render_template('log.html')
+        return render_template('auth/log.html')
 
 @app.route("/register", methods=["GET"])
 def registerView():
     if True:
-        return render_template('reg.html')
+        return render_template('auth/reg.html')
 
 @app.route("/logout", methods=['GET'])
 def logoutView(name=None):
@@ -114,7 +114,7 @@ def logoutView(name=None):
 @app.route("/register/verifying", methods=["GET"])
 def registerVerifying():
     if True:
-        return render_template('verify.html')
+        return render_template('auth/verify.html')
 
 # error 112 = no user verification expected from this email
 @app.route("/register/verify/<hashKey>", methods=["GET"])
@@ -178,7 +178,43 @@ def showHardwareView():
         ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1 
         GROUP BY DT2.generalObjectID
         ''').fetchall()
-        return render_template("seleccionHardware.html", HRDWR=hardware)
+        return render_template("reservas/seleccionHardware.html", HRDWR=hardware)
+
+@app.route("/reservations/showSoftware", methods=["GET"])
+def showSoftwareView():
+    if jwtValidated(request.cookies.get('jwt')):
+        cur = get_db().cursor()
+        software = cur.execute('''
+        SELECT generalObjectID, identifier, name, brand, description, operativeSystem, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT DT.*, AvailableObjects.generalObjectID, AvailableObjects.sO FROM 
+        (SELECT (SoftwareClass.prefix || "-" || SoftwareObjects.inClassId) as identifier, inTypeId, SoftwareClass.*
+        FROM SoftwareObjects LEFT JOIN SoftwareClass ON (SoftwareClass.classId = SoftwareObjects.classId) WHERE deleted = 0) DT
+        INNER JOIN AvailableObjects 
+        ON (DT.inTypeId = AvailableObjects.sO)) DT2
+        LEFT JOIN 
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
+        GROUP BY DT2.generalObjectID
+        ''').fetchall()
+        return render_template("reservas/seleccionSoftware.html", SFTWR=software)
+
+@app.route("/reservations/showRooms", methods=["GET"])
+def showRoomsView():
+    if jwtValidated(request.cookies.get('jwt')):
+        cur = get_db().cursor()
+        salas = cur.execute('''
+        SELECT generalObjectID, name, description, location, capacity, maxDays, SUM(ResTicket.weight) as totalWeight FROM
+        (SELECT Rooms.*, AvailableObjects.generalObjectID, AvailableObjects.rO FROM 
+        Rooms INNER JOIN AvailableObjects 
+        ON (Rooms.roomId = AvailableObjects.rO) WHERE deleted = 0) DT2
+        LEFT JOIN 
+        (SELECT ReservationTicket.objectId, ReservationTicket.weight FROM ReservationTicket WHERE (ReservationTicket.startDate 
+        BETWEEN datetime("now", "-5 hours") AND datetime("now", "-5 hours", "+7 days", "-0.001 seconds")) AND weight > 0) ResTicket
+        ON (ResTicket.objectID = DT2.generalObjectID) WHERE availability = 1
+        GROUP BY DT2.generalObjectID
+        ''').fetchall()
+        return render_template("reservas/seleccionSalas.html", rooms=salas)
 
 @app.route("/reservations/makeReservation", methods=["GET"])
 def reserveView():
@@ -187,7 +223,7 @@ def reserveView():
         rooms = cur.execute('''
         SELECT * FROM Rooms WHERE deleted = 0
         ''').fetchall()
-        return render_template("reservar2.html", ROOMS=rooms)
+        return render_template("reservas/reservar2.html", ROOMS=rooms)
 
 @app.route("/reservations/currentBookings", methods=["GET"])
 def currentBookingsView():
@@ -207,7 +243,7 @@ def currentBookingsView():
                                  ORDER BY startDate''', 
         (userData["userId"], ignoreTicket)).fetchall()
         print(tickets)
-        return render_template('currBooks.html', tickets=tickets)
+        return render_template('reservas/currBooks.html', tickets=tickets)
     else:
         return redirect("/login", code=302)
 
@@ -260,7 +296,7 @@ def getTicketWithQr(qr):
         ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
         print(ticket)
         #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
-        return render_template('ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"])
+        return render_template('reservas/ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"])
 
 '''--- USER MANAGEMENT ---'''
 
@@ -270,7 +306,7 @@ def forgotPasswordView():
 
 @app.route("/auth/newPassword/<hashKey>", methods=["GET"])
 def newPasswordView(hashKey):
-    return render_template("newPassword.html", hashKey=hashKey)
+    return render_template("auth/newPassword.html", hashKey=hashKey)
 
 '''---ADMIN---'''
 
@@ -281,7 +317,7 @@ def newObjectView():
         userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
         if userData["admin"] == 0:
             return "Only admins"
-        return render_template('objeto_nuevo.html')
+        return render_template('admin/objeto_nuevo.html')
     else:
         return redirect("/login", code=302)
 
@@ -300,7 +336,7 @@ def getHardwareView():
         GROUP BY DT.classId
         ''').fetchall()
 
-        return render_template('materialesHard.html', hardW=hardware)
+        return render_template('admin/materialesHard.html', hardW=hardware)
     else:
         return redirect("/login", code=302)
 
@@ -318,7 +354,7 @@ def getSoftwareView():
         LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
         GROUP BY DT.classId
         ''').fetchall()
-        return render_template('materialesSoftware.html', softW=software)
+        return render_template('admin/materialesSoftware.html', softW=software)
     else:
         return redirect("/login", code=302)
 
@@ -333,7 +369,7 @@ def getSalasView():
         rooms = cur.execute('''
         SELECT * FROM Rooms WHERE deleted = 0
         ''').fetchall()
-        return render_template('materialesSalas.html', salas=rooms)
+        return render_template('admin/materialesSalas.html', salas=rooms)
     else:
         return redirect("/login", code=302)
 
@@ -348,7 +384,7 @@ def getUsersView():
         users = cur.execute('''
         SELECT * FROM Users WHERE deleted = 0
         ''').fetchall()
-        return render_template('users.html', users=users)
+        return render_template('admin/users.html', users=users)
     else:
         return redirect("/login", code=302)
 
@@ -365,7 +401,7 @@ def getTicketsView():
         (SELECT * FROM ReservationTicket WHERE weight > 0) DT
         LEFT JOIN Users ON (Users.userId =  DT.userId)
         ''').fetchall()
-        return render_template('reservaciones.html', res=tickets)
+        return render_template('admin/reservaciones.html', res=tickets)
     else:
         return redirect("/login", code=302)
 
@@ -956,8 +992,8 @@ def loginApp(name=None):
             pfpPath = "static/resources/pfps/generic.png"
             with open(pfpPath, "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
-        user["pfp"] = encoded_string.decode('utf-8')
-        respBody = json.dumps({"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256")})
+        pfp = encoded_string.decode('utf-8')
+        respBody = json.dumps({"authorized":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256"), "pfp":pfp})
     else:
         respBody = json.dumps({"authorized":False, "errorId":103}) #, "desc":"Wrong pwd"
 
@@ -1058,8 +1094,27 @@ def changeUserData():
         if body["pfp"] != "":
             with open("static/resources/pfps/" + userData["userId"] + ".png", "wb") as fh:
                 fh.write(base64.decodebytes(body["pfp"]))
-            respBody = {"saved":True}
-            return json.dumps(respBody)
+
+        user = cur.execute('''SELECT Users.userId, 
+                                     Users.email,
+                                     Users.username,
+                                     Users.firstName,
+                                     Users.lastName,
+                                     Users.admin,
+                                     Users.blocked
+                                     FROM Users WHERE userId = ?''', 
+                           (userData["userId"],)).fetchone()
+        pfpPath = "static/resources/pfps/" + userData["userId"] +".png"
+        if exists(pfpPath):
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        else:
+            pfpPath = "static/resources/pfps/generic.png"
+            with open(pfpPath, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
+        pfp = encoded_string.decode('utf-8')
+        respBody = {"saved":True, "jwt":jwt.encode(user, jwtKey, algorithm="HS256"), "pfp":pfp}
+        return json.dumps(respBody)
 
 '''---RESERVATION MANAGEMENT---'''
 # Get available objects

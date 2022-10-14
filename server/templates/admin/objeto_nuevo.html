@@ -8,10 +8,9 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
          crud style -->
-        <link rel="stylesheet" href="{{ url_for('static',filename='styles/materialesSala.css') }}">
-
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/objeto_nuevo.css') }}">
         <!-- import crud functionality -->
-        <title>BookMe</title>
+        <title>CRUD</title>
     
     </head>
     <body>
@@ -36,6 +35,7 @@
 
         <!-- Main div -->
         <div class="main_div" id="main_div_id">
+            <h1 class="titulo"> Agregando nuevo objeto</h1>
 
             
 
@@ -44,26 +44,27 @@
             <!-- username, mail, name, country, birth, gender, creation(not_edit) -->
             <!-- name, lastname, gender, brith -->
             <div class="div_list_users" id="div_list_users_id">
+                <h2 class="titulo2"> Tipo</h2>
+                <select class="tipo" name="tipo" id="tipo">
+                    
+                    <option value="1">Elige un tipo de objeto</option>
+                    
+                    <option value="2">Hardware</option>
+                   
+                    <option value="3"> Software</option>
 
+                    <option value="4"> Sala</option>
+                </select>
                 <!-- Label -->
-                <div class="single_row_label" id="single_row_label_id">
-                    <div><p>Etiqueta</p></div>
-                    <div><p>Nombre Objeto</p></div>
-                    <div><p>Descripcion</p></div>
-                    <div><p>Cantidad</p></div>
-                    <div><p>Localización</p></div>
-                    <div><p>Disponible</p></div>
-                    <div><p>Borrar</p></div>
-                    <div><p>Guardar</p></div>
+                <br>
+                <br>
+                <div id="contenedortodo">
+                    
                 </div>
-                
-                
-
             </div>
-            <script>
-                var rooms = {{rooms|tojson}};
-            </script>
-        <script src="{{ url_for('static',filename='scripts/materialesSala.js') }}"></script>
+
+        <script src="{{ url_for('static',filename='scripts/admin/objeto_nuevo.js') }}"></script>
         </div>
+
     </body>
 </html>

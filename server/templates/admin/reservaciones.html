@@ -3,12 +3,11 @@
     <head>
         
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="UTF-8">
         <!-- Jquery -->
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
          crud style -->
-        <link rel="stylesheet" href="{{ url_for('static',filename='styles/objeto_nuevo.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/reservaciones.css') }}">
         <!-- import crud functionality -->
         <title>CRUD</title>
     
@@ -35,7 +34,6 @@
 
         <!-- Main div -->
         <div class="main_div" id="main_div_id">
-            <h1 class="titulo"> Agregando nuevo objeto</h1>
 
             
 
@@ -44,27 +42,27 @@
             <!-- username, mail, name, country, birth, gender, creation(not_edit) -->
             <!-- name, lastname, gender, brith -->
             <div class="div_list_users" id="div_list_users_id">
-                <h2 class="titulo2"> Tipo</h2>
-                <select class="tipo" name="tipo" id="tipo">
-                    
-                    <option value="1">Elige un tipo de objeto</option>
-                    
-                    <option value="2">Hardware</option>
-                   
-                    <option value="3"> Software</option>
 
-                    <option value="4"> Sala</option>
-                </select>
                 <!-- Label -->
-                <br>
-                <br>
-                <div id="contenedortodo">
-                    
+                <div class="single_row_label" id="single_row_label_id">
+                    <div><p>ID</p></div>
+                    <div>&nbsp&nbsp&nbsp<p>Username</p></div>
+                    <div><p>Objeto(id)</p></div>
+                    <div><p>Fecha Inicio</p></div>
+                    <div><p>Fecha Final</p></div>
+                    <div><p>Borrar</p></div>
+                    <div><p>Guardar</p></div>
                 </div>
+                
+                
+
             </div>
-
-        <script src="{{ url_for('static',filename='scripts/objeto_nuevo.js') }}"></script>
         </div>
-
+        <script>
+            var tickets = {{res|tojson}};
+        </script>
+        <script src="{{ url_for('static',filename='scripts/admin/reservaciones.js') }}"></script>
+        
+        
     </body>
 </html>

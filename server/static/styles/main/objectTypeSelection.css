@@ -17,8 +17,11 @@ body{
     height: 28vh;
 }
 #hardwareTypeImg{
- height: 25vh;
+ height: 22vh;
 }
 #softwareTypeImg{
+    height: 22vh;
+}
+#spaceTypeImg{
     height: 25vh;
 }
