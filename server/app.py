@@ -90,13 +90,13 @@ def mainView():
 @app.route("/authPrev", methods=["GET"])
 def authPrevView():
     if True:
-        return render_template('auth/LogandReg.html')
+        return render_template('auth/logOrReg.html')
 
 @app.route("/login", methods=["GET"])
 @cross_origin(origins='*', supports_credentials=True)
 def loginView():
     if True:
-        return render_template('auth/log.html')
+        return render_template('auth/login.html')
 
 @app.route("/register", methods=["GET"])
 def registerView():
@@ -457,7 +457,7 @@ def login(name=None):
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
-                                     Users.birth,
+                                     Users.birthDate,
                                      Users.organization,
                                      Users.hashPassword,
                                      Users.admin,
@@ -470,7 +470,7 @@ def login(name=None):
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
-                                     Users.birth,
+                                     Users.birthDate,
                                      Users.organization,
                                      Users.hashPassword,
                                      Users.admin,
@@ -1117,6 +1117,8 @@ def changeUserData():
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                         (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
                         body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
+            respBody = {"saved":False, "errorId":0}
+            return json.dumps(respBody)
 
         if body["hashPassword"] != "":
             query = '''UPDATE Users 
@@ -1141,7 +1143,7 @@ def changeUserData():
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
-                                     Users.birth,
+                                     Users.birthDate,
                                      Users.organization,
                                      Users.admin,
                                      Users.blocked

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="
+        default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'; 
+        script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+        connect-src * data: blob: 'unsafe-inline'; 
+        img-src * data: blob: 'unsafe-inline'; 
+        frame-src * data: blob: ; 
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        frame-ancestors * data: blob: 'unsafe-inline';                                                    
+        " />
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com"> 
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href=" {{url_for('static', filename='styles/auth/logOrRegStyle.css')}} ">
+        <link rel="stylesheet" href=" {{url_for('static', filename='styles/generalStyle.css')}} "> 
+
+        <title>BookMe</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src=" {{url_for('static', filename='scripts/auth/logOrRegFunc.js')}} "></script>
+    </head>
+    <body>
+       <!-- Navbar -->
+       <div class="navbar-div">
+            <div class="spacer-div">
+                <div class="dropdown">
+                    <a href="#" class="dropbtn"><img src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/navMenuButton.imageset/navMenuButton-2.png?raw=true" alt=""></a>
+                     <div class="dropdown-content">
+                        <a href="#">Home</a>
+                    </div>
+                </div>
+            </div>
+            <p id="bookMeTitle">BookMe</p>
+            <div class="spacer-div"></div>
+       </div> 
+
+       <!-- main div container -->
+       <div class="main-container-div">
+            
+            <!-- left div -->
+            <div class="left-container">
+                <a href="/login"><img id="newBookingButton" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/loginButton.imageset/logButton.png?raw=true" alt=""></a>
+            </div>
+
+            <!-- right div -->
+            <div class="right-container">
+                <a href="/register"><img id="newBookingButton" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/registerButton.imageset/regButton.png?raw=true" alt=""></a>
+            </div>
+       </div>
+
+    </body>
+</html>

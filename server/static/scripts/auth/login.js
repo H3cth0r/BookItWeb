@@ -15,7 +15,7 @@
         }
 
 
-        $("#botonenvio").click(function () {
+        $("#sendButton").click(function () {
             
             var correo = $("#email").val();
             var contrasena = $("#password").val();
@@ -24,14 +24,14 @@
             switch (true) {
                 case (correo == ""):
                     $("#email").focus();
-                    $("#emailid").css("color", "red");
-                
+                    $("#emailId").css("color", "red");
+                    break;
                 case (contrasena == ""):
                     $("#password").focus();
-                    $("#passwordid").css("color", "red");
-               
+                    $("#passwordId").css("color", "red");
+                    break;
                 default:
-                    $("#form").submit();
+                    break;
             }
 
         });
@@ -40,10 +40,11 @@
 
 
 $(document).ready(function () {
-    $("#formulario").on("input", function () {
- 
-        $("#emailid").css("color", "white");
-        $("#passwordid").css("color", "white");
+    $("#password").on("input", function () {
+        $("#passwordId").css("color", "white");
+    });
+    $("#email").on("input", function () {
+        $("#emailId").css("color", "white");
     });
 });
 
@@ -95,7 +96,7 @@ def login(name=None):
     //ajax para el login
 
     $(document).ready(function () {
-        $("#botonenvio").click(function () {
+        $("#sendButton").click(function () {
             var correo = $("#email").val();
             if (email.test(correo) == true) {
                 $.ajax({
@@ -109,13 +110,13 @@ def login(name=None):
                     dataType: "json",
                     success: function (data) {
                         if (data.authorized) {
-                            window.location.replace("/main");
+                            window.location.replace("/menu");
                         } else {
                             $("#error").html("Usuario o contraseña incorrectos");
                         }
                     },
                     error: function (xhr, status, error) {
-                        $("#error").html("Correo o contraseña incorrectos");
+                        $("#error").html("Usuario o contraseña incorrectos");
             
                     }
                 });
@@ -132,8 +133,7 @@ def login(name=None):
                     dataType: "json",
                     success: function (data) {
                         if (data.authorized) {
-                            console.log("SSSSSSSSSSSSSSSSSSSSIU")
-                            //window.location.replace("http://localhost:5000/main");
+                            window.location.replace("/menu");
                         } else {
                             $("#error").html("Usuario o contraseña incorrectos");
                         }
