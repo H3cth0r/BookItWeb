@@ -1008,7 +1008,7 @@ def loginApp(name=None):
     elif user["hashPassword"] == body["password"]:
         user.pop("hashPassword")
         user["exp"] = datetime.now(timezone.utc) + timedelta(days=7)
-        pfpPath = "static/resources/pfps/" + user["userId"] +".png"
+        pfpPath = "static/resources/pfps/" + str(user["userId"]) +".png"
         if exists(pfpPath):
             with open(pfpPath, "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read())
