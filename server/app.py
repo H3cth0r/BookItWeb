@@ -457,6 +457,8 @@ def login(name=None):
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
+                                     Users.birth,
+                                     Users.organization,
                                      Users.hashPassword,
                                      Users.admin,
                                      Users.blocked
@@ -468,6 +470,8 @@ def login(name=None):
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
+                                     Users.birth,
+                                     Users.organization,
                                      Users.hashPassword,
                                      Users.admin,
                                      Users.blocked
@@ -974,6 +978,8 @@ def loginApp(name=None):
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
+                                     Users.birth,
+                                     Users.organization,
                                      Users.hashPassword,
                                      Users.admin,
                                      Users.blocked
@@ -985,6 +991,8 @@ def loginApp(name=None):
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
+                                     Users.birth,
+                                     Users.organization,
                                      Users.hashPassword,
                                      Users.admin,
                                      Users.blocked
@@ -1133,6 +1141,8 @@ def changeUserData():
                                      Users.username,
                                      Users.firstName,
                                      Users.lastName,
+                                     Users.birth,
+                                     Users.organization,
                                      Users.admin,
                                      Users.blocked
                                      FROM Users WHERE userId = ?''', 
