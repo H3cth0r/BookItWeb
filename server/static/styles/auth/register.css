@@ -71,6 +71,13 @@ body{
     outline: none;
     color: white;
 }
+.input-info-row select{
+  width: 150px;
+  background-color: rgb(26, 26, 26);
+  border: none;
+  outline: none;
+  color: white;
+}
 .input-info-row div{
     width: 38%;
     height: 1vw;
