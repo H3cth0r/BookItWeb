@@ -1136,8 +1136,8 @@ def changeUserData():
 
         cur.execute(query, toInsert)
         if body["pfp"] != "":
-            with open("static/resources/pfps/" + userData["userId"] + ".png", "wb") as fh:
-                fh.write(base64.decodebytes(body["pfp"]))
+            with open("static/resources/pfps/" + str(userData["userId"]) + ".png", "wb") as fh:
+                fh.write(base64.b64decode(body["pfp"]))
 
         user = cur.execute('''SELECT Users.userId, 
                                      Users.email,
