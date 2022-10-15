@@ -101,7 +101,7 @@ def loginView():
 @app.route("/register", methods=["GET"])
 def registerView():
     if True:
-        return render_template('auth/reg.html')
+        return render_template('auth/register.html')
 
 @app.route("/logout", methods=['GET'])
 def logoutView(name=None):
@@ -826,6 +826,7 @@ def editUser():
         elif usernameSearch is not None:
             respBody = json.dumps({"saved":False, "errorId":111})#, "desc":"Username is already registered"
         else:
+            body["hashPassword"] = sha256(body["hashPassword"].encode('utf-8')).hexdigest()[:20]
             cur.execute('''
                         UPDATE Users SET firstName = ?, lastName = ?, username = ?, birthDate = ?, organization = ?, email = ?, ocupation = ?,
                         countryId = ?, hashPassword = ?, admin = ?, blocked = ?
