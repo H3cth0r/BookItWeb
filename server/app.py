@@ -1,5 +1,7 @@
+from asyncio.base_subprocess import ReadSubprocessPipeProto
 from pprint import pp
 from sys import base_prefix
+from tkinter.tix import Tree
 from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
 from flask_cors import CORS, cross_origin
@@ -554,6 +556,19 @@ def register():
                     (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
                     body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
         respBody = json.dumps({"registered":True})
+    return respBody
+
+# Expecting request:
+# {"verifyId" = verifyId}
+@app.route("/api/isVerified", methods=["POST"])
+def isUserVerified():
+    body = request.get_json()
+    cur = get_db().cursor()
+    toVerify = cur.execute('''SELECT id from ToVerify WHERE id = ?''', (body["verifyId"],))
+    if toVerify is None:
+        respBody = True
+    else:
+        respBody = False
     return respBody
 
 @app.route("/api/forgottenPassword", methods=["POST"])
