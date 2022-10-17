@@ -1,4 +1,8 @@
+var counter = 0;
 $(document).ready(function () {
+    counter = counter + 1;
+    console.log("Here")
+    console.log(counter)
     for (var i = 0; i < hardw.length; i++) {
         var hardware = hardw[i];
         var generalObjectId = hardware.generalObjectId;
@@ -16,25 +20,39 @@ $(document).ready(function () {
         else {
             hardwareHTML += "<p>Not Available       🔴</p>";
         }
-        hardwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
+        hardwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary botonenvio'>BooKMe</button>"
         hardwareHTML += "</div>";
         
         $('#main_table').append(hardwareHTML);
-        console.log(i)
-
     }
 
-    $("#botonenvio").click(function () {
-        let index = $('#botonenvio').val();
-        
+    $(".botonenvio").click(function () {
+        let index = $(this).val();
+        var data = {"objectType" : "HRDWR",
+                    "objectId" : hardw[index].generalObjectID, 
+                    "objectName" : hardw[index].name};
+        console.log(data)
+        if (hardw[index].maxDays == 1){
+            $.redirect("/reservations/daySelect", data);
+        }
+        else{
+            $.redirect("/reservations/daysSelect", data);
+        }
+
+        /*
         $.ajax({
-            url: "/makeReservation",
+            url: "/reservations/daySelect",
             type: "POST",
-            data: {"objectType" : "hardware",
+            data: {"objectType" : "HRDWR",
                    "objectId" : hardw[index].generalObjectId, 
-                   "objectName" : hardw[index].name}
+                   "objectName" : hardw[index].name},
+            success: function (data) {
+                document.write(data);
+            }
 
         });
+        */
+        
     }
     );
     

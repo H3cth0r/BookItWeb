@@ -179,6 +179,8 @@ def menuObjectTypeSelectionView():
 
 '''---RESERVATIONS---'''
 
+# selección X > day(s) select > time select > show ticket >(newTicket)
+
 @app.route("/reservations/showHardware", methods=["GET"])
 def showHardwareView():
     if jwtValidated(request.cookies.get('jwt')):
@@ -234,7 +236,74 @@ def showRoomsView():
         ''').fetchall()
         return render_template("reservas/seleccionSalas.html", rooms=salas)
 
-@app.route("/reservations/makeReservation", methods=["GET"])
+@app.route("/reservations/daySelect", methods=["POST"])
+def daySelectView():
+    body = request.form.to_dict()
+    body["objectId"] = int(body["objectId"])
+    return render_template('reservas/oneDateSelectionView.html', data=body)
+
+@app.route("/reservations/daysSelect", methods=["POST"])
+def daysSelectView():
+    body = request.form.to_dict()
+    body["objectId"] = int(body["objectId"])
+    return render_template('reservas/twoDatesSelectionView.html', data=body)
+
+@app.route("/reservations/timeSelect", methods=["POST"])
+def timeSelectView():
+    body = request.form.to_dict()
+    body["objectId"] = int(body["objectId"])
+
+    if "ignoreTicket" in body:
+        ignoreTicket = body["ignoreTicket"]
+    else:
+        ignoreTicket = "-1"
+    cur = get_db().cursor()
+    timeRanges = cur.execute('''
+    SELECT startDate, endDate, strftime('%Y-%m-%d', startDate) as startDay, strftime('%H:%M:%S', startDate) as startTime,
+    strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
+    FROM ReservationTicket 
+    WHERE (startDay = date(?) OR endDay = date(?)) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
+    ''', (body["date"], body["date"], body["objectId"], ignoreTicket)).fetchall()
+    body = {
+        "objectData":body,
+        "timeRanges":timeRanges
+    }
+
+    return body
+
+@app.route("/reservations/showTicket", methods=["POST"])
+def showTicketView():
+    body = request.form.to_dict()
+    body["objectId"] = int(body["objectId"])
+    return render_template('reservas/twoDatesSelectionView.html', data=body)
+
+'''
+{
+    "objectData":{
+
+    },
+    "timeRanges":[
+        {
+        "startDate": "2022-10-06 16:00:00.000",
+        "endDate": "2022-10-06 18:00:00.000",
+        "startDay": "2022-10-06",
+        "startTime": "16:00:00",
+        "endDay": "2022-10-06",
+        "endTime": "18:00:00"
+        },
+        {
+        "startDate": "2022-10-06 19:00:00.000",
+        "endDate": "2022-10-06 22:00:00.000",
+        "startDay": "2022-10-06",
+        "startTime": "19:00:00",
+        "endDay": "2022-10-06",
+        "endTime": "22:00:00"
+        }
+    ]
+}
+'''
+
+@app.route("/reservations/makeReservation", methods=["POST"])
 def reserveView():
     if jwtValidated(request.cookies.get('jwt')):
         cur = get_db().cursor()

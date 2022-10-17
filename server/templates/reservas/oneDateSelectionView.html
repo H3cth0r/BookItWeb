@@ -12,12 +12,15 @@
         frame-ancestors * data: blob: 'unsafe-inline';                                                    
         " />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+        <script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
         
         <link rel="stylesheet" href=" {{ url_for('static',filename='styles/reservas/oneDateSelectionStyle.css') }} ">
         <link rel="stylesheet" href=" {{ url_for('static',filename='styles/generalStyle.css') }} "> 
 
-        <script src="scripts/oneDateSelectionFunc.js"></script>
+        <script src=" {{ url_for('static',filename='scripts/reservas/oneDateSelectionFunc.js') }} "></script>
+        <script>
+            var objectData = {{data|tojson}};
+        </script>
     </head>
     <body>
         
@@ -31,7 +34,15 @@
 
         <!-- selection info div-->
         <div class="selection-info-div">
-                <input id="statsButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/nextButtonSquare.imageset/nextButtonSquare-2.png?raw=true" name="submit">
+                <input id="nextButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/nextButtonSquare.imageset/nextButtonSquare-2.png?raw=true" name="submit">
+                <div>
+                    <p>
+                        Date selected:
+                    </p>
+                    <p id="selectText">
+
+                    </p>
+                </div>
         </div>
         
     </body>
