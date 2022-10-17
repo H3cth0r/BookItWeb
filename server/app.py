@@ -269,7 +269,7 @@ def timeSelectView():
         "timeRanges":timeRanges
     }
 
-    return body
+    return render_template('/reservas/reloj.html', objectData = body)
 
 @app.route("/reservations/showTicket", methods=["POST"])
 def showTicketView():
@@ -1144,7 +1144,7 @@ def registerApp():
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                     (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
                     body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
-        respBody = json.dumps({"readyToVerify":True})
+        respBody = json.dumps({"readyToVerify":True, "verifyId":cur.lastrowid})
     return respBody
 
 # Check if new user data is valid.
