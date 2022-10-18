@@ -150,11 +150,11 @@ def verifyMailView(hashKey):
         u = cur.execute('''SELECT * FROM ToVerify WHERE hashKey = ? ORDER BY id DESC''', (hashKey,)).fetchone()
         if u is None:
             return redirect("/login?error=112", code=302)
-        cur.execute('''UPDATE Users ("firstName", "lastName", "username", "birthDate",
-                       "organization", "email", "ocupation", "countryId", "hashPassword") 
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+        cur.execute('''UPDATE Users SET firstName = ?, lastName = ?, username = ?, birthDate = ?,
+                       organization = ?, email = ?, ocupation = ?, countryId = ?, hashPassword = ?
+                       WHERE userId = ?;''',
                        (u["firstName"], u["lastName"], u["username"], u["birthDate"],
-                       u["organization"], u["email"], u["ocupation"], u["countryId"], u["hashPassword"]))
+                       u["organization"], u["email"], u["ocupation"], u["countryId"], u["hashPassword"], u["userId"]))
         cur.execute('''DELETE FROM ToVerify WHERE email = ? OR username = ? OR hashKey = ?''', (u["email"], u["username"], hashKey))
         return redirect("/login?fromVerify=true", code=302)
 
@@ -275,7 +275,7 @@ def timeSelectView():
 def showTicketView():
     body = request.form.to_dict()
     body["objectId"] = int(body["objectId"])
-    return render_template('reservas/twoDatesSelectionView.html', data=body)
+    return render_template('reservas/showTicket.html', TICKET=body)
 
 '''
 {
@@ -635,9 +635,9 @@ def isUserVerified():
     cur = get_db().cursor()
     toVerify = cur.execute('''SELECT id from ToVerify WHERE id = ?''', (body["verifyId"],))
     if toVerify is None:
-        respBody = True
+        respBody = json.dumps({"verified":True})
     else:
-        respBody = False
+        respBody = json.dumps({"verified":False})
     return respBody
 
 @app.route("/api/forgottenPassword", methods=["POST"])
@@ -1197,10 +1197,10 @@ def changeUserData():
             msg.html = render_template("mailVerification/mailVerification.html", hashKey=hashKey)
             mail.send(msg)
             cur.execute('''
-                        INSERT INTO "main"."ToVerify" ("firstName", "lastName", "username", "birthDate",
+                        INSERT INTO "main"."ToVerify" ("userId", "firstName", "lastName", "username", "birthDate",
                         "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
-                        (body["firstName"], body["lastName"], body["username"], body["birthDate"], 
+                        (userData["userId"], body["firstName"], body["lastName"], body["username"], body["birthDate"], 
                         body["organization"], body["email"], body["ocupation"], body["countryId"], body["hashPassword"], hashKey))
             respBody = {"saved":False, "errorId":0}
             return json.dumps(respBody)
