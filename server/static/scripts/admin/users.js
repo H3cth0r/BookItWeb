@@ -12,6 +12,7 @@ for (i = 0; i < users.length; i++) {
     var admin = user.admin;
     var blocked = user.blocked;
     var nacimiento = birthDate.split(" ");
+    console.log(blocked);
 
     let the = `<div class="single_row_user" id="` + userID + `">
                     <p id="userid">` + userID + `</p>
@@ -100,8 +101,15 @@ function save_button(id_val){
         var emailSend = $(".email"+id_val).val();
         var birthDateSend = $(".birthDate"+id_val).val();
         var countryIdSend = $(".countryId"+id_val).val();
+        console.log(blockedSend);
+        if (blockedSend == true){
+            blockedSend = 1;
+        }
+        else{
+            blockedSend = 0;
         
-        console.log(adminSend);
+        }
+        console.log(blockedSend);
     $.ajax({
         url: '/api/editUser', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
@@ -150,8 +158,9 @@ function checkAdmin(admin, id_val){
         document.getElementById(`admin`+id_val).checked = true;
     }
 }
+
 function checkifblocked(blocked, id_val){
-    if (blocked){
+    if (blocked == 1){
         document.getElementById(`blocked`+id_val).checked = true;
     }
 }

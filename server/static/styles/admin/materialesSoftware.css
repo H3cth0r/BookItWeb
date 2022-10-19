@@ -216,7 +216,7 @@ p{
     background-color: white;
     text-align: center;
     height: 5vh;
-    margin-left: -4%;
+    margin-left: -2%;
 }
 
 #cantidad {
@@ -239,6 +239,16 @@ p{
     text-align: center;
     height: 2vh;
     margin-left: -4%;
+
+}
+#numero {
+    width: 8vw;
+    border: transparent;
+    color: black;
+    background-color: white;
+    text-align: center;
+    height: 2vh;
+    margin-left: -1%;
 
 }
 

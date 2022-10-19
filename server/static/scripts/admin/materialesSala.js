@@ -20,22 +20,23 @@ for (var i = 0; i < rooms.length; i++) {
     var roomDescription = room.description;
     var roomLabel = room.label;
     var roomID = room.roomId;
+    console.log(roomID);
     let the = `<div class="single_row_user" id="`+ roomID + `">
-                        <input type="text" value="`+ roomLabel +` " id="prefijo">
+                        <input type="text" value="`+ roomLabel +` " id="prefijo" class="prefijo`+ roomID +`" disabled>
     
                         
-                        <textarea rows="2" cols="10"  id="nombreObjeto">`+ roomName + `</textarea>
-                        <textarea rows="2" cols="10"  id="descripcionObjeto">` + roomDescription +  `</textarea>
+                        <textarea rows="2" cols="10" class="nombreObjeto`+ roomID +`"  id="nombreObjeto">`+ roomName + `</textarea>
+                        <textarea rows="2" cols="10"  id="descripcionObjeto" class="descripcionObjeto`+ roomID +`">` + roomDescription +  `</textarea>
                         
-                        <input type="number" name="cantidad" id="cantidad" class="numero" value=`+roomCapacity+`>
+                        <input type="number" name="cantidad" id="cantidad" class="numero`+ roomID +`" value=`+roomCapacity+`>
 
-                        <textarea rows="2" cols="10"  id="tipo">` + roomLocation +  `</textarea>
+                        <textarea rows="2" cols="10"  id="tipo" class="location`+ roomID +`">` + roomLocation +  `</textarea>
                         <div class="checkbox">
-                                    <input type="checkbox" name="disponible" id="disponible`+ roomID + `" class="checkbox">
+                                    <input type="checkbox" name="disponible" id="disponible`+ roomID + `" class="checkbox`+ roomID +`">
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('`+ roomID + `');">Delete</button></div>
-                        <div><button id="row_save" onclick="save_button('$`+ roomID + `');">Save</button></div>
+                        <div><button id="row_save" onclick="save_button('`+ roomID + `');">Save</button></div>
                     </div>
                     <br>`;
         $('#contenedortodo').append(the);
@@ -71,7 +72,7 @@ function delete_button(id_val){
         success: function(data){
             alert(data);
         }
-        
+
     
         });
 }
@@ -81,18 +82,19 @@ function delete_button(id_val){
 
 function save_button(id_val){
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
-    var disp = document.getElementById(`disponible`+id_val).checked;
-    if (disp == true){
-        disp = 1;
-    }
-    else{//terminar de arreglar aqui
-        disp = 0;
-    }
+        console.log(id_val);
+    var nombreObjetoSend = $(".nombreObjeto"+id_val).val();
+    var descripcionObjetoSend = $(`.descripcionObjeto`+id_val).val();
+    var numeroSend = $(`.numero`+id_val).val();
+    var locationSend = $(`.location`+id_val).val();
+    var prefijoSend = $(`.prefijo`+id_val).val();
+    var disponibleSend = $(`.checkbox`+id_val).is(":checked");
+
 
     $.ajax({
-        url: 'api/editRooms', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: '/api/editRooms', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
-        data: JSON.stringify({ "roomId" : roomID }),
+        data: JSON.stringify({ "roomId" : id_val, "name" : nombreObjetoSend, "description" : descripcionObjetoSend, "capacity" : numeroSend, "location" : locationSend, "label" : prefijoSend, "availability" : disponibleSend }), //que victor me diga que mandarle al servidor o que revise porque no se borra
         contentType: "application/json",
         dataType: "json",
         success: function(data){
@@ -101,7 +103,7 @@ function save_button(id_val){
     
         });
 }
-    location.reload(true);
+    //location.reload(true);
 }
 function checkDisponible(id_val){
     if (roomAvailability == true){

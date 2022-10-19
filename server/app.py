@@ -1,7 +1,7 @@
 from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
 from flask_cors import CORS, cross_origin
-#from app_conf import smpt_password
+from app_conf import smpt_password
 from hashlib import new, sha256, sha1
 from hmac import compare_digest
 import json
@@ -23,7 +23,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'bookmebot@gmail.com'
-#app.config['MAIL_PASSWORD'] = smpt_password
+app.config['MAIL_PASSWORD'] = smpt_password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -33,7 +33,7 @@ DATABASE = 'DB\BookMeDB.db'
 jwtKey = 'BooKMeIsCool'
 hashedAdminPwd = sha256(jwtKey.encode('utf-8'))
 baseUrl = "http://4.228.81.149:5000"
-#app.config['SECRET_KEY'] = 'super-secret'
+app.config['SECRET_KEY'] = 'super-secret'
 
 def make_dicts(cursor, row):
     return dict((cursor.description[idx][0], value)
@@ -841,6 +841,8 @@ def editHardware():
         if userData["admin"] == 0:
             return "Only admins"
         body = request.get_json()
+        body["quantity"] = int(body["quantity"])
+        print(body)
         cur = get_db().cursor()
         oldHardware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
                                      (SELECT * FROM HardwareClass WHERE classId = ? AND deleted = 0) DT
@@ -863,9 +865,9 @@ def editHardware():
         cur.execute("PRAGMA foreign_keys = OFF")
         cur.execute('''
                     UPDATE HardwareClass SET name = ?, operativeSystem = ?, description = ?, prefix = ?, 
-                    availability = ?, maxDays = ? WHERE classId = ?''',
+                    availability = ? WHERE classId = ?''',
                     (body["name"], body["operativeSystem"], body["description"], body["prefix"], 
-                     int(body["availability"]), body["maxDays"], body["classId"]))
+                    int(body["availability"]), body["classId"]))
 
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
@@ -892,12 +894,14 @@ def editSoftware():
         if userData["admin"] == 0:
             return "Only admins"
         body = request.get_json()
+        print(body)
         cur = get_db().cursor()
         oldSoftware = cur.execute('''SELECT DT.*, COUNT(inClassId) as quantity FROM
                                      (SELECT * FROM SoftwareClass WHERE classId = ? AND deleted = 0) DT
                                      LEFT JOIN SoftwareObjects ON (DT.classId = SoftwareObjects.classId)
                                      GROUP BY DT.classId''', (body["classId"],)).fetchone()
         oldQuantity = oldSoftware["quantity"]
+        body["quantity"] = int(body["quantity"])
         newQuantity = body["quantity"]
         dObjects = newQuantity - oldQuantity
         if dObjects > 0:
@@ -915,9 +919,9 @@ def editSoftware():
         cur.execute("PRAGMA foreign_keys = OFF")
         cur.execute('''
                     UPDATE SoftwareClass SET name = ?, operativeSystem = ?, description = ?, prefix = ?, 
-                    brand = ?, availability = ?, maxDays = ? WHERE classId = ?''',
+                     availability = ? WHERE classId = ?''',
                     (body["name"], body["operativeSystem"], body["description"], body["prefix"],
-                     body["brand"], int(body["availability"]), body["maxDays"], body["classId"]))
+                     int(body["availability"]), body["classId"]))
 
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
@@ -946,9 +950,9 @@ def editRooms():
         cur = get_db().cursor()
         cur.execute('''
                     UPDATE Rooms SET name = ?, label = ?, description = ?, location = ?, 
-                    availability = ?, maxDays = ? WHERE roomId = ?''',
+                    availability = ? WHERE roomId = ?''',
                     (body["name"], body["label"], body["description"], body["location"],
-                     int(body["availability"]), body["maxDays"], body["roomId"]))
+                     int(body["availability"]), body["roomId"]))
 
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
@@ -960,6 +964,7 @@ def editUser():
         if userData["admin"] == 0:
             return "Only admins"
         body = request.get_json()
+        print(body)
         cur = get_db().cursor()
         emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],)).fetchone()
         usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],)).fetchone()

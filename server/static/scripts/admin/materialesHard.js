@@ -7,19 +7,20 @@ for (var i = 0; i < hardW.length; i++) {
     var hardwareMaxDays = hardware.maxDays;
     var hardwareQuantity = hardware.quantity;
     var hardwareID = hardware.classId;
-    console.log(hardwareID);
+    var hardwareAvailability = hardware.availability;
+    console.log(hardwareAvailability);
 
     let the = `<div class="single_row_user" id="`+ hardwareID +`">
       
-                        <input type="text" value="`+ hardwarePrefix +`" id="prefijo">
-                        <input type="text" value="`+ hardwareName +`" id="nombreObjeto">
-                        <textarea rows="2" cols="10" id="descripcionObjeto">`+ hardwareDescription +`</textarea>
+                        <input type="text" value="`+ hardwarePrefix +`" id="prefijo" class="prefijo`+ hardwareID +`">
+                        <input type="text" value="`+ hardwareName +`" id="nombreObjeto" class="nombreObjeto`+ hardwareID +`">
+                        <textarea rows="2" cols="10" id="descripcionObjeto" class="descripcionObjeto`+ hardwareID +`">`+ hardwareDescription +`</textarea>
                         
-                        <input type="number" name="cantidad" id="cantidad" class="numero" value = `+ hardwareQuantity +`>
+                        <input type="number" name="cantidad" id="numero" class="numero`+ hardwareID +`" value = `+ hardwareQuantity +`>
                         <p id="tipo"> Hardware </p>
-                        <input type="text" value="`+ hardwareOS +`" id="tipo">
+                        <input type="text" value="`+ hardwareOS +`" id="tipo" class="tipo`+ hardwareID +`">
                         <div class="checkbox" id="chechboxid">
-                                    <input type="checkbox" name="disponible" id="disponible" value="true">
+                                    <input type="checkbox" name="disponible" id="disponible" value="true" class="disponible`+ hardwareID +`">
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('`+ hardwareID +`');">Delete</button></div>
@@ -28,6 +29,7 @@ for (var i = 0; i < hardW.length; i++) {
                     <br>`;
         $('#contenedortodo').append(the);
         console.log("lol");
+        checkDisponible(hardwareID);
     }
 
 
@@ -75,12 +77,18 @@ function delete_button(id_val){
  
 function save_button(id_val){
     console.log("saved " + id_val);
+    var nombreObjeto = $(".nombreObjeto" + id_val).val();
+    var descripcionObjeto = $(".descripcionObjeto" + id_val).val();
+    var tipo = $(".tipo" + id_val).val();
+    var numero = $(".numero" + id_val).val();
+    var prefijo = $(".prefijo" + id_val).val();
+    var availability = $(".disponible" + id_val).is(":checked");
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
-    alert("saved " + id_val)
+    
     $.ajax({ 
     url: '/api/editHardware', //cambiar esto por la ruta del servidor y añadir bien el json
     type: 'POST',
-    data: JSON.stringify({"classId" : id_val, "quantity" : $(`#${id_val} #cantidad`).val(), "name" : $(`#${id_val} #nombreObjeto`).val(), "operativeSystem" : $(`#${id_val} #tipo`).val(), "description" : $(`#${id_val} #descripcionObjeto`).val(), "prefix" : $(`#${id_val} #prefijo`).val(), "availability" : $(`#${id_val} #disponible`).val(), "maxDays" : $(`#${id_val} #maxDays`).val() }), //que victor me diga que mandarle al servidor 
+    data: JSON.stringify({"classId" : id_val, "quantity" : numero, "name" : nombreObjeto, "operativeSystem" : tipo, "description" : descripcionObjeto, "prefix" : prefijo, "availability" : availability}), //que victor me diga que mandarle al servidor 
     contentType: "application/json",
     dataType: "json",
     success: function(data){
@@ -95,4 +103,12 @@ function add_button(){
     window.location.href = "/admin/nuevoObjeto" //añadir ruta de la página de añadir objeto
 }
 
+function checkDisponible (id_val){
+    if (hardwareAvailability == 1){
+        $(".disponible" + id_val).prop("checked", true);
+    }
+    else{
+        $(".disponible" + id_val).prop("checked", false);
+    }
+}
     
