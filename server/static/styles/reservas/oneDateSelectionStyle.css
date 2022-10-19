@@ -64,3 +64,15 @@ body{
 .selection-info-div div p{
     color: white;
 }
+
+::-webkit-scrollbar {
+    width: 0.2vw;
+    height: 0.1vh;
+  }
+  
+  
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(0, 0, 0); 
+  }

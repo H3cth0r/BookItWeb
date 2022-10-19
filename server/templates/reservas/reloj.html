@@ -19,7 +19,10 @@
     <body>
 
         <div>
-            <div id="contenedor">
+            <div id="dia">
+
+            </div>
+            <div id="contenedor" class="contenedor">
                 <select id="hora" multiple="multiple"> <!-- añadir en value los segunos -->
                     <option value="0:15:00">0:15</option>
                     <option value="0:30:00">0:30</option>
@@ -119,9 +122,15 @@
                     <option value="24:00:00">24:00</option>
                 </select>
             </div>
+            <div id = "Horas">
+
+
+            </div>
         </div>
-<button id="start">start</button>
-<button id="end">end</button>
+        <div>
+            <button id="start">START</button>
+            <button id="end">END</button>
+        </div>
 <script>
    /*{
     "objectData":{
@@ -149,12 +158,21 @@
         "endTime": "22:00:00"
         }
     ]
+
+  "objectId":4,
+  "objectType":"HRDWR", 
+  "objectName":"DELL PC", 
+  "startDate":"2022-10-2 12:00:00.000",
+  "endDate":"2022-10-2 22:00:00.000",
+  "description":"Reserva Dell"
 }*/
     var objectData = {
-        "id":1,
-        "name":"test",
-        "startDay": "2022-10-06",
-        "endDay": "2022-10-06",
+        "objectId":1,
+        "objectType":"HRDWR",
+        "objectName":"test",
+        "startDate": "2022-10-06",
+        "endDate": "2022-10-06",
+        "descripcion": "test"
     };
 
     var timeRanges = [
@@ -175,10 +193,23 @@
         "endTime": "22:00:00"
         }
     ];
+    $(document).ready(function(){
+        $('#dia').append(`<p value="`+ objectData.startDate +`">`+ objectData.startDate+ `</p>`);
+    });
+
     $('#start').click(function(){
         var start = $('#hora').val();
         $('#end').click(function(){
             var end = $('#hora').val();
+            
+            if (start > end){
+                var prov = start;
+                start = end;
+                end = prov;
+            }
+            $('#Horas').empty();
+            $('#Horas').append('<p> Start: '+start+'</p>');
+            $('#Horas').append('<p> End: '+end+'</p>');
             var colision = 0;
             if (start != ' ' && end != ' '){
                 for (var i = 0; i < timeRanges.length; i++) {
@@ -194,18 +225,24 @@
                 if (colision == 0){
                     alert ('no colision');
                     console.log(timeRanges);
+                    /*var objectData = {
+        "objectId":1,
+        "objectType":"HRDWR",
+        "objectName":"test",
+        "startDate": "2022-10-06",
+        "endDate": "2022-10-06",
+        "descripcion": "test"
+    };*/
                     var jsonHora = {
-                        "id" : objectData.id,
-                        "name" : objectData.name,
-                        "startDate": objectData.startDay + ' ' + start + '.000',
-                        "endDate": objectData.endDay + ' ' + end + '.000',
-                        "startDay": objectData.startDay,
-                        "startTime": start,
-                        "endDay": objectData.endDay,
-                        "endTime": end
+                        "objectId" : objectData.id,
+                        "objectType" : objectData.objectType,
+                        "objectName" : objectData.objectName,
+                        "startDate" : objectData.startDay + ' ' + start,
+                        "endDate" : objectData.endDay + ' ' + end,
+                        "description" : objectData.descripcion
                     };
                     $.ajax({
-                        url: 'api/timeRanges',
+                        url: '/reservations/showTicket',
                         type: 'POST',
                         data: JSON.stringify(jsonHora),
                         contentType: 'application/json',
@@ -220,58 +257,22 @@
         });
     });
      
-        /*    for (var i = 0; i < timeRanges.length; i++) {
-                if (start == end) {
-                    alert('start and end are the same');
-                    colision += 1;
-                }else if (start <= timeRanges[i].startTime && start >= timeRanges[i].endTime) {
-                    colision += 1;
-                }else if (end <= timeRanges[i].startTime && end >= timeRanges[i].endTime) {
-                    colision += 1;
-                }else if (start >= timeRanges[i].startTime && end <= timeRanges[i].endTime) {
-                    colision += 1;
-                }else if (start <= timeRanges[i].startTime && end >= timeRanges[i].endTime) {
-                    colision += 1;
-                }else{
-                    colision += 0;
-                }
-            }
-            alert (colision + ' colisiones');
-            alert (start + ' start');
-            alert (end + ' end');
-            if (colision > 0) {
-                alert('Los horarios no estan disponibles'); 
-            } else {
-                    alert('no hay colision');
-                    alert ( colision + ' colisiones en total no deberia entrar');
-                    var jsonHora = {
-                        "id" : objectData.id,
-                        "name" : objectData.name,
-                        "startDate": objectData.startDay + ' ' + start + '.000',
-                        "endDate": objectData.endDay + ' ' + end + '.000',
-                        "startDay": objectData.startDay,
-                        "startTime": start,
-                        "endDay": objectData.endDay,
-                        "endTime": end
-                    };
-                   
-                }
-
-                
-            }
-        );
-    });
-
-
-
-*/
 </script>
 <style>
+    *{
+        font-family: 'Chivo', sans-serif;
+    }
     select{
     overflow-y: show;
-    width: 150px;
+    width: 250px;
     size: 10;
-    height: 50vh;
+    height: 70vh;
+    background-color: transparent;
+    border: 2px solid rgb(42, 42, 42);
+    color: white;
+    margin-top: 30px;
+    align-items: center;
+
 }
 
     #contenedor {
@@ -279,9 +280,72 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        width: 30vw;
-        height: 60vh;
+        width: 35vw;
+        height: 70vh;
+        margin-left: 30%;
+        margin-top: -4%;
+
     }
+    body {
+        background-color: black;
+        color : white;
+    }
+    #Horas {
+        color: white;
+        z-index: 1;
+        margin-left: 12.5%;
+        margin-top: 10px;
+    }
+
+    p{
+        color: white;
+    }
+    #dia {
+        color: white;
+    
+        margin-left: 38.5%;
+        font-size: 25px;
+        
+    }
+    #start {
+        margin-left: 12.5%;
+        margin-top: 5px;
+        border: 1px solid white;
+        background-color: transparent;
+        color: white;
+        width: 150px;
+        height: 45px;
+    }
+    #end {
+        margin-left: 12.5%;
+        margin-top: 10px;
+        border: 1px solid white;
+        background-color: transparent;
+        color: white;
+        width: 150px;
+        height: 45px;
+
+    }
+    #hora {
+        text-align: center;
+    }
+
+    option {
+        font-size: 20px;
+        margin-top: 10px;   
+    }
+    ::-webkit-scrollbar {
+  width: 0.2vw;
+  height: 0.1vh;
+}
+
+
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 0, 0); 
+}
+
 
 </style>
 

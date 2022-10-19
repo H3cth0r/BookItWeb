@@ -57,4 +57,15 @@ body{
     color: white;
     margin: 0.5vh;
     font-size: 2.2vh;
-}
+} 
+::-webkit-scrollbar {
+    width: 0.2vw;
+    height: 0.1vh;
+  }
+  
+  
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(0, 0, 0); 
+  }

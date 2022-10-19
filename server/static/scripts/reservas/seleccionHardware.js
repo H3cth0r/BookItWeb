@@ -11,20 +11,26 @@ $(document).ready(function () {
         var hardwareWeight = hardware.totalWeight;
         
         var hardwareHTML = "<div class='hardware'>";
-        hardwareHTML += "<p>" + hardwareName + "</p>";
-        hardwareHTML += "<p>" + hardwarePrefix + "</p>";
-        
+        hardwareHTML += "<div class='hardwareName'>"
+        hardwareHTML += `<p id="name">` + hardwareName + `</p>`;
+        hardwareHTML += `<p id=prefix>` + hardwarePrefix + `</p>`;
+        hardwareHTML += "</div>";
+        hardwareHTML += `<div class="hardwareWeight">`;
         if (hardwareWeight < 150) {
             hardwareHTML += "<p>Available       🟢</p>";
         }
         else {
             hardwareHTML += "<p>Not Available       🔴</p>";
         }
+        hardwareHTML += "</div>";
         hardwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary botonenvio'>BooKMe</button>"
         hardwareHTML += "</div>";
+        hardwareHTML += `<HR WIDTH="90%" COLOR="black"></HR>`;
+
         
         $('#main_table').append(hardwareHTML);
-    }
+    }   
+
 
     $(".botonenvio").click(function () {
         let index = $(this).val();
