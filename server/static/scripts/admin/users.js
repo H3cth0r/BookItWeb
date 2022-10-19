@@ -10,21 +10,25 @@ for (i = 0; i < users.length; i++) {
     var countryId = user.countryId;
     var userID = user.userId;
     var admin = user.admin;
+    var blocked = user.blocked;
     var nacimiento = birthDate.split(" ");
 
     let the = `<div class="single_row_user" id="` + userID + `">
                     <p id="userid">` + userID + `</p>
-                    <input type="text" value="` + firstName + `" id="name">
-                    <input type="text" value="` + lastName + `" id="lastName">
-                    <input type="text" value="` + username + `" id="username">
-                    <input type="text" value="` + email + `" id="email">
-                    <input type="date" value="` + nacimiento[0] + `" id="birthDate">
-                    <input type="text" value="` + countryId + `" id="countryId">
+                    <input type="text" value="` + firstName + `" id="name" class="name` + userID + `">
+                    <input type="text" value="` + lastName + `" id="lastName" class="lastName` + userID + `">
+                    <input type="text" value="` + username + `" id="username" class="username` + userID + `">
+                    <input type="text" value="` + email + `" id="email" class="email` + userID + `">
+                    <input type="date" value="` + nacimiento[0] + `" id="birthDate" class="birthDate` + userID + `">
+                    <input type="text" value="` + countryId + `" id="countryId" class="countryId` + userID + `">
                     <div class="checkbox" id="chechboxid">
                                     <input type="checkbox" name="admin" id="admin`+userID+`" value="true">
                         </div>
-                    <div><button id="row_block" onclick="block_button('` + userID + `');">Block</button></div>
-                    <div><button id="row_delete" onclick="delete_button('` + userID + `');">Delete</button></div>
+                    <div class="checkbox" id="chechboxid">
+                        <input type="checkbox" name="blocked" id="blocked`+userID+`" value="true">
+                    </div>
+                    
+                    <div><button id="row_delete" onclick="delete_button('`+ userID +`');">Delete</button></div>
                     <div><button id="row_save" onclick="save_button('` + userID + `');">Save</button></div>
                     
                 </div>
@@ -32,6 +36,7 @@ for (i = 0; i < users.length; i++) {
     $('#contenedortodo').append(the);
     blockAdminButton(userID);
     checkAdmin( admin, userID);
+    checkifblocked( blocked, userID);
 }
 
 
@@ -68,10 +73,11 @@ function adminLevel (id_val){
 function delete_button(id_val){
     if (confirm ("¿Estás seguro de que quieres eliminar este objeto?")) {
     setTimeout(move_rows, 800, id_val);
+    console.log(id_val);
     $.ajax({
-        url: '/api/deleteUser', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: 'api/deleteUser', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
-        data: JSON.stringify({ "userId" : userID }),
+        data: JSON.stringify({ "userId" : id_val }),
         contentType: "application/json",
         dataType: "json",
         success: function(data){
@@ -80,15 +86,34 @@ function delete_button(id_val){
     });
 }
 }
+
+
 
 function save_button(id_val){
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
-        adminSend = adminLevel(id_val);
+    
+        var adminSend = adminLevel(id_val);
+        var blockedSend = $("#blocked"+id_val).is(":checked");
+        var nameSend = $(".name"+id_val).val();
+        var lastNameSend = $(".lastName"+id_val).val();
+        var usernameSend = $(".username"+id_val).val();
+        var emailSend = $(".email"+id_val).val();
+        var birthDateSend = $(".birthDate"+id_val).val();
+        var countryIdSend = $(".countryId"+id_val).val();
+        
         console.log(adminSend);
     $.ajax({
-        url: 'api/edit/user', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: '/api/editUser', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
-        data: JSON.stringify({ "userId" : userID , "firstName" : firstName, "lastName" : lastName, "birthDate" : birthDate, "email" : email, "countryId" : countryId, "admin" : adminSend }),
+        data: JSON.stringify({ "userId" : id_val ,
+         "firstName" : nameSend,
+          "lastName" : lastNameSend,
+           "birthDate" : birthDateSend,
+            "email" : emailSend,
+             "countryId" : countryIdSend,
+              "admin" : adminSend, 
+              "blocked" : blockedSend,
+               "username" : usernameSend}),
         contentType: "application/json",
         dataType: "json",
         success: function(data){
@@ -99,21 +124,6 @@ function save_button(id_val){
 }
 }
 
-function block_button(id_val){
-    if (confirm ("¿Estás seguro de que quieres bloquear este usuario?")) {
-    
-    $.ajax({
-        url: 'api/block/user', //cambiar esto por la ruta del servidor y añadir bien el json
-        type: 'POST',
-        data: JSON.stringify({ "userId" : userID }),
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data){
-            alert(data);
-        }
-    });
-}
-}
 function parseJwt (token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -140,6 +150,9 @@ function checkAdmin(admin, id_val){
         document.getElementById(`admin`+id_val).checked = true;
     }
 }
-$(document).ready(function(){
-    
-});
+function checkifblocked(blocked, id_val){
+    if (blocked){
+        document.getElementById(`blocked`+id_val).checked = true;
+    }
+}
+

@@ -59,6 +59,7 @@ function delete_button(id_val){
         translateX: 1500,
         easing: "easeInOutCubic"
     });*/
+    
     setTimeout(move_rows, 800, id_val);
     console.log(id_val);
     $.ajax({
@@ -70,6 +71,7 @@ function delete_button(id_val){
         success: function(data){
             alert(data);
         }
+        
     
         });
 }

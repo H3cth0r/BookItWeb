@@ -1,7 +1,7 @@
 from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
 from flask_cors import CORS, cross_origin
-from app_conf import smpt_password
+#from app_conf import smpt_password
 from hashlib import new, sha256, sha1
 from hmac import compare_digest
 import json
@@ -23,7 +23,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'bookmebot@gmail.com'
-app.config['MAIL_PASSWORD'] = smpt_password
+#app.config['MAIL_PASSWORD'] = smpt_password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -969,13 +969,12 @@ def editUser():
         elif usernameSearch is not None:
             respBody = json.dumps({"saved":False, "errorId":111})#, "desc":"Username is already registered"
         else:
-            body["hashPassword"] = sha256(body["hashPassword"].encode('utf-8')).hexdigest()[:20]
             cur.execute('''
-                        UPDATE Users SET firstName = ?, lastName = ?, username = ?, birthDate = ?, organization = ?, email = ?, ocupation = ?,
-                        countryId = ?, hashPassword = ?, admin = ?, blocked = ?
+                        UPDATE Users SET firstName = ?, lastName = ?, username = ?, birthDate = ?, email = ?, 
+                        countryId = ?, admin = ?, blocked = ?
                         WHERE userId = ?''',
-                        (body["firstName"], body["lastName"], body["username"], body["birthDate"], body["organization"], body["email"],
-                        body["ocupation"], body["countryId"], body["hashPassword"], body["admin"], body["blocked"], body["userId"]))
+                        (body["firstName"], body["lastName"], body["username"], body["birthDate"], body["email"],
+                        body["countryId"],  body["admin"], body["blocked"], body["userId"]))
             respBody = json.dumps({"saved":True})
         return respBody
     return json.dumps({"saved":False})
@@ -988,9 +987,10 @@ def editTicket():
             return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
+        print(body)
         cur.execute('''
                     UPDATE ReservationTicket SET startDate = ?, endDate = ? WHERE ticketId = ?''',
-                    (body["startDate"], body["endDate"], body["ticketId"]))
+                    (body["startDate"], body["endDate"], body["ticketId"],))
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
 
