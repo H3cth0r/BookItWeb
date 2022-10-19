@@ -1025,7 +1025,7 @@ def deleteRooms():
             return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
-        cur.execute('''UPDATE Rooms SET deleted = 1 WHERE roomId = ?''',(body["roomId"]))
+        cur.execute('''UPDATE Rooms SET deleted = 1 WHERE roomId = ?''',(body["roomId"],))
         cur.execute('''UPDATE ReservationTicket SET weight = 0 WHERE ReservationTicket.objectId IN 
                        (SELECT AvailableObjects.generalObjectID FROM Rooms
                        LEFT JOIN AvailableObjects ON (Rooms.roomId = AvailableObjects.rO))''', (body["roomId"],))
