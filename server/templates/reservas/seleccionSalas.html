@@ -6,14 +6,16 @@
     <meta name="author" content="">
     <title>BookMe</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="{{ url_for('static',filename='styles/reservas/seleccionSalas.js') }}"></script> " 
+    <script src="{{ url_for('static',filename='scripts/reservas/seleccionSalas.js') }}"></script>  
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/reservas/seleccionSalas.css') }}">
     <script>
       var rooms = {{ rooms | tojson }};
     </script>
 </head>
 <body>
-    
+  <div id="main_table">
+
+  </div>
 </body>
 
 

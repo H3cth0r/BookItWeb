@@ -7,6 +7,7 @@ for (var i = 0; i < hardW.length; i++) {
     var hardwareMaxDays = hardware.maxDays;
     var hardwareQuantity = hardware.quantity;
     var hardwareID = hardware.classId;
+    console.log(hardwareID);
 
     let the = `<div class="single_row_user" id="`+ hardwareID +`">
       
@@ -22,7 +23,7 @@ for (var i = 0; i < hardW.length; i++) {
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('`+ hardwareID +`');">Delete</button></div>
-                        <div><button id="row_save" onclick="save_button('`+ hardwareID +`s');">Save</button></div>
+                        <div><button id="row_save" onclick="save_button('`+ hardwareID +`');">Save</button></div>
                     </div>
                     <br>`;
         $('#contenedortodo').append(the);
@@ -73,10 +74,11 @@ function delete_button(id_val){
 '''*/
  
 function save_button(id_val){
+    console.log("saved " + id_val);
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
     alert("saved " + id_val)
     $.ajax({ 
-    url: 'api/edit/hardware', //cambiar esto por la ruta del servidor y añadir bien el json
+    url: '/api/editHardware', //cambiar esto por la ruta del servidor y añadir bien el json
     type: 'POST',
     data: JSON.stringify({ "jwt" :request.cookies.get('jwt'), "classId" : id_val, "quantity" : $(`#${id_val} #cantidad`).val(), "name" : $(`#${id_val} #nombreObjeto`).val(), "operativeSystem" : $(`#${id_val} #tipo`).val(), "description" : $(`#${id_val} #descripcionObjeto`).val(), "prefix" : $(`#${id_val} #prefijo`).val(), "availability" : $(`#${id_val} #disponible`).val(), "maxDays" : $(`#${id_val} #maxDays`).val() }), //que victor me diga que mandarle al servidor 
     contentType: "application/json",

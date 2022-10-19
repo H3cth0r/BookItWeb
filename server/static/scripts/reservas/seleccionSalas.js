@@ -1,7 +1,12 @@
-
+var counter = 0;
+$(document).ready(function () {
+    counter = counter + 1;
+    console.log("Here")
+    console.log(counter)
 for (var i = 0; i < rooms.length; i++) {
     var room = rooms[i];
     var roomName = room.name;
+    var generalObjectID = room.generalObjectId;
     var roomLocation = room.location;
     var roomCapacity = room.capacity;
     var roomWeight = room.totalWeight;
@@ -24,19 +29,20 @@ for (var i = 0; i < rooms.length; i++) {
     roomHTML += "<p>Días máximos de reserva: " + roomMaxDays + "</p>";
     roomHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
     roomHTML += "</div>";
-    document.write(roomHTML);
+    $('#main_table').append(roomHTML);
+    $(".botonenvio").click(function () {
 
-    $("#botonenvio").click(function () {
-        let index = $('#botonenvio').val();
-        
-        $.ajax({
-            url: "/makeReservation",
-            type: "POST",
-            data: {"objectType" : "room",
-                   "objectId" : rooms[index].generalObjectId, 
-                   "objectName" : rooms[index].name}
-
-        });
-    }
-    );
+        let index = $(this).val();
+        var data = {"objectType" : "ROOMS",
+                    "objectId" : room[index].generalObjectID, 
+                    "objectName" : room[index].name};
+        console.log(data)
+        if (room[index].maxDays == 1){
+            $.redirect("/reservations/daySelect", data);
+        }
+        else{
+            $.redirect("/reservations/daysSelect", data);
+        }
+    });
 }
+});

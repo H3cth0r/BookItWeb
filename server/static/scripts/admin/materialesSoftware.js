@@ -62,7 +62,7 @@ function save_button(id_val){
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
     
     $.ajax({
-        url: 'api/edit/software', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: 'api/editSoftware', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
         data: JSON.stringify({ "classId" : softwareID }), 
         contentType: "application/json",
