@@ -75,16 +75,18 @@ $( document ).ready(function() {
             $("#selectText2").html("Favor de seleccionar una fecha");
         }
         else{
+            selectedDate1.setHours(0,0,0);
             var stringDate = selectedDate1.getFullYear() + "-";
             stringDate += (selectedDate1.getMonth() + 1).toString().padStart(2, '0') + "-";
             stringDate += selectedDate1.getDate().toString().padStart(2, '0') + " ";
-            stringDate += selectedDate1.toTimeString().split(' ')[0] + '000';
+            stringDate += selectedDate1.toTimeString().split(' ')[0];
             objectData.startDate = stringDate;
 
+            selectedDate2.setHours(23,59,59);
             stringDate = selectedDate2.getFullYear() + "-";
             stringDate += (selectedDate2.getMonth() + 1).toString().padStart(2, '0') + "-";
             stringDate += selectedDate2.getDate().toString().padStart(2, '0') + " ";
-            stringDate += selectedDate2.toTimeString().split(' ')[0] + '000';
+            stringDate += selectedDate2.toTimeString().split(' ')[0]; // + '.000'
             objectData.endDate = stringDate;
 
             $.redirect("/reservations/showTicket", objectData);

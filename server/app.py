@@ -674,6 +674,46 @@ def newPassword():
   "maxDays":"15"
 }
 '''
+'''
+{
+  "jwt":,
+  "objectId":4,
+  "objectType":"HRDWR", 
+  "objectName":"DELL PC", 
+  "startDate":"2022-10-2 12:00:00.000",
+  "endDate":"2022-10-2 22:00:00.000",
+  "description":"Reserva Dell"
+}
+'''
+
+@app.route("/app/api/newTicket", methods=["POST"])
+def newTicket():
+    body = request.get_json()
+    if jwtValidated(body["jwt"]):
+        userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S.%f")
+        endDate = datetime.strptime(body["endDate"], "%Y-%m-%d %H:%M:%S.%f")
+        weight = (endDate - startDate).total_seconds() / 3600
+        startDate = startDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        endDate = endDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        cur = get_db().cursor()
+        cur.execute('''
+        INSERT INTO "main"."ReservationTicket" 
+        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userId", "description", "weight") VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''',
+        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight))
+        # ticketId + userId + objectId + dateRegistered
+        qr = str(cur.lastrowid) + str(userData["userId"]) + str(body["objectId"]) + dateRegistered
+        qr = qr.encode('utf-8')
+        qr = sha1(qr).hexdigest()[:10]
+        cur.execute('''UPDATE ReservationTicket SET qrCode = ? WHERE ticketId = ?''',
+                       (qr, cur.lastrowid))
+        genQr(qr)
+        respBody = {"ticketSaved":True}
+        return json.dumps(respBody)
+
 @app.route("/api/newHardware", methods=["POST"])
 def newHardware():
     if jwtValidated(request.cookies.get('jwt')):
@@ -1474,7 +1514,7 @@ def updateQrCodes():
 '''
 
 @app.route("/app/api/newTicket", methods=["POST"])
-def newTicket():
+def newTicketApp():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")
