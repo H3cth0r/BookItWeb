@@ -634,7 +634,8 @@ def isUserVerified():
     body = request.get_json()
     cur = get_db().cursor()
     toVerify = cur.execute('''SELECT id from ToVerify WHERE id = ?''', (body["verifyId"],))
-    if toVerify is None:
+    data = cur.fetchall()
+    if len(data) == 0:
         respBody = json.dumps({"verified":True})
     else:
         respBody = json.dumps({"verified":False})
@@ -1178,6 +1179,7 @@ def registerApp():
         msg.body = render_template("mailVerification/verification.html", hashKey=hashKey)
         msg.html = render_template("mailVerification/verification.html", hashKey=hashKey)
         mail.send(msg)
+        print("http://10.48.219.224:2000/register/verify/" + hashKey)
         cur.execute('''
                     INSERT INTO "main"."ToVerify" ("firstName", "lastName", "username", "birthDate",
                     "organization", "email", "ocupation", "countryId", "hashPassword", "hashKey") 

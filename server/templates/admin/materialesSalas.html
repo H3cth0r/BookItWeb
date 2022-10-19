@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
+        <!-- Jquery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
+         crud style -->
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/materialesSala.css') }}">
+
+        <!-- import crud functionality -->
+        <title>BookMe</title>
+    
+    </head>
+    <body>
+        <div class="header"  id="head">
+            <br>
+            <h1>Salas</h1>
+            <br>
+        </div>
+        <!-- Navbar cambiar -->
+       <!-- <div class="navbar" id="navbar_id">
+            <div class="navbar-content">
+                <div class="navbar-logo">
+                    <img src="logo.png" alt="logo">
+                </div>
+                <div class="navbar-links">
+                    <a href="index.html">Home</a>
+                    <a href="listos.html">Listos</a>
+                    <a href="LogandReg.html">LogIn</a>
+                    <a href="LogandReg.html">Register</a>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Main div -->
+        <div class="main_div" id="main_div_id">
+
+            
+
+
+            <!-- div to present users -->
+            <!-- username, mail, name, country, birth, gender, creation(not_edit) -->
+            <!-- name, lastname, gender, brith -->
+            <div class="div_list_users" id="div_list_users_id">
+                <a href="/admin/nuevoObjeto"><img src=" {{ url_for('static',filename='resources/nuevoObjeto.png') }}" id="nuevoObjeto"></a>
+                <!-- Label -->
+                <div class="single_row_label" id="single_row_label_id">
+                    <div><p>Etiqueta</p></div>
+                    <div><p>Nombre Objeto</p></div>
+                    <div><p>Descripcion</p></div>
+                    <div><p>Capacidad</p></div>
+                    <div><p>Localización</p></div>
+                    <div><p>Disponible</p></div>
+                    <div><p>Borrar</p></div>
+                    <div><p>Guardar</p></div>
+                </div>
+                
+                
+
+            </div>
+            <div id="contenedorDeContenedor">
+                <div id="contenedortodo">
+                </div>
+            </div>
+            
+            <script>
+                var rooms = {{salas|tojson}};
+            </script>
+        <script src="{{ url_for('static',filename='scripts/admin/materialesSala.js') }}"></script>
+        </div>
+    </body>
+</html>

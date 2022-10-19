@@ -14,8 +14,10 @@
     
     </head>
     <body>
-        <div class="header"  id="header">
+        <div class="header"  id="head">
             <br>
+            
+            <h1>Materiales Software</h1>
             <br>
         </div>
         <!-- Navbar cambiar -->
@@ -39,11 +41,11 @@
             
 
 
+                <a href="/admin/nuevoObjeto"><img src=" {{ url_for('static',filename='resources/nuevoObjeto.png') }}" id="nuevoObjeto"></a>
             <!-- div to present users -->
             <!-- username, mail, name, country, birth, gender, creation(not_edit) -->
             <!-- name, lastname, gender, brith -->
             <div class="div_list_users" id="div_list_users_id">
-
                 <!-- Label -->
                 <div class="single_row_label" id="single_row_label_id">
                     
@@ -57,10 +59,15 @@
                     <div><p>Borrar</p></div>
                     <div><p>Guardar</p></div>
                 </div>
-                
+            </div>   
+                <div id="contenedorDeContenedor">
+                    <div id="contenedortodo">
+
+                    </div>
+                </div>
                 
 
-            </div>
+            
             <script>
                 var softW = {{softW|tojson}};
             </script>
