@@ -21,7 +21,7 @@ for (var i = 0; i < softW.length; i++) {
                         <p id="tipo"> Software </p>
                         <input type="text" value="` + softwareOS + `" id="sistema" class="sistema` + softwareID + `">
                         <div class="checkbox">
-                                    <input type="checkbox" name="disponible" id="disponible" class="checkbox2` + softwareID + `" onclick="checkDisponible(` + softwareID + `)">
+                                    <input type="checkbox" name="disponible" id="disponible" class="checkbox2` + softwareID + `">
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('` + softwareID + `');">Delete</button></div>
@@ -68,12 +68,8 @@ function save_button(id_val){
     var descripcionObjetoSend = $(".descripcionObjeto" + id_val).val();
     var numeroSend = $(".numero" + id_val).val();
     var prefijoSend = $(".prefijo" + id_val).val();
-    var disponibleSend = $(".checkbox2" + id_val).prop("checked");
-    if (disponibleSend == true){
-        disponibleSend = 1;
-    } else {
-        disponibleSend = 0;
-    }
+    var disponibleSend = $(".checkbox2" + id_val).is(":checked");
+    
     var sistemaSend = $(".sistema" + id_val).val();
 
 
