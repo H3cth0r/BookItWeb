@@ -1,7 +1,3 @@
-from asyncio.base_subprocess import ReadSubprocessPipeProto
-from pprint import pp
-from sys import base_prefix
-from tkinter.tix import Tree
 from flask import Flask, request, g, make_response, redirect, render_template, url_for, Response
 from flask_mail import Mail, Message
 from flask_cors import CORS, cross_origin
@@ -246,7 +242,31 @@ def daySelectView():
 def daysSelectView():
     body = request.form.to_dict()
     body["objectId"] = int(body["objectId"])
-    return render_template('reservas/twoDatesSelectionView.html', data=body)
+    cur = get_db().cursor()
+    if "ignoreTicket" in body:
+        ignoreTicket = body["ignoreTicket"]
+    else:
+        ignoreTicket = "-1"
+    startDate = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d")
+    endDate = (datetime.now(timezone.utc) - timedelta(hours=5) + timedelta(days=30)).strftime("%Y-%m-%d")
+    query = cur.execute('''
+    SELECT strftime('%Y-%m-%d', startDate) as startDay, strftime('%Y-%m-%d', endDate) as endDay
+    FROM ReservationTicket WHERE ((startDay BETWEEN date(?) AND date(?))
+    OR (endDay BETWEEN date(?) AND date(?))) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
+    ''', (startDate, endDate, startDate, endDate, body["objectId"], ignoreTicket)).fetchall()
+    
+    days = []
+    currDay = datetime.strptime(startDate, "%Y-%m-%d")
+    for daysRange in query:
+        sd = datetime.strptime(daysRange["startDay"], "%Y-%m-%d")
+        ed = datetime.strptime(daysRange["endDay"], "%Y-%m-%d")
+        if currDay < sd:
+            currDay = sd
+        while currDay <= ed:
+            days.append(currDay.strftime("%Y-%m-%d"))
+            currDay = currDay + timedelta(days=1)
+
+    return render_template('reservas/twoDatesSelectionView.html', data=body, days=days)
 
 @app.route("/reservations/timeSelect", methods=["POST"])
 def timeSelectView():
@@ -675,6 +695,49 @@ def newPassword():
   "maxDays":"15"
 }
 '''
+'''
+{
+  "jwt":,
+  "objectId":4,
+  "objectType":"HRDWR", 
+  "objectName":"DELL PC", 
+  "startDate":"2022-10-2 12:00:00.000",
+  "endDate":"2022-10-2 22:00:00.000",
+  "description":"Reserva Dell"
+}
+'''
+
+@app.route("/api/newTicket", methods=["POST"])
+def newTicket():
+    if jwtValidated(request.cookies.get('jwt')):
+        body = request.get_json()
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        dateRegistered = (datetime.now(timezone.utc) - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        startDate = datetime.strptime(body["startDate"], "%Y-%m-%d %H:%M:%S")
+        endDate = datetime.strptime(body["endDate"], "%Y-%m-%d %H:%M:%S")
+        weight = (endDate - startDate).total_seconds() / 3600
+        startDate = startDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        endDate = endDate.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+        cur = get_db().cursor()
+        cur.execute('''
+        INSERT INTO "main"."ReservationTicket" 
+        ("dateRegistered", "objectId", "objectType", "objectName", "startDate", "endDate", "userId", "description", "weight") VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''',
+        (dateRegistered, body["objectId"], body["objectType"], body["objectName"], startDate, endDate, userData["userId"], body["description"], weight))
+        # ticketId + userId + objectId + dateRegistered
+        qr = str(cur.lastrowid) + str(userData["userId"]) + str(body["objectId"]) + dateRegistered
+        qr = qr.encode('utf-8')
+        qr = sha1(qr).hexdigest()[:10]
+        cur.execute('''UPDATE ReservationTicket SET qrCode = ? WHERE ticketId = ?''',
+                       (qr, cur.lastrowid))
+        genQr(qr)
+        respBody = {"ticketSaved":True}
+        return json.dumps(respBody)
+    else:
+        respBody = {"ticketSaved":True}
+        return json.dumps(respBody)
+
 @app.route("/api/newHardware", methods=["POST"])
 def newHardware():
     if jwtValidated(request.cookies.get('jwt')):
@@ -1476,7 +1539,7 @@ def updateQrCodes():
 '''
 
 @app.route("/app/api/newTicket", methods=["POST"])
-def newTicket():
+def newTicketApp():
     body = request.get_json()
     if jwtValidated(body["jwt"]):
         userData = jwt.decode(body["jwt"], jwtKey, algorithms="HS256")

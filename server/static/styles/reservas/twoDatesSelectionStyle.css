@@ -4,7 +4,12 @@ body{
     flex-direction: column;
     justify-content: center;
 }
-
+.disabled{
+    background-color: darkgray;
+}
+.enabled{
+    background-color: white;
+}
 .upper-band-div{
     width: 100vw;
     height: 40vh;
@@ -21,7 +26,6 @@ body{
     height: 90%;
     
     margin-right: 5%;
-    background-color: white;
 }
 .upper-band-div div p{
     color: black;
@@ -36,6 +40,8 @@ body{
     width: 50%;
     margin-left: 45%;
 }
+
+
 
 .surface-div{
     width: 100vw;

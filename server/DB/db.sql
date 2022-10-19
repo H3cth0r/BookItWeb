@@ -495,6 +495,11 @@ INSERT INTO ReservationTicket VALUES(24,'2022-10-04 16:41:38.448',4,'HRDWR','DEL
 INSERT INTO ReservationTicket VALUES(25,'2022-10-04 17:33:53.547',4,'HRDWR','DELL PC','2022-10-22 12:00:00.000','2022-10-23 12:00:00.000',3,'Reserva Dell',24.0,'e3552bb97a');
 INSERT INTO ReservationTicket VALUES(26,'2022-10-04 17:36:07.656',4,'HRDWR','DELL PC','2022-10-24 12:00:00.000','2022-10-24 22:00:00.000',1,'Reserva Dell',10.0,'b7d97a737e');
 INSERT INTO ReservationTicket VALUES(27,'2022-10-06 12:42:26.000',28,'HRDWR','DELL PC','2022-10-06 16:00:00.000','2022-10-06 18:00:00.000',1,'Reserva pc dell',2.0,'123456789a');
+INSERT INTO ReservationTicket VALUES(28,'2022-10-09 02:27:41.666',26,'ROOM','Laboratorio de Finanzas 02','2022-10-20 01:00:00.000','2022-10-22 01:00:00.000',1,'Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',0.0,'b1cb04d5a8');
+INSERT INTO ReservationTicket VALUES(29,'2022-10-09 02:30:34.102',26,'ROOM','Laboratorio de Finanzas 02','2022-10-20 01:00:00.000','2022-10-22 01:00:00.000',1,'Laboratorio de finanzas. Cuenta con 20 equipos de Bloomberg especializados para tareas pesadas de finanzas.',48.000000000000000001,'152cfd81b1');
+INSERT INTO ReservationTicket VALUES(30,'2022-10-18 22:31:40.373',1,'HRDWR','Mac Book Air','2022-10-22 00:00:00.000','2022-10-22 23:59:59.000',1,' ',47.999722222222224845,'835a300d6c');
+INSERT INTO ReservationTicket VALUES(31,'2022-10-19 00:25:38.687',1,'HRDWR','Mac Book Air','2022-10-24 00:00:00.000','2022-10-25 23:59:59.000',1,' ',47.999722222222224845,'8e4cea34a4');
+INSERT INTO ReservationTicket VALUES(32,'2022-10-19 00:27:29.828',1,'HRDWR','Mac Book Air','2022-10-30 00:00:00.000','2022-10-31 23:59:59.000',1,' ',47.999722222222224845,'e4af5db8a5');
 CREATE TABLE IF NOT EXISTS "Users" (
 	"userId"	INTEGER NOT NULL,
 	"dateRegistered"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -515,9 +520,16 @@ CREATE TABLE IF NOT EXISTS "Users" (
 );
 INSERT INTO Users VALUES(1,'2022-09-28 17:57:41.000','Pepo','Lopez','pepo117','2002-11-11 11:11:11.111','Tec','A01659891@tec.mx','Estudiante',12,'d50d3319bccca99d3093b689745b168cc79ecfd0e18e3e80be6d8c6ad1061407',2,0,0);
 INSERT INTO Users VALUES(3,'2022-10-04 16:38:01.000','Victor','Portilla','nonwiz','2002-11-01 00:00:00.000','Tec','a01659198@tec.mx','Estudiante',107,'5f77c2500f56fe1a4abe06bf961012a3ea513ce8fbbbf4fec4d58339f95630d9',0,0,0);
-INSERT INTO Users VALUES(4,'2022-10-05 11:28:53','Yael','Goan','yael.goan01','1995-11-30','UNAM','yael.goan01@gmail.com','Estudiante',120,'kirakira',1,0,0);
-INSERT INTO Users VALUES(5,'2022-10-05 11:32:13','Misael','Chavez','wada','2002-06-20','Tec','a01653495@tec.mx','Estudiante',1,'bussybussy',0,0,0);
-INSERT INTO Users VALUES(6,'2022-10-06 17:07:13','yoel','ledo','ledo','1995-01-01','Tec','ledo@tec.mx','Profesor',1,'asdfgasdfg',0,0,0);
+INSERT INTO Users VALUES(15,'2022-10-12 17:19:03.729','pepe','sdfgdfsg','sdfgsdfg','1995-01-01','sdfgsdfg','gar-mira@hotmail.com','programmer',5,'78ec8223ca210d8d00ab284a39e00203196e79420be7c7dc257c4bc7932b67d4',0,0,0);
+INSERT INTO Users VALUES(18,'2022-10-14 19:27:31.723','Victor Hugo','Portilla Ortiz','portilla.ortiz.v','2002-11-01','IPN','victor32154@gmail.com','Estudiante',107,'5252d39c6ed6dd1263bcbe71f210cf0e8e03d6eff5e7b2973fd270f97f5878f0',0,0,0);
+CREATE TABLE IF NOT EXISTS "ForgottenPassword" (
+	"userId"	INTEGER,
+	"hashKey"	TEXT
+);
+INSERT INTO ForgottenPassword VALUES(1,'asdfg');
+INSERT INTO ForgottenPassword VALUES(3,'70caa3ccf2fbb87747d3');
+INSERT INTO ForgottenPassword VALUES(3,'a06d103e890b8fa61611');
+INSERT INTO ForgottenPassword VALUES(3,'90016a883a6a14e2185e');
 CREATE TABLE IF NOT EXISTS "ToVerify" (
 	"firstName"	TEXT NOT NULL,
 	"lastName"	TEXT NOT NULL,
@@ -530,10 +542,10 @@ CREATE TABLE IF NOT EXISTS "ToVerify" (
 	"hashPassword"	TEXT NOT NULL,
 	"hashKey"	TEXT NOT NULL,
 	"id"	INTEGER NOT NULL,
-	FOREIGN KEY("countryId") REFERENCES "Countries"("id"),
-	PRIMARY KEY("id" AUTOINCREMENT)
+	"userId"	INTEGER,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("countryId") REFERENCES "Countries"("id")
 );
-INSERT INTO ToVerify VALUES('csdvcs','wdecwdcwsd','dfsvsd','dsfv','dsfv','dsfv','sdfv',1,'sdfvzc','asfvwerv',1);
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('Countries',252);
 INSERT INTO sqlite_sequence VALUES('HardwareObjects',31);
@@ -543,7 +555,7 @@ INSERT INTO sqlite_sequence VALUES('AvailableObjects',84);
 INSERT INTO sqlite_sequence VALUES('HardwareClass',6);
 INSERT INTO sqlite_sequence VALUES('SoftwareClass',7);
 INSERT INTO sqlite_sequence VALUES('Rooms',12);
-INSERT INTO sqlite_sequence VALUES('ReservationTicket',27);
-INSERT INTO sqlite_sequence VALUES('Users',10);
-INSERT INTO sqlite_sequence VALUES('ToVerify',1);
+INSERT INTO sqlite_sequence VALUES('ReservationTicket',32);
+INSERT INTO sqlite_sequence VALUES('Users',18);
+INSERT INTO sqlite_sequence VALUES('ToVerify',18);
 COMMIT;
