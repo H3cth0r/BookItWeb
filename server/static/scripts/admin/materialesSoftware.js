@@ -21,7 +21,7 @@ for (var i = 0; i < softW.length; i++) {
                         <p id="tipo"> Software </p>
                         <input type="text" value="` + softwareOS + `" id="sistema" class="sistema` + softwareID + `">
                         <div class="checkbox">
-                                    <input type="checkbox" name="disponible" id="disponible" class="checkbox2` + softwareID + `" onclick="checkDisponible(` + softwareID + `)">
+                                    <input type="checkbox" name="disponible" id="disponible" class="checkbox2` + softwareID + `">
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('` + softwareID + `');">Delete</button></div>

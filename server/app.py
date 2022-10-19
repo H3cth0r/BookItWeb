@@ -414,6 +414,23 @@ def newPasswordView(hashKey):
 
 '''---ADMIN---'''
 
+# Stats
+@app.route("/admin/stats", methods=["GET"])
+def statsView():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        cur = get_db().cursor()
+        cur.row_factory = None
+        query = cur.execute('''SELECT strftime('%Y-%m-%d', startDate) as startDay, count(ticketId) as ammount FROM ReservationTicket GROUP BY startDay''').fetchall()
+        labels = [row[0] for row in query]
+        values = [row[1] for row in query]
+        print(query)
+        return "JEJ"#render_template('admin/graph.html', my_chart = my_chart, charts = charts)
+    else:
+        return redirect("/login", code=302)
+
 # Show new object view
 @app.route("/admin/nuevoObjeto", methods=["GET"])
 def newObjectView():
