@@ -31,7 +31,7 @@ for (var i = 0; i < rooms.length; i++) {
 
                         <textarea rows="2" cols="10"  id="tipo">` + roomLocation +  `</textarea>
                         <div class="checkbox">
-                                    <input type="checkbox" name="disponible" id="disponible" class="checkbox">
+                                    <input type="checkbox" name="disponible" id="disponible`+ roomID + `" class="checkbox">
                         </div>
                         
                         <div><button id="row_delete" onclick="delete_button('`+ roomID + `');">Delete</button></div>
@@ -40,6 +40,7 @@ for (var i = 0; i < rooms.length; i++) {
                     <br>`;
         $('#contenedortodo').append(the);
         console.log("lol");
+        checkDisponible(roomID);
     
 }
 
@@ -59,10 +60,11 @@ function delete_button(id_val){
         easing: "easeInOutCubic"
     });*/
     setTimeout(move_rows, 800, id_val);
+    console.log(id_val);
     $.ajax({
         url: '/api/deleteRooms', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
-        data: JSON.stringify({ "classId" : id_val }), //que victor me diga que mandarle al servidor o que revise porque no se borra
+        data: JSON.stringify({ "roomId" : id_val }), //que victor me diga que mandarle al servidor o que revise porque no se borra
         contentType: "application/json",
         dataType: "json",
         success: function(data){
@@ -71,11 +73,20 @@ function delete_button(id_val){
     
         });
 }
-    localtion.reload(true);
+    //location.reload(true);
 }
+
 
 function save_button(id_val){
     if (confirm ("¿Estás seguro de que quieres guardar los cambios?")) {
+    var disp = document.getElementById(`disponible`+id_val).checked;
+    if (disp == true){
+        disp = 1;
+    }
+    else{//terminar de arreglar aqui
+        disp = 0;
+    }
+
     $.ajax({
         url: 'api/editRooms', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
@@ -89,6 +100,14 @@ function save_button(id_val){
         });
 }
     location.reload(true);
+}
+function checkDisponible(id_val){
+    if (roomAvailability == true){
+        document.getElementById(`disponible`+id_val).checked = true;
+    }
+    else{
+        document.getElementById(`disponible`+id_val).checked = false;
+    }
 }
 
 function add_button(){
