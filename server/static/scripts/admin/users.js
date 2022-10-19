@@ -24,7 +24,7 @@ for (i = 0; i < users.length; i++) {
                                     <input type="checkbox" name="admin" id="admin`+userID+`" value="true">
                         </div>
                     <div><button id="row_block" onclick="block_button('` + userID + `');">Block</button></div>
-                    <div><button id="row_delete" onclick="delete_button('` + userID + `');">Delete</button></div>
+                    <div><button id="row_delete" onclick="delete_button('`+ userID +`');">Delete</button></div>
                     <div><button id="row_save" onclick="save_button('` + userID + `');">Save</button></div>
                     
                 </div>
@@ -68,10 +68,11 @@ function adminLevel (id_val){
 function delete_button(id_val){
     if (confirm ("¿Estás seguro de que quieres eliminar este objeto?")) {
     setTimeout(move_rows, 800, id_val);
+    console.log(id_val);
     $.ajax({
-        url: '/api/deleteUser', //cambiar esto por la ruta del servidor y añadir bien el json
+        url: 'api/deleteUser', //cambiar esto por la ruta del servidor y añadir bien el json
         type: 'POST',
-        data: JSON.stringify({ "userId" : userID }),
+        data: JSON.stringify({ "userId" : id_val }),
         contentType: "application/json",
         dataType: "json",
         success: function(data){

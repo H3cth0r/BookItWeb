@@ -262,7 +262,7 @@
                         
                         #contenedorDeContenedor {
                             width: 100vw;
-                            height: 72vh;
+                            height: 72xvh;
                             display: flex;
                             flex-direction: column;
                             align-items: center;
