@@ -59,10 +59,11 @@ console.log(tickets)
         
             console.log(fecha_inicio);
             console.log(fecha_fin);
+            console.log(id_val);
         $.ajax({
             url: '/api/editTicket', //cambiar esto por la ruta del servidor y añadir bien el json
             type: 'POST',
-            data: JSON.stringify({ "ticketID " : ticketID, "fecha_inicio" : fecha_inicio, "fecha_fin" : fecha_fin }),
+            data: JSON.stringify({ "ticketId" : id_val, "startDate" : fecha_inicio, "endDate" : fecha_fin }),
             contentType: "application/json",
             dataType: "json",
             success: function(data){

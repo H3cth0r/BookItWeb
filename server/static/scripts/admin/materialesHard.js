@@ -80,7 +80,7 @@ function save_button(id_val){
     $.ajax({ 
     url: '/api/editHardware', //cambiar esto por la ruta del servidor y añadir bien el json
     type: 'POST',
-    data: JSON.stringify({ "jwt" :request.cookies.get('jwt'), "classId" : id_val, "quantity" : $(`#${id_val} #cantidad`).val(), "name" : $(`#${id_val} #nombreObjeto`).val(), "operativeSystem" : $(`#${id_val} #tipo`).val(), "description" : $(`#${id_val} #descripcionObjeto`).val(), "prefix" : $(`#${id_val} #prefijo`).val(), "availability" : $(`#${id_val} #disponible`).val(), "maxDays" : $(`#${id_val} #maxDays`).val() }), //que victor me diga que mandarle al servidor 
+    data: JSON.stringify({"classId" : id_val, "quantity" : $(`#${id_val} #cantidad`).val(), "name" : $(`#${id_val} #nombreObjeto`).val(), "operativeSystem" : $(`#${id_val} #tipo`).val(), "description" : $(`#${id_val} #descripcionObjeto`).val(), "prefix" : $(`#${id_val} #prefijo`).val(), "availability" : $(`#${id_val} #disponible`).val(), "maxDays" : $(`#${id_val} #maxDays`).val() }), //que victor me diga que mandarle al servidor 
     contentType: "application/json",
     dataType: "json",
     success: function(data){
