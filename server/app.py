@@ -961,8 +961,8 @@ def editUser():
             return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
-        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ?", (body["email"],)).fetchone()
-        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ?", (body["username"],)).fetchone()
+        emailSearch = cur.execute("SELECT Users.userId FROM Users WHERE email = ? AND userId != ?", (body["email"],body["userId"])).fetchone()
+        usernameSearch = cur.execute("SELECT Users.userId FROM Users WHERE username = ? AND userId != ?", (body["username"],body["userId"])).fetchone()
         if emailSearch is not None:
             print(emailSearch)
             respBody = json.dumps({"saved":False, "errorId":110})#, "desc":"Email is already registered"
