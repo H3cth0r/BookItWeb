@@ -57,7 +57,8 @@ $( document ).ready(function() {
             stringDate += (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-";
             stringDate += selectedDate.getDate().toString().padStart(2, '0') + " ";
             stringDate += selectedDate.toTimeString().split(' ')[0] + '000';
-            objectData.date = stringDate;
+            objectData.startDate = stringDate;
+            objectData.endDate = stringDate;
             $.redirect("/reservations/timeSelect", objectData);
         }
     }
