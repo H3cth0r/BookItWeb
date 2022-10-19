@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <!-- Jquery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
+         crud style -->
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/materialesHard.css') }}">
+        <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
+
+        <!-- import crud functionality -->
+        <title>BookMe</title>
+    
+    </head>
+<body>
+    <script>
+        var numeros = {{numeros|tojson}};
+    </script>
+    <!--stats-->
+    <div class="header"  id="head">
+        <br>
+        
+        <h1>Estadisticas</h1>
+        <br>
+    </div>
+    <div id="usuariosTotales">
+        <h2>Usuarios Totales</h2>
+        <h3>{{numeros.usuariosTotales}}</h3>
+    </div>
+    <div id="objetosTotales">
+        <h2>Objetos Totales</h2>
+        <h3>{{numeros.objetosTotales}}</h3>
+    </div>
+    <div id="reservasTotales">
+        <h2>Reservas Totales</h2>
+        <h3>{{numeros.reservasTotales}}</h3>
+    </div>
+    <div id="administradoresTotales">
+        <h2>Administradores</h2>
+        <h3>{{numerosadministradoresTotales}}</h3>
+    </div>
+    <div id="usuariosTec">
+        <h2>Usuarios Tec</h2>
+        <h3>{{usuariosTec}}</h3>
+    </div>
+    <div id="usuariosNoTec">
+        <h2>Usuarios Generales</h2>
+        <h3>{{usuariosNoTec}}</h3>
+    </div>
+    <div id="charts" class="charts">
+        <h2>Reservas por dia</h2>
+        <canvas id="myChart" width="400" height="400">{{ charts.my_chart }}</canvas>
+    </div>
+
+
+
+</body>

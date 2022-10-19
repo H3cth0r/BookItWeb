@@ -68,12 +68,8 @@ function save_button(id_val){
     var descripcionObjetoSend = $(".descripcionObjeto" + id_val).val();
     var numeroSend = $(".numero" + id_val).val();
     var prefijoSend = $(".prefijo" + id_val).val();
-    var disponibleSend = $(".checkbox2" + id_val).prop("checked");
-    if (disponibleSend == true){
-        disponibleSend = 1;
-    } else {
-        disponibleSend = 0;
-    }
+    var disponibleSend = $(".checkbox2" + id_val).is(":checked");
+    
     var sistemaSend = $(".sistema" + id_val).val();
 
 
