@@ -86,14 +86,20 @@ p{
 
 .header {
     background-color: black ;
-    height: 9vh;
+    height: 15vh;
 }
 
+.header h1{
+    font-size: 3rem;
+    font-weight: 500;
+    margin-top: 20px;
+    color : white;
+}
 
 /* Main div */
 .main_div{
     width: 100vw;
-    height: 100vh;
+    height: 80vh;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -110,7 +116,7 @@ p{
 }
 
 .titulo{
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: bold;
     color: black;
     margin: 1rem;
@@ -122,13 +128,14 @@ p{
     color: black;
     margin: 1rem;
     justify-content: left;
+   
 }
 
 #tipo {
     font-size: 2rem;
     font-weight: bold;
     color: grey;
-    margin: 1rem;
+    margin-top: -20px;
     justify-content: left;
     background-color: lightgray;
     border-radius: 0.001rem;
@@ -339,4 +346,52 @@ label {
     border-radius: 0.001rem;
     border: transparent;
     width: 23vw;
+}
+
+#labelE {
+    font-size: 2rem;
+    font-weight: bold;
+    justify-content: left;
+    border-radius: 0.001rem;
+    border: transparent;
+    width: 23vw;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+#aceptarHardware {
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+    margin: 2rem;
+    justify-content: left;
+    border-radius: 1px solid black;
+    border: transparent;
+    width: 10vw;
+    margin-left: 80%;
+}
+
+#aceptarSoftware {
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+    margin: 2rem;
+    justify-content: left;
+    border-radius: 1px solid black;
+    border: transparent;
+    width: 10vw;
+    margin-left: 80%;
+}
+
+#aceptarSala {
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+    margin: 2rem;
+    justify-content: left;
+    border-radius: 1px solid black;
+    border: transparent;
+    width: 10vw;
+    margin-left: 80%;
 }
