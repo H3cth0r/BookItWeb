@@ -55,8 +55,7 @@ $( document ).ready(function() {
         else{
             var stringDate = selectedDate.getFullYear() + "-";
             stringDate += (selectedDate.getMonth() + 1).toString().padStart(2, '0') + "-";
-            stringDate += selectedDate.getDate().toString().padStart(2, '0') + " ";
-            stringDate += selectedDate.toTimeString().split(' ')[0] + '000';
+            stringDate += selectedDate.getDate().toString().padStart(2, '0');
             objectData.startDate = stringDate;
             objectData.endDate = stringDate;
             $.redirect("/reservations/timeSelect", objectData);

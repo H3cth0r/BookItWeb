@@ -235,6 +235,7 @@ def showRoomsView():
 @app.route("/reservations/daySelect", methods=["POST"])
 def daySelectView():
     body = request.form.to_dict()
+    print(body)
     body["objectId"] = int(body["objectId"])
     return render_template('reservas/oneDateSelectionView.html', data=body)
 
@@ -283,13 +284,9 @@ def timeSelectView():
     strftime('%Y-%m-%d', endDate) as endDay, strftime('%H:%M:%S', endDate) as endTime
     FROM ReservationTicket 
     WHERE (startDay = date(?) OR endDay = date(?)) AND ReservationTicket.objectId = ? AND weight > 0 AND ticketId != ?
-    ''', (body["date"], body["date"], body["objectId"], ignoreTicket)).fetchall()
-    body = {
-        "objectData":body,
-        "timeRanges":timeRanges
-    }
+    ''', (body["startDate"], body["startDate"], body["objectId"], ignoreTicket)).fetchall()
 
-    return render_template('/reservas/reloj.html', objectData = body)
+    return render_template('/reservas/reloj.html', objectData = body, timeRanges = timeRanges)
 
 @app.route("/reservations/showTicket", methods=["POST"])
 def showTicketView():
@@ -653,9 +650,8 @@ def register():
 def isUserVerified():
     body = request.get_json()
     cur = get_db().cursor()
-    toVerify = cur.execute('''SELECT id from ToVerify WHERE id = ?''', (body["verifyId"],))
-    data = cur.fetchall()
-    if len(data) == 0:
+    toVerify = cur.execute('''SELECT id from ToVerify WHERE id = ?''', (body["verifyId"],)).fetchall()
+    if len(toVerify) == 0:
         respBody = json.dumps({"verified":True})
     else:
         respBody = json.dumps({"verified":False})
@@ -1052,13 +1048,14 @@ def deleteUser():
 def deleteTicket():
     if jwtValidated(request.cookies.get("jwt")):
         userData = jwt.decode(request.cookies.get("jwt"), jwtKey, algorithms="HS256")
-
+        if userData["admin"] == 0:
+            return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
         cur.execute('''
         DELETE FROM ReservationTicket WHERE ticketId = ?;
         ''',
-        (body["ticketId"], userData["userId"]))
+        (body["ticketId"],))
         respBody = {"ticketDeleted":True}
         return json.dumps(respBody)
     else:
@@ -1432,7 +1429,7 @@ def getTickets():
                                  AND ReservationTicket.endDate > datetime('now', '-5 hours')
                                  ORDER BY startDate''', 
         (userData["userId"],)).fetchall()
-        return tickets
+        return json.dumps(tickets)
 
 # Get user's ticket by ticketId
 # Expecting request: {"jwt":jwt,     "ticketId":ticketId, "objectType":objectType}

@@ -13,6 +13,10 @@
         <title>BookMe</title>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="{{ url_for('static',filename='scripts/jquery.ios.picker.js') }}"></script>
+        <script>
+            var objectData = {{objectData|tojson}};
+            var timeRanges = {{timeRanges|tojson}}
+        </script>
         <!--<link href="{{ url_for('static',filename='styles/index.css') }}" rel="stylesheet">
         <script src="{{ url_for('static',filename='scripts/reloj.js') }}"></script>-->
     </head>
@@ -122,77 +126,17 @@
                     <option value="24:00:00">24:00</option>
                 </select>
             </div>
-            <div id = "Horas">
-
-
-            </div>
+            
         </div>
-        <div>
+        <div id="start-end">
             <button id="start">START</button>
             <button id="end">END</button>
         </div>
+        <div class="selection-info-div">
+            <input id="nextButton" type="image" src="https://github.com/H3cth0r/BookMe/blob/main/BookMe/Assets.xcassets/nextButtonSquare.imageset/nextButtonSquare-2.png?raw=true" name="submit">
+            <div id = "Horas"></div>
+        </div>
 <script>
-   /*{
-    "objectData":{
-        "id":1,
-        "name":"test",
-        "startDay": "2022-10-06",
-        "endDay": "2022-10-06",
-
-    },
-    "timeRanges":[
-        {
-        "startDate": "2022-10-06 16:00:00.000",
-        "endDate": "2022-10-06 18:00:00.000",
-        "startDay": "2022-10-06",
-        "startTime": "16:00:00",
-        "endDay": "2022-10-06",
-        "endTime": "18:00:00"
-        },
-        {
-        "startDate": "2022-10-06 19:00:00.000",
-        "endDate": "2022-10-06 22:00:00.000",
-        "startDay": "2022-10-06",
-        "startTime": "19:00:00",
-        "endDay": "2022-10-06",
-        "endTime": "22:00:00"
-        }
-    ]
-
-  "objectId":4,
-  "objectType":"HRDWR", 
-  "objectName":"DELL PC", 
-  "startDate":"2022-10-2 12:00:00.000",
-  "endDate":"2022-10-2 22:00:00.000",
-  "description":"Reserva Dell"
-}*/
-    var objectData = {
-        "objectId":1,
-        "objectType":"HRDWR",
-        "objectName":"test",
-        "startDate": "2022-10-06",
-        "endDate": "2022-10-06",
-        "descripcion": "test"
-    };
-
-    var timeRanges = [
-        {
-        "startDate": "2022-10-06 16:00:00.000",
-        "endDate": "2022-10-06 18:00:00.000",
-        "startDay": "2022-10-06",
-        "startTime": "16:00:00",
-        "endDay": "2022-10-06",
-        "endTime": "18:00:00"
-        },
-        {
-        "startDate": "2022-10-06 19:00:00.000",
-        "endDate": "2022-10-06 22:00:00.000",
-        "startDay": "2022-10-06",
-        "startTime": "19:00:00",
-        "endDay": "2022-10-06",
-        "endTime": "22:00:00"
-        }
-    ];
     $(document).ready(function(){
         $('#dia').append(`<p value="`+ objectData.startDate +`">`+ objectData.startDate+ `</p>`);
     });
@@ -210,53 +154,48 @@
             $('#Horas').empty();
             $('#Horas').append('<p> Start: '+start+'</p>');
             $('#Horas').append('<p> End: '+end+'</p>');
-            var colision = 0;
-            if (start != ' ' && end != ' '){
-                for (var i = 0; i < timeRanges.length; i++) {
-                    if (start >= timeRanges[i].startTime && start <= timeRanges[i].endTime){ //si la hora de inicio esta dentro de un rango
-                        alert ('colision ' + timeRanges[i].startTime + ' - ' + timeRanges[i].endTime + ' ' + start + ' - ' + end);
-                        colision = 1;
-                    }
-                    if (end >= timeRanges[i].startTime && end <= timeRanges[i].endTime){ //si la hora de fin esta dentro de un rango
-                        alert ('colision ' + timeRanges[i].startTime + ' - ' + timeRanges[i].endTime + ' ' + start + ' - ' + end);
-                        colision = 1;
-                    }
+        });
+
+    });
+
+    $("#nextButton").click(function(){
+        var colision = 0;
+        if (start != ' ' && end != ' '){
+            for (var i = 0; i < timeRanges.length; i++) {
+                if (start >= timeRanges[i].startTime && start <= timeRanges[i].endTime){ //si la hora de inicio esta dentro de un rango
+                    alert ('colision ' + timeRanges[i].startTime + ' - ' + timeRanges[i].endTime + ' ' + start + ' - ' + end);
+                    colision = 1;
                 }
-                if (colision == 0){
-                    alert ('no colision');
-                    console.log(timeRanges);
-                    /*var objectData = {
-        "objectId":1,
-        "objectType":"HRDWR",
-        "objectName":"test",
-        "startDate": "2022-10-06",
-        "endDate": "2022-10-06",
-        "descripcion": "test"
-    };*/
-                    var jsonHora = {
-                        "objectId" : objectData.id,
-                        "objectType" : objectData.objectType,
-                        "objectName" : objectData.objectName,
-                        "startDate" : objectData.startDay + ' ' + start,
-                        "endDate" : objectData.endDay + ' ' + end,
-                        "description" : objectData.descripcion
-                    };
-                    $.ajax({
-                        url: '/reservations/showTicket',
-                        type: 'POST',
-                        data: JSON.stringify(jsonHora),
-                        contentType: 'application/json',
-                        success: function (data) {
-                            console.log(data);
-                        }
-                    });
-                }else{
-                    alert('colision');
+                if (end >= timeRanges[i].startTime && end <= timeRanges[i].endTime){ //si la hora de fin esta dentro de un rango
+                    alert ('colision ' + timeRanges[i].startTime + ' - ' + timeRanges[i].endTime + ' ' + start + ' - ' + end);
+                    colision = 1;
                 }
             }
-        });
+            if (colision == 0){
+                alert ('no colision');
+                console.log(timeRanges);
+                var jsonHora = {
+                    "objectId" : objectData.id,
+                    "objectType" : objectData.objectType,
+                    "objectName" : objectData.objectName,
+                    "startDate" : objectData.startDay + ' ' + start,
+                    "endDate" : objectData.endDay + ' ' + end,
+                    "description" : objectData.descripcion
+                };
+                $.ajax({
+                    url: '/reservations/showTicket',
+                    type: 'POST',
+                    data: JSON.stringify(jsonHora),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log(data);
+                    }
+                });
+            }else{
+                alert('colision');
+            }
+        }
     });
-     
 </script>
 <style>
     *{
@@ -266,7 +205,7 @@
     overflow-y: show;
     width: 250px;
     size: 10;
-    height: 70vh;
+    height: 50vh;
     background-color: transparent;
     border: 2px solid rgb(42, 42, 42);
     color: white;
@@ -281,7 +220,7 @@
         align-items: center;
         flex-direction: column;
         width: 35vw;
-        height: 70vh;
+        height: 53vh;
         margin-left: 30%;
         margin-top: -4%;
 
@@ -302,14 +241,17 @@
     }
     #dia {
         color: white;
-    
-        margin-left: 38.5%;
         font-size: 25px;
-        
+        text-align: center;        
+    }
+
+    #start-end {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
     }
     #start {
-        margin-left: 12.5%;
-        margin-top: 5px;
         border: 1px solid white;
         background-color: transparent;
         color: white;
@@ -317,8 +259,7 @@
         height: 45px;
     }
     #end {
-        margin-left: 12.5%;
-        margin-top: 10px;
+
         border: 1px solid white;
         background-color: transparent;
         color: white;
@@ -334,18 +275,31 @@
         font-size: 20px;
         margin-top: 10px;   
     }
-    ::-webkit-scrollbar {
-  width: 0.2vw;
-  height: 0.1vh;
-}
 
+    .selection-info-div{
+        width: 100vw;
+        height: 20vh;
+        margin-top: 5vh;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: space-between;
+    }
 
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(0, 0, 0); 
-}
+    .selection-info-div input{
+        width: 25%;
+        height: 80%;
+        margin-right: 8%;
+        margin-bottom: 5%;;
+    }
 
+    .selection-info-div div p{
+        color: white;
+    }
 
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+    background: rgb(0, 0, 0); 
+    }
 </style>
 
