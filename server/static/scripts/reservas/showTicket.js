@@ -29,11 +29,24 @@ $(document).ready(function(){
     $('#startDate').html(startDateString);
     $('#endDate').html(endDateString);
     $('#objectName').html(ticket.objectName);
+    ticket.description = " ";
 
     console.log(ticket);
 
     $("#saveButton").click(function () {
-         
+        $.ajax({
+            url: "/api/newTicket",
+            type: "POST",
+            data: JSON.stringify(ticket),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                if(data.ticketSaved){
+                    window.location.replace("/reservations/currentBookings")
+                }
+            }
+
+        });
     })
 
 })
