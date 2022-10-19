@@ -822,7 +822,6 @@ def newRoom():
 # Expecting request: 
 '''
 {
-  "jwt":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiQTAxNjU5ODkxQHRlYy5teCIsImZpcnN0TmFtZSI6IlBlcG8iLCJsYXN0TmFtZSI6IkxvcGV6IiwiYWRtaW4iOjAsImJsb2NrZWQiOjAsImV4cCI6MTY2NDgzMzc3N30.nCyDkEwjnaqLmFXbt61lsuOKjhlNd0cBBrkyahc1Ldg",
   "classId":1,
   "quantity":7,
   "name":"Mac Book Air",
@@ -981,6 +980,20 @@ def editUser():
         return respBody
     return json.dumps({"saved":False})
 
+@app.route("/api/editTicket", methods=["POST"])
+def editTicket():
+    if jwtValidated(request.cookies.get('jwt')):
+        userData = jwt.decode(request.cookies.get('jwt'), jwtKey, algorithms="HS256")
+        if userData["admin"] == 0:
+            return "Only admins"
+        body = request.get_json()
+        cur = get_db().cursor()
+        cur.execute('''
+                    UPDATE ReservationTicket SET startDate = ?, endDate = ? WHERE ticketId = ?''',
+                    (body["startDate"], body["endDate"], body["ticketId"]))
+        return json.dumps({"saved":True})
+    return json.dumps({"saved":False})
+
 
 # Expecting request: {"classId":classId}
 @app.route("/api/deleteHardwareClass", methods=["POST"])
@@ -1040,7 +1053,7 @@ def deleteUser():
             return "Only admins"
         body = request.get_json()
         cur = get_db().cursor()
-        cur.execute('''UPDATE delete = 1, username = 'DELETED', email = 'DELETED' WHERE userId = ?''', (body["userId"],))
+        cur.execute('''UPDATE Users SET deleted = 1, username = 'DELETED', email = 'DELETED' WHERE userId = ?''', (body["userId"],))
         return json.dumps({"saved":True})
     return json.dumps({"saved":False})
 
