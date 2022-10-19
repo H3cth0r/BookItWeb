@@ -34,14 +34,15 @@ console.log(tickets)
 
     function delete_button(id_val ){
         if (confirm ("¿Estás seguro de que quieres eliminar este objeto?")) {
-            setTimeout(move_rows, 800, id_val);
             var temp = id_val.split(" ");
+            setTimeout(move_rows, 800, temp[0]);
+            
             console.log("deleted " + temp[0]);
             console.log("deleted " + temp[1]);
         $.ajax({
             url: '/api/deleteTicket', //cambiar esto por la ruta del servidor y añadir bien el json
             type: 'POST',
-            data: JSON.stringify({ "ticketId" : temp[0], "userId" : temp[1] }), 
+            data: JSON.stringify({ "ticketId" : temp[0]}), 
             contentType: "application/json",
             dataType: "json",
             success: function(data){
