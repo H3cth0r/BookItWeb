@@ -1,17 +1,7 @@
 *{
     font-family: 'chivo', sans-serif;
 }
-.hardware {
-    width: 100%;
-    height: 12%;
-    background-color: rgb(255, 255, 255);
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-}
+
 
 p {
     font-size: 0.8em;
@@ -21,20 +11,6 @@ p {
     padding: 0;
 }
 
-.hardwareName {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: 10%;
-    width: 30%;
-
-}
-.hardwareWeight {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: 15%;
-}
 
 ::-webkit-scrollbar {
     width: 0.5vw;
