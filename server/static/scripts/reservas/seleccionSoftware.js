@@ -1,5 +1,9 @@
 
-
+var counter = 0;
+$(document).ready(function () {
+    counter = counter + 1;
+    console.log("Here")
+    console.log(counter)
 for (var i = 0; i < softW.length; i++) {
     var software = softW[i];
     var softwareName = software.name;
@@ -20,20 +24,37 @@ for (var i = 0; i < softW.length; i++) {
     }
     softwareHTML += "<button name='generalObjectId' value='" + i + "' class='btn btn-primary' id='botonenvio'>BooKMe</button>"
     softwareHTML += "</div>";
-    
+    softwareHTML += `<HR WIDTH="90%" COLOR="black"></HR>`;
     softwareHTML += "</div>";
-    document.write(softwareHTML);
+    $('#main_table').append(softwareHTML);}
+
     $("#botonenvio").click(function () {
-        let index = $('#botonenvio').val();
-        
+        let index = $(this).val();
+        var data = {"objectType" : "SOFTW",
+        "objectId" : softW[index].generalObjectID, 
+        "objectName" : softW[index].name};
+        console.log(data)
+        if (softW[index].maxDays == 1){
+            $.redirect("/reservations/daySelect", data);
+        }
+        else{
+            $.redirect("/reservations/daysSelect", data);
+        }
+
+        /*
         $.ajax({
-            url: "/makeReservation",
-            type: "POST",
-            data: {"objectType" : "software",
-                   "objectId" : softW[index].generalObjectId, 
-                   "objectName" : softW[index].name}
+        url: "/reservations/daySelect",
+        type: "POST",
+        data: {"objectType" : "HRDWR",
+            "objectId" : hardw[index].generalObjectId, 
+            "objectName" : hardw[index].name},
+        success: function (data) {
+            document.write(data);
+        }
 
         });
-    }
-    );
-}
+        */
+
+        }
+);
+});
