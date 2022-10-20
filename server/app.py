@@ -422,12 +422,25 @@ def statsView():
         if userData["admin"] == 0:
             return "Only admins"
         cur = get_db().cursor()
+        usuariosTotales = cur.execute('''SELECT count(userId) as usuarios FROM Users''').fetchone()["usuarios"]
+        objetosTotales = cur.execute('''SELECT count(generalObjectId) as objetos FROM AvailableObjects''').fetchone()["objetos"]
+        reservasTotales = cur.execute('''SELECT count(ticketId) as tickets FROM ReservationTicket''').fetchone()["tickets"]
+        administradoresTotales = cur.execute('''SELECT count(userId) as admins FROM Users WHERE admin != 0''').fetchone()["admins"]
+        usuariosTec = cur.execute('''SELECT count(userId) as usuarios FROM Users WHERE organization = "Tec"''').fetchone()["usuarios"]
+        usuariosNoTec = cur.execute('''SELECT count(userId) as usuarios FROM Users WHERE organization != "Tec"''').fetchone()["usuarios"]
+        numeros = {
+            "usuariosTotales" : usuariosTotales,
+            "objetosTotales" : objetosTotales,
+            "reservasTotales" : reservasTotales,
+            "administradoresTotales" : administradoresTotales,
+            "usuariosTec" : usuariosTec,
+            "usuariosNoTec" : usuariosNoTec
+        }
         cur.row_factory = None
         query = cur.execute('''SELECT strftime('%Y-%m-%d', startDate) as startDay, count(ticketId) as ammount FROM ReservationTicket GROUP BY startDay''').fetchall()
         labels = [row[0] for row in query]
         values = [row[1] for row in query]
-        print(query)
-        return "JEJ"#render_template('admin/graph.html', my_chart = my_chart, charts = charts)
+        return render_template('admin/stats.html', numeros = numeros, labels = labels, values = values)
     else:
         return redirect("/login", code=302)
 
@@ -1511,7 +1524,7 @@ def getTicket():
         with open(qrPath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
         ticket["qrCode64"] = encoded_string.decode('utf-8')
-        return ticket
+        return json.dumps(ticket)
 
 
 # Get user's ticket by qrcode
