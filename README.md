@@ -3,6 +3,7 @@
 This is  a resporitory focused on the development of the web services of that are needed to run the
 BookIt project. 
 
+![Alt text](https://github.com/H3cth0r/BookMe/blob/main/resources/portadaParaRepo.png?raw=true "Optional title")
 
 ## What is **BookMe**?
 Book it is a project of a security project, in which we are intended to create an app for the
