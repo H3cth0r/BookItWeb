@@ -9,22 +9,6 @@ user    Name
         organization
 
 */ 
-var ticket = {
-    ticketId: 1,
-    userId: 1,
-    dateRegistered: "2021-01-01",
-    startDate: "2021-01-01",
-    endDate: "2021-01-01",
-    objectId: 1,
-    objectType: "HRDWR",
-    objectName: "PC",
-    ticketDescription: "PC de la sala de reuniones",
-    qrCode: "2a2d247816",
-    weight: 1,
-    name: "PC",
-    operativeSystem: "Windows",
-    objectDescription: "PC de la sala de reuniones"
-}
 
 
 
