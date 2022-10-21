@@ -89,7 +89,7 @@
     justify-content: space-around;
     border: 1px solid black;
     writing-mode: vertical-lr;
-    font-size: small;
+    font-size: 1.4vh;
 }
 #barras {
     width: 100%;
@@ -101,7 +101,7 @@
 }
 #textoTicket {
     
-    font-size: small;
+    font-size: 1.6vh;
 }
 button {
     color : transparent;

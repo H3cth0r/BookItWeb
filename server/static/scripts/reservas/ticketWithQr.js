@@ -40,34 +40,27 @@ $(document).ready(function () {
         var operativeSystem = hardware.operativeSystem;
         var objectDescription = hardware.objectDescription;
         /* aqui añadir el html del ticket */
-        let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
-        let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
-        let tickId = `<p>`+ qrCode + `</p>`;
 
-        $('#qrCode').append(qrImage);
-        $('#profile').append(imagenes);
-        $('#ticketsid').append(tickId);
-        var tickedInside = `<div class="ticket">
+        $('#ticketsid').append(ticketId);
+        var tickedInside = `
             <div class="ticket__header">
-                <h2 class="ticket__title">{</h2>
-                <h2 class="ticket__title">"reservation":{</h2>
-                <h2 class="ticket__title">"user":{</h2>
+                <p class="ticket__title">{</p>
+                <p class="ticket__title">"reservation":{</p>
+                <p class="ticket__title">"user":{</p>
                 <p > "name": "`+ userName + `",</p>
                 <p > "surname": "`+ userSurname + `",</p>
                 <p > "birthDate": "`+ userBirthDate + `",</p>
                 <p > "organization": "`+ userOrganization + `",</p>
-                <h2 class="ticket__title">},</h2>
+                <p class="ticket__title">},</p>
                 <p > "type": "`+ objectType + `",</p>
                 <p > "nameHardware": "`+ objectName + `",</p>
                 <p > "description": "`+ ticketDescription + `",</p>
                 <p > "startDate": "`+ startDate + `",</p>
                 <p > "endDate": "`+ endDate + `",</p>
 
-                <h2 class="ticket__title">},</h2>
-                <h2 class="ticket__title">}</h2>
-                <button id="edit">EDIT</button>
+                <p class="ticket__title">},</p>
+                <p class="ticket__title">}</p>
 
-            </div>
             </div>`;
             
         
@@ -75,28 +68,28 @@ $(document).ready(function () {
 
         if ($('#edit').click(function(){
             $('#textoTicket').empty();
-                var tickedInside = `<div class="ticket">
+                var tickedInside = `
                 <div class="ticket__header">
-                    <h2 class="ticket__title">{</h2>
-                    <h2 class="ticket__title">"reservation":{</h2>
-                    <h2 class="ticket__title">"user":{</h2>
+                    <p class="ticket__title">{</p>
+                    <p class="ticket__title">"reservation":{</p>
+                    <p class="ticket__title">"user":{</p>
                     <p > "name": "`+ userName + `",</p>
                     <p > "surname": "`+ userSurname + `",</p>
                     <p > "birthDate": "`+ userBirthDate + `",</p>
                     <p > "organization": "`+ userOrganization + `",</p>
-                    <h2 class="ticket__title">},</h2>
+                    <p class="ticket__title">},</p>
                     <p > "type": "`+ objectType + `",</p>
                     <p > "nameHardware": "`+ objectName + `",</p>
                     <p > "description": "`+ ticketDescription + `",</p>
                     <input type="date" id="startDate" value="`+ startDate + `">
                     <input type="date" id="endDate" value="`+ endDate + `">
 
-                    <h2 class="ticket__title">},</h2>
-                    <h2 class="ticket__title">}</h2>
+                    <p class="ticket__title">},</p>
+                    <p class="ticket__title">}</p>
                     <button id="safe">SAVE</button>
 
                 </div>
-                </div>`;
+                `;
             $('#textoTicket').append(tickedInside);
 
             if (('#safe').click(function(){
@@ -140,62 +133,56 @@ $(document).ready(function () {
         var objectDescription = software.objectDescription;
             /* aqui añadir el html del ticket */
 
-        let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
-        let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
-        let tickId = `<p>`+ ticketId + `</p>`;
-        $('#qrCode').append(qrImage);
-        //$('#profile').append(imagenes);
-        $('#ticketsid').append(tickId);
-        var tickedInside = `<div class="ticket">
+        $('#ticketsid').append(ticketId);
+        var tickedInside = `
             <div class="ticket__header">
-                <h2 class="ticket__title">{</h2>
-                <h2 class="ticket__title">"reservation":{</h2>
-                <h2 class="ticket__title">"user":{</h2>
+                <p class="ticket__title">{</p>
+                <p class="ticket__title">"reservation":{</p>
+                <p class="ticket__title">"user":{</p>
                 <p > "name": "`+ userName + `",</p>
                 <p > "surname": "`+ userSurname + `",</p>
                 <p > "birthDate": "`+ userBirthDate + `",</p>
                 <p > "organization": "`+ userOrganization + `",</p>
-                <h2 class="ticket__title">},</h2>
+                <p class="ticket__title">},</p>
                 <p > "type": "`+ objectType + `",</p>
                 <p > "prefix": "`+ brand + `",</p>
                 <p > "description": "`+ ticketDescription + `",</p>
                 <p > "startDate": "`+ startDate + `",</p>
                 <p > "endDate": "`+ endDate + `",</p>
 
-                <h2 class="ticket__title">},</h2>
-                <h2 class="ticket__title">}</h2>
-                <button id="edit">EDIT</button>
+                <p class="ticket__title">},</p>
+                <p class="ticket__title">}</p>
 
             </div>
-            </div>`;
+            `;
 
         $('#textoTicket').append(tickedInside);
 
         if ($('#edit').click(function(){
 
             $('#textoTicket').empty();
-            var tickedInside = `<div class="ticket">
+            var tickedInside = `
             <div class="ticket__header">
-                <h2 class="ticket__title">{</h2>
-                <h2 class="ticket__title">"reservation":{</h2>
-                <h2 class="ticket__title">"user":{</h2>
+                <p class="ticket__title">{</p>
+                <p class="ticket__title">"reservation":{</p>
+                <p class="ticket__title">"user":{</p>
                 <p > "name": "`+ userName + `",</p>
                 <p > "surname": "`+ userSurname + `",</p>
                 <p > "birthDate": "`+ userBirthDate + `",</p>
                 <p > "organization": "`+ userOrganization + `",</p>
-                <h2 class="ticket__title">},</h2>
+                <p class="ticket__title">},</p>
                 <p > "type": "`+ objectType + `",</p>
                 <p > "prefix": "`+ objectName + `",</p>
                 <p > "description": "`+ ticketDescription + `",</p>
                 <input type="date" id="startDate" value="`+ startDate + `">
                 <input type="date" id="endDate" value="`+ endDate + `">
 
-                <h2 class="ticket__title">},</h2>
-                <h2 class="ticket__title">}</h2>
+                <p class="ticket__title">},</p>
+                <p class="ticket__title">}</p>
                 <button id="safe">SAVE</button>
 
             </div>
-            </div>`;
+            `;
             $('#textoTicket').append(tickedInside);
 
             if (('#safe').click(function(){
@@ -237,60 +224,53 @@ $(document).ready(function () {
         var location = sala.location;
         var objectDescription = sala.objectDescription;
             /* aqui añadir el html del ticket */
-        
-        let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
-        let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
-        let tickId = `<p>`+ ticketId + `</p>`;
-        $('#qrCode').append(qrImage);
-        //$('#profile').append(imagenes);
-        $('#ticketsid').append(tickId);
-        var tickedInside = `<div class="ticket">
+
+        $('#ticketsid').append(ticketId);
+        var tickedInside = `
             <div class="ticket__header">
-                <h2 class="ticket__title">{</h2>
-                <h2 class="ticket__title">"reservation":{</h2>
-                <h2 class="ticket__title">"user":{</h2>
+                <p class="ticket__title">{</p>
+                <p class="ticket__title">"reservation":{</p>
+                <p class="ticket__title">"user":{</p>
                 <p > "name": "`+ userName + `",</p>
                 <p > "surname": "`+ userSurname + `",</p>
                 <p > "birthDate": "`+ userBirthDate + `",</p>
                 <p > "organization": "`+ userOrganization + `",</p>
-                <h2 class="ticket__title">},</h2>
+                <p class="ticket__title">},</p>
                 <p > "type": "`+ objectType + `",</p>
                 <p > "label": "`+ objectName + `",</p>
                 <p > "description": "`+ ticketDescription + `",</p>
                 <p > "startDate": "`+ startDate + `",</p>
                 <p > "endDate": "`+ endDate + `",</p>
 
-                <h2 class="ticket__title">},</h2>
-                <h2 class="ticket__title">}</h2>
-                <button id="edit">EDIT</button>
+                <p class="ticket__title">},</p>
+                <p class="ticket__title">}</p>
 
             </div>
-            </div>`;
+            `;
         $('#textoTicket').append(tickedInside);
         if ($('#edit').click(function(){
 
             $('#textoTicket').empty();
-            var tickedInside = `<div class="ticket">
+            var tickedInside = `
             <div class="ticket__header">
-                <h2 class="ticket__title">{</h2>
-                <h2 class="ticket__title">"reservation":{</h2>
-                <h2 class="ticket__title">"user":{</h2>
+                <p class="ticket__title">{</p>
+                <p class="ticket__title">"reservation":{</p>
+                <p class="ticket__title">"user":{</p>
                 <p > "name": "`+ userName + `",</p>
                 <p > "surname": "`+ userSurname + `",</p>
                 <p > "birthDate": "`+ userBirthDate + `",</p>
                 <p > "organization": "`+ userOrganization + `",</p>
-                <h2 class="ticket__title">},</h2>
+                <p class="ticket__title">},</p>
                 <p > "type": "`+ objectType + `",</p>
                 <p > "label": "`+ objectName + `",</p>
                 <p > "description": "`+ ticketDescription + `",</p>
                 <input type="date" id="startDate" value="`+ startDate + `">
                 <input type="date" id="endDate" value="`+ endDate + `">
 
-                <h2 class="ticket__title">},</h2>
-                <h2 class="ticket__title">}</h2>
+                <p class="ticket__title">},</p>
+                <p class="ticket__title">}</p>
                 <button id="safe">SAVE</button>
 
-            </div>
             </div>`;
             $('#textoTicket').append(tickedInside);
 

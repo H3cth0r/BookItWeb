@@ -400,7 +400,7 @@ def getTicketWithQr(qr):
         ticket = cur.execute(query, (ticketInfo["ticketId"], )).fetchone()
         print(ticket)
         #qrPath = "static/resources/qrCodes/" + ticket["qrCode"] + ".png"
-        return render_template('reservas/ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"])
+        return render_template('reservas/ticketWithQr.html', TICKET=ticket, QRCODE=ticket["qrCode"], USERID=str(ticket["userId"]))
 
 '''--- USER MANAGEMENT ---'''
 
