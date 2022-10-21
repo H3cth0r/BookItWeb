@@ -8,7 +8,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <!--<script src="scripts/anime-master/anime-master/lib/anime.min.js"></script>  
          crud style -->
-        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/materialesHard.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/admin/stats.css') }}">
         <link href="https://fonts.googleapis.com/css?family=Chivo&display=swap" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
@@ -27,33 +27,43 @@
         <h1>Estadisticas</h1>
         <br>
     </div>
+    <div id="cont1">
     <div id="usuariosTotales">
-        <h2>Usuarios Totales</h2>
+        <h2>Usuarios </h2>
+        <h2>Totales</h2>
         <h3>{{numeros.usuariosTotales}}</h3>
     </div>
     <div id="objetosTotales">
-        <h2>Objetos Totales</h2>
+        <h2>Objetos</h2>
+        <h2>Totales</h2>
         <h3>{{numeros.objetosTotales}}</h3>
     </div>
     <div id="reservasTotales">
-        <h2>Reservas Totales</h2>
+        <h2>Reservas</h2>
+        <h2>Totales</h2>
         <h3>{{numeros.reservasTotales}}</h3>
     </div>
+</div>
+    <div id="cont2">
     <div id="administradoresTotales">
         <h2>Administradores</h2>
         <h3>{{numeros.administradoresTotales}}</h3>
     </div>
     <div id="usuariosTec">
-        <h2>Usuarios Tec</h2>
+        <h2>Usuarios</h2>
+        <h2> Tec</h2>
         <h3>{{numeros.usuariosTec}}</h3>
     </div>
     <div id="usuariosNoTec">
-        <h2>Usuarios Generales</h2>
+        <h2>Usuarios 
+        <h2>Generales</h2>
         <h3>{{numeros.usuariosNoTec}}</h3>
     </div>
+</div>
+    <div id="cont3">
     <div id="charts" class="charts">
         <h2>Reservas por dia</h2>
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <canvas id="myChart" width="500" height="500"></canvas>
         <script>
             var ctx = document.getElementById('myChart').getContext('2d');
             var lineChart = new Chart(ctx, {
@@ -75,6 +85,7 @@
                 }
             });
         </script>
+        </div>
     </div>
 
 
