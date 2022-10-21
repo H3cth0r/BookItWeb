@@ -40,12 +40,12 @@ $(document).ready(function () {
         var operativeSystem = hardware.operativeSystem;
         var objectDescription = hardware.objectDescription;
         /* aqui añadir el html del ticket */
-        //let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
-        //let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
+        let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
+        let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
         let tickId = `<p>`+ qrCode + `</p>`;
 
-        //$('#qrCode').append(qrImage);
-        //$('#profile').append(imagenes);
+        $('#qrCode').append(qrImage);
+        $('#profile').append(imagenes);
         $('#ticketsid').append(tickId);
         var tickedInside = `<div class="ticket">
             <div class="ticket__header">
