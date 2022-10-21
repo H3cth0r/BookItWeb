@@ -1,3 +1,6 @@
+*{
+    font-family: 'chivo', sans-serif;
+}
 #imagenes {
     width: 100%;
     height: 25%;
@@ -21,26 +24,26 @@
 }
 #datosId {
     width: 100%;
-    height: 15%;
+    height: 8%;
     display: flex;
     justify-content: space-around;
     
 }
 #texto {
-    width: 48%;
+    width: 50%;
     height: 100%;
     color : white;
-    font-size: 2cm;
+    font-size: 0.8cm;
     background-color: black;
     text-align: center;
     text-justify: inter-cluster;
     
 }
 #ticketsid {
-    width: 48%;
+    width: 50%;
     height: 100%;
     color : black;
-    font-size: 1.5cm;
+    font-size: 0.7cm;
     background-color: white;
     text-align: center;
     text-justify: inter-cluster;
@@ -48,13 +51,13 @@
 }
 
 #datosTicket {
-    width: 98%;
-    height: 60%;
+    width: 100%;
+    height: 59%;
     background-color: white;
     display: flex;
     justify-content: space-around;
     border: 1px solid black;
-    margin-left: 10px;
+    
     
 }
 #contenedor {
@@ -64,7 +67,7 @@
     flex-direction: column;
     justify-content: space-around;
     border : 1px solid black;
-    
+    font-size: small;
     
 }
 #editar {
@@ -76,6 +79,7 @@
     border: 1px solid black;
     margin-left: 85%;
     margin-top: 75%;
+    
 }
 #diaTicket {
     width: 20%;
@@ -85,4 +89,21 @@
     justify-content: space-around;
     border: 1px solid black;
     writing-mode: vertical-lr;
+    font-size: small;
+}
+#barras {
+    width: 100%;
+    height: 8%;
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid black;
+}
+#textoTicket {
+    
+    font-size: small;
+}
+button {
+    color : transparent;
+    background-color: transparent;
 }

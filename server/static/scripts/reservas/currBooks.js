@@ -7,6 +7,7 @@ $(document).ready(function(){
         var currBookName = currBook.objectName;
         var currBookStart = currBook.startDate;
         var currBookEnd = currBook.endDate;
+        var currQr = currBook.qrCode;
 
         let the = `<div class="single_row_user" id="`+ currBookID + `">
                     <div id="nombre">
@@ -18,7 +19,7 @@ $(document).ready(function(){
                         <p>`+ currBookEnd + `</p>
                     </div>
                     <div  id="botones">
-                        <div><button id="qrCode" > <img src="{{url_for('static', filename='resources/qrCodes/1df7eac27c.png')}}" alt="QR Code" width="40" height="40"> </button></div>
+                        <div><button id="qrCode" > <img src="{{url_for('static', filename='resources/qrCodes/`+currQr+`.png')}}" alt="QR Code" width="40" height="40"> </button></div>
                         <div><button id="row_delete" onclick="delete_button('`+ currBookID + `');"><HR WIDTH="100%" COLOR="black"></HR></button></div>
                     </div>
                     </div>

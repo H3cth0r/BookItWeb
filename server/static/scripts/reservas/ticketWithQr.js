@@ -9,6 +9,27 @@ user    Name
         organization
 
 */ 
+var ticket = {
+    ticketId: 1,
+    userId: 1,
+    dateRegistered: "2021-01-01",
+    startDate: "2021-01-01",
+    endDate: "2021-01-01",
+    objectId: 1,
+    objectType: "HRDWR",
+    objectName: "PC",
+    ticketDescription: "PC de la sala de reuniones",
+    qrCode: "2a2d247816",
+    weight: 1,
+    name: "PC",
+    operativeSystem: "Windows",
+    objectDescription: "PC de la sala de reuniones"
+}
+
+
+
+
+
 $(document).ready(function () {
     console.log(ticket);
     objeto = ticket.objectType;
@@ -35,11 +56,11 @@ $(document).ready(function () {
         var operativeSystem = hardware.operativeSystem;
         var objectDescription = hardware.objectDescription;
         /* aqui añadir el html del ticket */
-        let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
-        let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
+        //let imagenes = `<img src="`+ userId + `" alt="QR Code" width="100" height="100">`;
+        //let qrImage = `<img src="`+ qrCode + `" alt="QR Code" width="100" height="100">`;
         let tickId = `<p>`+ qrCode + `</p>`;
 
-        $('#qrCode').append(qrImage);
+        //$('#qrCode').append(qrImage);
         //$('#profile').append(imagenes);
         $('#ticketsid').append(tickId);
         var tickedInside = `<div class="ticket">
